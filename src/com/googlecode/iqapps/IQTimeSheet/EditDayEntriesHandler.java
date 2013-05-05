@@ -144,11 +144,16 @@ public class EditDayEntriesHandler extends ListActivity {
 		Log.d(TAG, "timeEntryCursor has " + timeEntryCursor.getCount()
 				+ " entries.");
 
+        try {
 		reportList.setAdapter(new SimpleCursorAdapter(this,
 				android.R.layout.simple_list_item_2, timeEntryCursor,
 				new String[] { TimeSheetDbAdapter.KEY_TASK,
 						TimeSheetDbAdapter.KEY_RANGE }, new int[] {
 						android.R.id.text1, android.R.id.text2 }));
+        } catch (Exception e) {
+            Log.d(TAG, "reportList.setAdapter: " + e.toString());
+            return;
+        }
 	}
 
 	/*

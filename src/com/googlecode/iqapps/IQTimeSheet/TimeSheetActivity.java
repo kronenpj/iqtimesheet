@@ -161,7 +161,7 @@ public class TimeSheetActivity extends ListActivity {
 	}
 
 	/*
-	 * @return: If the final state is checked.
+	 * Given a task ID, close the task and, if the ID differs, open a new task.  Refresh the data displayed.
 	 */
 	private void processChange(long taskID) {
 		Log.d(TAG, "processChange for task ID: " + taskID);
@@ -192,15 +192,16 @@ public class TimeSheetActivity extends ListActivity {
 		if (timeOut == 0 && lastTaskID == taskID) {
 			db.closeEntry(taskID);
 			tasksList.clearChoices();
-			Log.d(TAG, "processChange for task ID: " + taskID);
+			Log.d(TAG, "Closed task ID: " + taskID);
 		} else {
 			if (timeOut == 0 && lastTaskID != taskID)
 				db.closeEntry();
 			db.createEntry(taskID);
-			fillData();
-			setSelected();
 			Log.d(TAG, "processChange ID from " + lastTaskID + " to " + taskID);
 		}
+        // Refresh the UI to reflect the change.
+        fillData();
+        setSelected();
 	}
 
 	/**

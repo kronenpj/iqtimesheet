@@ -1,4 +1,7 @@
 High-priority items to do:
+* Implement timezone anchor for cross-day checks.
+** Start time < anchored midnight < End time / now = cross day...
+* Fix Add-task crash following screen rotation (onResume problem)
 
 Medium-priority items to do:
 * Move everything possible into preferences.
@@ -8,13 +11,15 @@ Medium-priority items to do:
 * Database scrub to find floating 0-time-out clockings.
 * Database scrub to find cross-day clockings that weren't caught.
 * Alarm when 8h/day is reached and 40h/week.
-* Properly adjust for Time Zone changes, eg: travel.
+* Alarm when particular time occurs & still clocked in, eg: 5:00pm.
+* Persistent icon when clocked in.
 * Use DatePickerDialog rather than a separate activity.
 * Use TimePickerDialog rather than a separate activity.
 * Year-end database purge.
 * CSV database export between dates.
 
 Low-priority items to do:
+* Port to new UI scheme for Android 3+.
 
 Uncategorized Items to do:
 
@@ -24,3 +29,5 @@ Completed Items:
 * Figure out how to get the task list to scroll to the selected item.
 * Backup / restore onto / from SD card.
 * Extend TimePicker class to snap to 6- or 15- or X-minute intervals. Somehow.
+* Properly adjust for Time Zone changes, eg: travel. - No change needed...
+* Fix lingering indicator on task list after clock out on Android 4+ (4.1+?) device.
