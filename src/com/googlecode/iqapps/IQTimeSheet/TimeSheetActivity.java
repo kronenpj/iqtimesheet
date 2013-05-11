@@ -694,15 +694,23 @@ public class TimeSheetActivity extends ListActivity {
 				// Our protocol with the sending activity is that it will send
 				// text in 'data' as its result.
 				if (data != null) {
-					if (!data.hasExtra("parent"))
-						db.createTask(data.getAction());
-					else {
-						db.createTask(data.getAction(),
-								data.getStringExtra("parent"),
-								data.getIntExtra("percentage", 100));
+					try {
+						if (!data.hasExtra("parent"))
+							db.createTask(data.getAction());
+						else {
+							db.createTask(data.getAction(),
+									data.getStringExtra("parent"),
+									data.getIntExtra("percentage", 100));
+						}
+					} catch (NullPointerException e) {
+						Log.d(TAG, "TaskAdd Result: " + e.toString());
 					}
 				}
-				fillData();
+				try {
+					fillData();
+				} catch (NullPointerException e) {
+					Log.d(TAG, "TaskAdd fillData: " + e.toString());
+				}
 			}
 		} else if (requestCode == ActivityCodes.TASKREVIVE.ordinal()) {
 			// This one is a special case, since it has its own database
