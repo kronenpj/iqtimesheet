@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="robotium">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../robotium/robotium-solo/target/classes" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../robotium/robotium-solo/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

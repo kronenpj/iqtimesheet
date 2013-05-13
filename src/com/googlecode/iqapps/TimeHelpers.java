@@ -18,7 +18,6 @@ package com.googlecode.iqapps;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -85,6 +84,7 @@ public class TimeHelpers {
 	 * 
 	 * @return The supplied value trimmed to the six-minute boundary.
 	 */
+    @Deprecated
 	public static long millisToNearestTenth(long timeInMillis) {
 		return millisToAlignMinutes(timeInMillis, 6);
 	}
@@ -580,4 +580,27 @@ public class TimeHelpers {
 
 		return retMonth;
 	}
+
+    /**
+     * Calculate the timezone-anchored end of day boundary.  This is meant to be the
+     * same time no matter where the device roams.  Handy when travelling so that a
+     * very long day that spans time zones doesn't last longer than 24 hours...
+     *
+     * @param timeInMillis Reference point for a day, in milliseconds.
+     * @return Time in milliseconds of the boundary
+     */
+    public static long millisToEoDBoundary(long timeInMillis, TimeZone tzAnchor) {
+            GregorianCalendar calendar = new GregorianCalendar();
+            calendar.setTimeInMillis(timeInMillis);
+            calendar.setTimeZone(tzAnchor);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MILLISECOND, 0);
+            // Flip to the next day by adding a second. This forces the calendar to
+            // do most of the work :).
+            calendar.add(Calendar.SECOND, 1);
+
+            return calendar.getTimeInMillis();
+        }
 }

@@ -20,26 +20,31 @@
  * @param       (methods and constructors only)
  * @return      (methods only)
  * @exception   (@throws is a synonym added in Javadoc 1.2)
- * @see         
+ * @see
  * @deprecated  (see How and When To Deprecate APIs)
  */
 package com.googlecode.iqapps.IQTimeSheet;
 
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import java.util.TimeZone;
+
 /**
  * @author kronenpj
- * Borrowed heavily from ConnectBot's SettingsActivity. 
+ * Borrowed heavily from ConnectBot's SettingsActivity.
  */
-public class MyPreferenceActivity extends PreferenceActivity {
+public class MyPreferenceActivity extends PreferenceActivity implements
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
-	@Override
-	protected void onResume() {
+    @Override
+    protected void onResume() {
 		super.onResume();
 
+/*
 		try {
 			addPreferencesFromResource(R.xml.preferences);
 		} catch (Exception e) {
@@ -57,9 +62,53 @@ public class MyPreferenceActivity extends PreferenceActivity {
 			PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 			prefEditor = prefs.edit();
 			prefEditor.commit();
-			
+
 			// Try loading the preferences again.
 			addPreferencesFromResource(R.xml.preferences);
 		}
+*/
+
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        addPreferencesFromResource(R.xml.preferences);
+
+        SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+
+        ListPreference tzAnchor = (ListPreference) findPreference("tz.anchor");
+        tzAnchor.setOrder(70);
+        String[] timeZones = TimeZone.getAvailableIDs();
+        tzAnchor.setEntries((CharSequence[]) timeZones);
+        tzAnchor.setEntryValues((CharSequence[]) timeZones);
+    }
+
+    @Override
+    protected void onPause() {
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        finish();
+        super.onPause();
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+/*
+        Preference pref = findPreference(key);
+        if (pref instanceof EditTextPreference) {
+            EditTextPreference etp = (EditTextPreference) pref;
+            if (pref.getKey().equals("password")) {
+                pref.setSummary(etp.getText().replaceAll(".", "*"));
+            } else {
+                pref.setSummary(etp.getText());
+            }
+        } else if (pref instanceof CheckBoxPreference) {
+            if (((CheckBoxPreference) pref).isChecked())
+                pref.setSummary("On");
+            else
+                pref.setSummary("Off");
+        }
+*/
+    }
 }

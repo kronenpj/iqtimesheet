@@ -31,6 +31,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.TimeZone;
+
 /**
  * Class to encapsulate preference handling for the application.
  * 
@@ -49,7 +51,8 @@ public class PreferenceHelper {
 	public static final String KEY_HOURS_WEEK = "hours.week";
 	public static final String KEY_FONTSIZE_TASKLIST = "fontSize.tasklist";
 	public static final String KEY_TOTAL_FONTSIZE = "total.fontSize";
-	public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
+    public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
+    public static final String KEY_TIMEZONE_ANCHOR = "tz.anchor";
 
 	public PreferenceHelper(Context mCtx) {
 		prefs = PreferenceManager.getDefaultSharedPreferences(mCtx);
@@ -163,12 +166,30 @@ public class PreferenceHelper {
 			Log.e(TAG,
 					KEY_FONTSIZE_TASKLIST + " threw exception: " + e.toString());
 		}
-		Log.d(TAG, "Preference " + KEY_FONTSIZE_TASKLIST + ": "
-				+ fontSizeTaskList);
+//		Log.d(TAG, "Preference " + KEY_FONTSIZE_TASKLIST + ": "
+//				+ fontSizeTaskList);
 		return fontSizeTaskList;
 	}
 
-	public boolean getSDCardBackup() {
+    public TimeZone getTimeZone() {
+        // Make the default the current, where ever it might be.
+        TimeZone timeZoneAnchor = TimeZone.getDefault();
+        try {
+            // Throws ClassCastException
+            String tzpref = prefs.getString(
+                    KEY_TIMEZONE_ANCHOR,
+                    TimeZone.getDefault().getDisplayName());
+            timeZoneAnchor=TimeZone.getTimeZone(tzpref);
+        } catch (Exception e) {
+            Log.e(TAG,
+                    KEY_TIMEZONE_ANCHOR + " threw exception: " + e.toString());
+        }
+//        Log.d(TAG, "Preference " + KEY_TIMEZONE_ANCHOR + ": "
+//                + timeZoneAnchor.getDisplayName());
+        return timeZoneAnchor;
+    }
+
+    public boolean getSDCardBackup() {
 		boolean backup = false;
 		try {
 			backup = prefs.getBoolean(KEY_SDCARD_BACKUP, true);

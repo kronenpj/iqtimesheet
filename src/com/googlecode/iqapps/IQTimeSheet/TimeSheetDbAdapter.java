@@ -17,6 +17,7 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
 import java.sql.Date;
+import java.util.TimeZone;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -419,7 +420,16 @@ public class TimeSheetDbAdapter {
 			// if (timeOut - origTimeOut == 1)
 			// timeOut = origTimeOut;
 		}
-		ContentValues updateValues = new ContentValues();
+
+        // Stop the time closed from landing on a day boundary.
+        Cursor taskCursor = fetchEntry(lastClockEntry());
+        taskCursor.moveToFirst();
+        long timeIn = taskCursor.getLong(taskCursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+        long boundary = TimeHelpers.millisToEoDBoundary(timeIn, TimeSheetActivity.prefs.getTimeZone());
+        if (timeOut > boundary) timeOut = boundary - 1000;
+
+        ContentValues updateValues = new ContentValues();
 		updateValues.put(KEY_TIMEOUT, timeOut);
 
 		Log.d(TAG, "closeEntry: " + chargeno);

@@ -40,6 +40,8 @@
 	<string name="hours_day_summary">Hours normally worked per day</string>
 	<string name="hours_week_title">Hours per week</string>
 	<string name="hours_week_summary">Hours normally worked per week</string>
+    <string name="tz_anchor_title">Select anchor time zone</string>
+    <string name="tz_anchor_summary">Anchor time zone for midnight and cross-day checks</string>
 	<string name="backup_sd_title">Enable backups?</string>
 	<string name="backup_sd_summary_on">Backups of time database will be made on SD card</string>
 	<string name="backup_sd_summary_off">Backups of time database are disabled</string>
@@ -48,4 +50,5 @@
 	<string name="totals_font_size">Totals Font Size</string>
 	<string name="fontsize_tasklist">Tasklist Font Size</string>
 	<string name="select_parent_task">Select parent task</string>
+    <string name="scrub_database">Scrub the database</string>
 </resources>

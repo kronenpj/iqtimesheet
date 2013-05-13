@@ -37,7 +37,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -47,8 +46,10 @@ import com.googlecode.iqapps.TimeHelpers;
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class TimeSheetActivity extends ListActivity {
+	private static final String TAG = "TimeSheetActivity";
+	private static final int CROSS_DIALOG = 0x40;
+	private static final int CONFIRM_RESTORE_DIALOG = 0x41;
 	static PreferenceHelper prefs;
-
 	TimeSheetDbAdapter db;
 	Menu optionsMenu;
 	private ListView tasksList;
@@ -59,9 +60,6 @@ public class TimeSheetActivity extends ListActivity {
 	private Cursor reportCursor;
 	private String applicationName;
 	private String myPackage;
-	private static final String TAG = "TimeSheetActivity";
-	private static final int CROSS_DIALOG = 0x40;
-	private static final int CONFIRM_RESTORE_DIALOG = 0x41;
 
 	/**
 	 * Called when the activity is first created.
@@ -103,7 +101,7 @@ public class TimeSheetActivity extends ListActivity {
 			Log.e(TAG, "register listeners: " + e.toString());
 		}
 
-		// Register the context menu below with the tasksList ListView.
+        // Register the context menu below with the tasksList ListView.
 		registerForContextMenu(tasksList);
 	}
 
@@ -126,6 +124,12 @@ public class TimeSheetActivity extends ListActivity {
 			checkCrossDayClock();
 		} catch (Exception e) {
 			Log.d(TAG, "onResume: (checkCrossDayClock) " + e.toString());
+		}
+
+		try {
+            checkBoundary();
+		} catch (Exception e) {
+			Log.d(TAG, "onResume: (checkBoundary) " + e.toString());
 		}
 
 		try {
@@ -264,7 +268,7 @@ public class TimeSheetActivity extends ListActivity {
 		}
 
 		tasksList.setAdapter(new MyArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_single_choice, items));
+                android.R.layout.simple_list_item_single_choice, items));
 		updateTitleBar();
 	}
 
@@ -294,6 +298,37 @@ public class TimeSheetActivity extends ListActivity {
 		}
 	}
 
+    /**
+     * Checks database entries for cross-boundary entries.
+     */
+	void checkBoundary() {
+		long lastRowID = db.lastClockEntry();
+		Cursor tempClockCursor = db.fetchEntry(lastRowID);
+
+		long timeOut = -1;
+		timeOut = tempClockCursor.getLong(tempClockCursor
+				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+
+		if (timeOut < 1) {
+			tempClockCursor.close();
+			return;
+		}
+
+		long timeIn = tempClockCursor.getLong(tempClockCursor
+				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+		long boundary = TimeHelpers.millisToEndOfDay(timeIn);
+
+		// Want to know whether the last entry follows: timeIn < boundary < timeOut
+        // TODO: Should this be something more interactive?
+        if (timeIn<boundary && boundary<timeOut) {
+            Toast.makeText(this, "checkBoundary: Found entry.", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "checkBoundary: Clipping: row " + lastRowID + ", timeOut: " + timeOut);
+            db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+        }
+
+		tempClockCursor.close();
+	}
+
 	void checkCrossDayClock() {
 		long lastRowID = db.lastClockEntry();
 		long lastTaskID = db.taskIDForLastClockEntry();
@@ -312,11 +347,12 @@ public class TimeSheetActivity extends ListActivity {
 		// tempClockCursor.moveToFirst();
 		long now = TimeHelpers.millisNow();
 		long lastClockIn = tempClockCursor.getLong(tempClockCursor
-				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-		// TODO: The following doesn't behave correctly for a cross-year
-		// clocking.
-		int delta = (TimeHelpers.millisToDayOfYear(now) - TimeHelpers
-				.millisToDayOfYear(lastClockIn));
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+        long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn, prefs.getTimeZone());
+
+        // Calculate where we are in relation to the boundary time.
+		long delta = now - boundary;
+
 		// If the difference in days is 1, ask. If it's greater than 1, just
 		// close it.
 		Log.d(TAG,
@@ -325,19 +361,20 @@ public class TimeSheetActivity extends ListActivity {
 		Log.d(TAG, "checkCrossDayClock: lastClockIn=" + lastClockIn + " / "
 				+ TimeHelpers.millisToTimeDate(lastClockIn));
 		Log.d(TAG, "checkCrossDayClock: delta=" + delta);
+
 		// TODO: This should be handled better.
 		// Less than one day
 		if (delta < 1) {
 			Log.d(TAG, "Ignoring.  delta = " + delta);
-		} else if (delta <= 2) { // Between one and two days.
+        } else if ((now - TimeHelpers.millisToStartOfDay(lastClockIn)) > 86400000) { // More than one day.
+            Log.d(TAG, "Closing entry.  delta = " + delta / 86400000.0 + " days.");
+            Log.d(TAG, "With timeOut = " + boundary);
+            db.closeEntry(lastTaskID, boundary);
+            taskCursor.requery();
+        } else if (delta > 0) { // Now is beyond the boundary.
 			Log.d(TAG, "Opening dialog.  delta = " + delta);
+            db.closeEntry(lastTaskID, boundary);
 			showDialog(CROSS_DIALOG);
-		} else if (delta > 2) { // More than two days.
-			Log.d(TAG, "Closing entry.  delta = " + delta + " days.");
-			long lastClockDay = TimeHelpers.millisToEndOfDay(lastClockIn);
-			Log.d(TAG, "With timeOut = " + lastClockDay);
-			db.closeEntry(lastTaskID, lastClockDay);
-			taskCursor.requery();
 		}
 
 		tempClockCursor.close();
@@ -403,13 +440,6 @@ public class TimeSheetActivity extends ListActivity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									long taskID = db.taskIDForLastClockEntry();
-									long now = TimeHelpers.millisNow();
-									long today = TimeHelpers
-											.millisToStartOfDay(now) - 1000;
-									db.closeEntry(taskID, today);
-									// TODO: The item selected remains so, even
-									// though that task has been closed.
 									tasksList.clearChoices();
 									setSelected();
 								}
@@ -421,8 +451,7 @@ public class TimeSheetActivity extends ListActivity {
 									long taskID = db.taskIDForLastClockEntry();
 									long now = TimeHelpers.millisNow();
 									long today = TimeHelpers
-											.millisToStartOfDay(now) - 1000;
-									db.closeEntry(taskID, today);
+											.millisToStartOfDay(now);
 									db.createEntry(taskID, today);
 									setSelected();
 								}
@@ -550,6 +579,7 @@ public class TimeSheetActivity extends ListActivity {
 			item.setIcon(R.drawable.ic_menu_info_details);
 		}
 		item = menu.add(0, MenuItems.ABOUT.ordinal(), 9, R.string.menu_about);
+		item = menu.add(0, MenuItems.SCRUB_DB.ordinal(), 10, R.string.scrub_database);
 		// Hanging on to this so it can be used for testing.
 		optionsMenu = menu;
 		item.setIcon(R.drawable.ic_menu_info_details);
@@ -669,10 +699,42 @@ public class TimeSheetActivity extends ListActivity {
 			}
 			return true;
 		}
-		return false;
-	}
+        if (item.getItemId() == MenuItems.SCRUB_DB.ordinal()) {
+            Cursor taskCursor = db.fetchAllTimeEntries();
+            taskCursor.moveToFirst();
+            int count = 0;
+            while (!taskCursor.isAfterLast()) {
+                long timeOut = -1;
+                timeOut = taskCursor.getLong(taskCursor
+                        .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
 
-	/**
+                if (timeOut > 0) {
+                    long timeIn = taskCursor.getLong(taskCursor
+                            .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+                    long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
+
+                    // Want to know whether the last entry follows: timeIn < boundary < timeOut
+                    // TODO: Should this be something more interactive?
+                    long lastRowID = taskCursor.getPosition();
+                    if (timeIn < boundary && boundary < timeOut) {
+                        Log.d(TAG, "ScrubDB: Clipping: row " + lastRowID);
+                        Log.d(TAG, "----> timeIn: " + TimeHelpers.millisToTimeDate(timeIn));
+                        Log.d(TAG, "---> timeOut: " + TimeHelpers.millisToTimeDate(timeOut));
+                        Log.d(TAG, "--> boundary: " + TimeHelpers.millisToTimeDate(boundary));
+                        // Toast.makeText(this, "ScrubDB: Found entry: " + lastRowID, Toast.LENGTH_LONG).show();
+                        db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+                        count++;
+                    }
+                }
+                taskCursor.moveToNext();
+            }
+            Toast.makeText(this, "ScrubDB: Found " + count + " entries.", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
+    }
+
+    /**
 	 * This method is called when the sending activity has finished, with the
 	 * result it supplied.
 	 * 

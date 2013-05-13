@@ -7,15 +7,16 @@ package com.googlecode.iqapps.IQTimeSheet;
  * @author Neil http://stackoverflow.com/users/319625/user319625
  */
 
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import android.os.Environment;
-import android.util.Log;
 
 public class SDBackup {
 	private static final String TAG = "SDBackup";
@@ -23,7 +24,7 @@ public class SDBackup {
 	public static boolean doSDBackup(String databaseName, String packageName) {
 		try {
 			File sd = Environment.getExternalStorageDirectory();
-			File data = Environment.getDataDirectory();
+            File data = Environment.getDataDirectory();
 			Log.d(TAG, "SDBackup: databaseName: " + databaseName);
 			Log.d(TAG, "SDBackup: packageName: " + packageName);
 
@@ -35,6 +36,11 @@ public class SDBackup {
 				File currentDB = new File(data, currentDBPath);
 				File backupDir = new File(sd, backupDBPath);
 				File backupDB = new File(sd, backupDBPath + "/" + databaseName);
+
+                String currentPrefPath = "/data/" + packageName + "/shared_prefs/"
+                        + packageName + "_preferences.xml";
+                File currentPref = new File(data, currentPrefPath);
+                File backupPref = new File(sd, backupDBPath + "/" + "preferences.xml");
 
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 				Date currentTime_1 = new Date();
@@ -71,7 +77,19 @@ public class SDBackup {
 					dst.transferFrom(src, 0, src.size());
 					dst.close();
 					src.close();
-					return true;
+
+                    // Make a backup of the preferences
+                    try {
+                        src = new FileInputStream(currentPref).getChannel();
+                        dst = new FileOutputStream(backupPref).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        dst.close();
+                        src.close();
+                    } catch (FileNotFoundException e) {
+                        Log.i(TAG, "FileNotFoundException: " + e.toString());
+                    }
+
+                    return true;
 				} else {
 					Log
 							.d(TAG, "SDBackup: " + currentDBPath
@@ -102,16 +120,21 @@ public class SDBackup {
 				Log.d(TAG, "SDRestore: currentDBPath: " + currentDBPath);
 				Log.d(TAG, "SDRestore: backupDBPath: " + backupDBPath);
 
-				if (currentDBbak.exists()) {
+                String currentPrefPath = "/data/" + packageName + "/shared_prefs/"
+                        + packageName + "_preferences.xml";
+                File currentPref = new File(data, currentPrefPath);
+                File backupPref = new File(sd, backupDBPath + "/" + "preferences.xml");
+
+                if (currentDBbak.exists()) {
 					currentDBbak.delete();
 				}
 
+                FileChannel src;
+                FileChannel dst;
 				if (backupDB.exists()) {
 					currentDB.renameTo(currentDBbak);
-					FileChannel src = new FileInputStream(backupDB)
-							.getChannel();
-					FileChannel dst = new FileOutputStream(currentDB)
-							.getChannel();
+					src = new FileInputStream(backupDB).getChannel();
+					dst = new FileOutputStream(currentDB).getChannel();
 					dst.transferFrom(src, 0, src.size());
 					src.close();
 					dst.close();
@@ -120,6 +143,17 @@ public class SDBackup {
 					Log.d(TAG, "SDRestore: " + currentDBPath
 							+ " doesn't exist.");
 				}
+
+                // Make a backup of the preferences
+                try {
+                    src = new FileInputStream(backupPref).getChannel();
+                    dst = new FileOutputStream(currentPref).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    dst.close();
+                    src.close();
+                } catch (FileNotFoundException e) {
+                    Log.i(TAG, "FileNotFoundException: " + e.toString());
+                }
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "SDRestore threw exception: " + e.toString());

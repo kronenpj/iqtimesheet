@@ -1,7 +1,8 @@
 High-priority items to do:
 * Implement timezone anchor for cross-day checks.
 ** Start time < anchored midnight < End time / now = cross day...
-* Fix Add-task crash following screen rotation (onResume problem)
+* Address deprecated functions while keeping compatibility at ~ API 8.
+* Examine redundant & other suggested items identified by IdeaIC IDE.
 
 Medium-priority items to do:
 * Move everything possible into preferences.
@@ -31,3 +32,4 @@ Completed Items:
 * Extend TimePicker class to snap to 6- or 15- or X-minute intervals. Somehow.
 * Properly adjust for Time Zone changes, eg: travel. - No change needed...
 * Fix lingering indicator on task list after clock out on Android 4+ (4.1+?) device.
+* Fix Add-task crash following screen rotation (onResume problem)
