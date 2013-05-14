@@ -700,6 +700,7 @@ public class TimeSheetActivity extends ListActivity {
 			return true;
 		}
         if (item.getItemId() == MenuItems.SCRUB_DB.ordinal()) {
+            long lastDBentry = db.lastTaskEntry();
             Cursor taskCursor = db.fetchAllTimeEntries();
             taskCursor.moveToFirst();
             int count = 0;
@@ -707,32 +708,30 @@ public class TimeSheetActivity extends ListActivity {
                 long timeOut = -1;
                 timeOut = taskCursor.getLong(taskCursor
                         .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
-
                 long timeIn = taskCursor.getLong(taskCursor
                         .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
                 long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
 
-                long lastRowID = taskCursor.getPosition();
+                long thisRowID = taskCursor.getPosition();
                 // Want to know whether the last entry follows: timeIn < boundary < timeOut
                 // TODO: Should this be something more interactive?
                 if (timeOut > 0) {
                     if (timeIn < boundary && boundary < timeOut) {
-                        Log.d(TAG, "ScrubDB: Clipping: row " + lastRowID);
+                        Log.d(TAG, "ScrubDB: Clipping: row " + thisRowID);
                         Log.d(TAG, "----> timeIn: " + TimeHelpers.millisToTimeDate(timeIn));
                         Log.d(TAG, "---> timeOut: " + TimeHelpers.millisToTimeDate(timeOut));
                         Log.d(TAG, "--> boundary: " + TimeHelpers.millisToTimeDate(boundary));
                         // Toast.makeText(this, "ScrubDB: Found entry: " + lastRowID, Toast.LENGTH_LONG).show();
-                        db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+                        db.updateEntry(thisRowID, -1, null, timeIn, boundary);
                         count++;
                     }
                 }
 
                 // Locate "dangling" 0-timeOut entries, except the last one...
-                if ((timeOut == 0) &&
-                        (lastRowID < db.lastTaskEntry())) {
-                    Log.d(TAG, "ScrubDB: Closing: row " + lastRowID);
+                if ((timeOut == 0) && (thisRowID < lastDBentry)) {
+                    Log.d(TAG, "ScrubDB: Closing: row " + thisRowID);
                     Log.d(TAG, "--> with time: " + TimeHelpers.millisToTimeDate(boundary));
-                    db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+                    db.updateEntry(thisRowID, -1, null, timeIn, boundary);
                     count++;
                 }
                 taskCursor.moveToNext();
