@@ -708,14 +708,14 @@ public class TimeSheetActivity extends ListActivity {
                 timeOut = taskCursor.getLong(taskCursor
                         .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
 
-                if (timeOut > 0) {
-                    long timeIn = taskCursor.getLong(taskCursor
-                            .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-                    long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
+                long timeIn = taskCursor.getLong(taskCursor
+                        .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+                long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
 
-                    // Want to know whether the last entry follows: timeIn < boundary < timeOut
-                    // TODO: Should this be something more interactive?
-                    long lastRowID = taskCursor.getPosition();
+                long lastRowID = taskCursor.getPosition();
+                // Want to know whether the last entry follows: timeIn < boundary < timeOut
+                // TODO: Should this be something more interactive?
+                if (timeOut > 0) {
                     if (timeIn < boundary && boundary < timeOut) {
                         Log.d(TAG, "ScrubDB: Clipping: row " + lastRowID);
                         Log.d(TAG, "----> timeIn: " + TimeHelpers.millisToTimeDate(timeIn));
@@ -726,9 +726,18 @@ public class TimeSheetActivity extends ListActivity {
                         count++;
                     }
                 }
+
+                // Locate "dangling" 0-timeOut entries, except the last one...
+                if ((timeOut == 0) &&
+                        (lastRowID < db.lastTaskEntry())) {
+                    Log.d(TAG, "ScrubDB: Closing: row " + lastRowID);
+                    Log.d(TAG, "--> with time: " + TimeHelpers.millisToTimeDate(boundary));
+                    db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+                    count++;
+                }
                 taskCursor.moveToNext();
             }
-            Toast.makeText(this, "ScrubDB: Found " + count + " entries.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "ScrubDB: Fixed " + count + " entries.", Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
