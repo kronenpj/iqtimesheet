@@ -51,6 +51,7 @@ public class PreferenceHelper {
 	public static final String KEY_HOURS_WEEK = "hours.week";
 	public static final String KEY_FONTSIZE_TASKLIST = "fontSize.tasklist";
 	public static final String KEY_TOTAL_FONTSIZE = "total.fontSize";
+	public static final String KEY_PERSISTENT_NOTIFICATION = "persistent.notification";
     public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
     public static final String KEY_TIMEZONE_ANCHOR = "tz.anchor";
 
@@ -188,6 +189,21 @@ public class PreferenceHelper {
 //                + timeZoneAnchor.getDisplayName());
         return timeZoneAnchor;
     }
+
+    public boolean getPersistentNotification() {
+        boolean persistentNotification = false;
+        try {
+            persistentNotification = prefs.getBoolean(KEY_PERSISTENT_NOTIFICATION, false);
+        } catch (Exception e) {
+            Log.e(TAG,
+                    KEY_PERSISTENT_NOTIFICATION + " threw exception: "
+                            + e.toString());
+        }
+//        Log.d(TAG, "Preference " + KEY_PERSISTENT_NOTIFICATION + ": "
+//                + persistentNotification);
+        return persistentNotification;
+    }
+
 
     public boolean getSDCardBackup() {
 		boolean backup = false;

@@ -2,55 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7e2156a4-2428-4dd8-9c41-cd73a423c730" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/IQTimeSheet.eml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/IQTimeSheet.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/tests/IQTimeSheetTests.eml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/tests/IQTimeSheetTests.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/kronenpj.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/robotium.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.classpath" afterPath="$PROJECT_DIR$/.classpath" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/.classpath" afterPath="$PROJECT_DIR$/tests/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/AAA_CreateDBPrefs.java" afterPath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/AAA_CreateDBPrefs.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/ActivityCodes.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/ActivityCodes.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/AndroidManifest.xml" afterPath="$PROJECT_DIR$/tests/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/CrossDayCheck.java" afterPath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/CrossDayCheck.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MenuItems.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MenuItems.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MyPreferenceActivity.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MyPreferenceActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/IQTimeSheet.eml" afterPath="$PROJECT_DIR$/IQTimeSheet.eml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/PreferenceHelper.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/PreferenceHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/SDBackup.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/SDBackup.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TODO" afterPath="$PROJECT_DIR$/TODO" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/TimeHelpers.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/TimeHelpers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeHelpersTest.java" afterPath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeHelpersTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeSheetActivityTest.java" afterPath="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeSheetActivityTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetDbAdapter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetDbAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/build.xml" afterPath="$PROJECT_DIR$/tests/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/notrans.xml" afterPath="$PROJECT_DIR$/res/values/notrans.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences.xml" afterPath="$PROJECT_DIR$/res/xml/preferences.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.properties" afterPath="$PROJECT_DIR$/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/project.properties" afterPath="$PROJECT_DIR$/tests/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="iqtimesheet.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368398709994" ignored="false" />
-    <file path="/PreferenceHelper.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368400558846" ignored="false" />
-    <file path="/preferences.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368406908555" ignored="false" />
+    <file path="/Dummy.txt" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368847214162" ignored="false" />
+    <file path="/PreferenceHelper.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368753023069" ignored="false" />
+    <file path="/preferences.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368752324044" ignored="false" />
     <file path="/strings.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368241055777" ignored="false" />
     <file path="/TimeHelpers.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368392919677" ignored="false" />
-    <file path="/TimeSheetActivity.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368417563266" ignored="false" />
+    <file path="/TimeSheetActivity.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368844305043" ignored="false" />
     <file path="/TODO" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367786537342" ignored="false" />
     <file path="/a.dummy" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367787403356" ignored="false" />
     <file path="/EditDayEntriesHandler.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367787627495" ignored="false" />
@@ -59,11 +32,13 @@
     <file path="/sample.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367795674905" ignored="false" />
     <file path="/fragment.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367811114117" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/plugins/android/lib/android.jar!/org/jetbrains/android/android.xsd" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1367812295794" ignored="false" />
-    <file path="/opt/android-sdk-linux_x86/tools/ant/build.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368240947955" ignored="false" />
+    <file path="/opt/android-sdk-linux_x86/tools/ant/build.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368844882480" ignored="false" />
     <file path="/TimeSheetDbAdapter.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368414095534" ignored="false" />
     <file path="/TimeHelpersTest.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368393103898" ignored="false" />
     <file path="/MyPreferenceActivity.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368408527890" ignored="false" />
     <file path="/SDBackup.java" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368412460260" ignored="false" />
+    <file path="/a.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368844665752" ignored="false" />
+    <file path="/opt/android-sdk-linux/tools/ant/build.xml" changelist="7e2156a4-2428-4dd8-9c41-cd73a423c730" time="1368847522499" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +58,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -120,6 +94,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -136,7 +111,7 @@
       <file leaf-file-name="TimeSheetActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="454" column="0" selection-start="13319" selection-end="13319" vertical-scroll-proportion="0.6103896">
+            <state line="243" column="31" selection-start="7293" selection-end="7293" vertical-scroll-proportion="0.55172414">
               <folding />
             </state>
           </provider>
@@ -168,12 +143,12 @@
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MenuItems.java" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/TimeHelpers.java" />
         <option value="$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeHelpersTest.java" />
-        <option value="$PROJECT_DIR$/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/res/xml/preferences.xml" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/SDBackup.java" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MyPreferenceActivity.java" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetDbAdapter.java" />
+        <option value="$PROJECT_DIR$/res/xml/preferences.xml" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/PreferenceHelper.java" />
+        <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java" />
       </list>
     </option>
@@ -194,11 +169,6 @@
             <id>Android Lint</id>
           </State>
         </expanded-state>
-        <selected-state>
-          <State>
-            <id>Abstraction issues</id>
-          </State>
-        </selected-state>
       </profile-state>
     </entry>
   </component>
@@ -213,7 +183,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
+    <option name="STATE" value="2" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
@@ -228,11 +198,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope">
-        <subPane subId="Project Files" />
-        <subPane subId="All" />
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -291,72 +256,30 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="values" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="iqtimesheet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files" />
+        <subPane subId="All" />
+      </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="preferences.sourceCode" />
+    <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="preferences.updates" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RunManager" selected="Android Application.IQTimeSheet">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -521,7 +444,6 @@
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
     <option name="FORCE_UPDATE" value="false" />
     <option name="IGNORE_EXTERNALS" value="false" />
-    <configuration useDefault="true">$USER_HOME$/.subversion</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
   <component name="TaskManager">
@@ -559,22 +481,24 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3292683" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2495935" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295964" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3116592" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32967034" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24948665" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17659138" sideWeight="0.67058825" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17659138" sideWeight="0.6883408" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286052" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39764705" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -706,118 +630,55 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/DevelopingTests.java">
+    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="39" selection-start="1027" selection-end="1027" vertical-scroll-proportion="0.3307393" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/AddTaskHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="12" selection-start="4688" selection-end="4688" vertical-scroll-proportion="0.03787879">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/EditDayEntriesHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="329" column="34" selection-start="9660" selection-end="9660" vertical-scroll-proportion="0.33050847">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/DayReport.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="135" column="38" selection-start="3606" selection-end="3606" vertical-scroll-proportion="0.624031">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeHelpersTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="20" selection-start="3610" selection-end="3610" vertical-scroll-proportion="4.4025974">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/TimeHelpers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="591" column="23" selection-start="18491" selection-end="18491" vertical-scroll-proportion="0.39698493">
-          <folding>
-            <element signature="e#986#1013#0" expanded="true" />
-            <element signature="e#1310#1337#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="52" selection-start="3614" selection-end="3614" vertical-scroll-proportion="0.80833334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/android/preference/PreferenceActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="499" column="28" selection-start="18928" selection-end="18953" vertical-scroll-proportion="0.27272728">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/java/util/TimeZone.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="239" column="42" selection-start="9342" selection-end="9372" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/xml/preferences.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="0" selection-start="2277" selection-end="2277" vertical-scroll-proportion="0.64343166">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/MyPreferenceActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="0" selection-start="3529" selection-end="3529" vertical-scroll-proportion="0.39698493">
-          <folding>
-            <element signature="e#0#3774#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/SDBackup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="116" column="4" selection-start="4202" selection-end="4202" vertical-scroll-proportion="0.20100503">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/android/widget/Toast.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="236" column="24" selection-start="7009" selection-end="7009" vertical-scroll-proportion="0.33246753">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/PreferenceHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="187" column="0" selection-start="6993" selection-end="6993" vertical-scroll-proportion="0.8492462">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetDbAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="515" column="19" selection-start="18553" selection-end="18553" vertical-scroll-proportion="0.2562814">
+        <state line="234" column="89" selection-start="6975" selection-end="6975" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="454" column="0" selection-start="13319" selection-end="13319" vertical-scroll-proportion="0.6103896">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="51" selection-start="3675" selection-end="3675" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/android/preference/PreferenceActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="499" column="28" selection-start="18928" selection-end="18953" vertical-scroll-proportion="0.27272728" />
+      </provider>
+    </entry>
+    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/java/util/TimeZone.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="239" column="42" selection-start="9342" selection-end="9372" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file:///opt/android-sdk-linux_x86/sources/android-16/android/widget/Toast.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="236" column="24" selection-start="7009" selection-end="7009" vertical-scroll-proportion="0.33246753" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="51" selection-start="3675" selection-end="3675" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/src/com/googlecode/iqapps/IQTimeSheet/test/TimeAlignTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="31" selection-start="1203" selection-end="1203" vertical-scroll-proportion="0.57279235">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/googlecode/iqapps/IQTimeSheet/TimeSheetActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="243" column="31" selection-start="7293" selection-end="7293" vertical-scroll-proportion="0.55172414">
           <folding />
         </state>
       </provider>
@@ -839,7 +700,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Detection</last-edited>
+          <last-edited>Android</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -862,7 +723,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>Maven Android 4.1.2 Platform</last-edited>
+          <last-edited>Android 2.3.3 Platform (1)</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -874,7 +735,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>IQTimeSheetTests</last-edited>
+          <last-edited>Android|IQTimeSheetTests</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -886,7 +747,7 @@
       </state>
       <state key="ProjectJDKs.UI">
         <settings>
-          <last-edited>Maven Android 4.1.2 Platform</last-edited>
+          <last-edited>1.7</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -899,17 +760,6 @@
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
           <last-edited>robotium</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ScopeChooserConfigurable.UI">
-        <settings>
           <splitter-proportions>
             <option name="proportions">
               <list>

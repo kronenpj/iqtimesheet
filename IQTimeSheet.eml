@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component jdk="Maven Android 4.1.2 Platform" jdk_type="Android SDK">
+<component jdk="Android 2.3.3 Platform (1)" jdk_type="Android SDK">
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="android-support-v4" scope="PROVIDED"/>
+	<levels>
+		<level name="android-support-v4" value="project"/>
+	</levels>
 </component>

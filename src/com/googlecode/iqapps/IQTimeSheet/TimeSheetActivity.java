@@ -16,15 +16,15 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ListActivity;
+import android.app.*;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -46,10 +46,11 @@ import com.googlecode.iqapps.TimeHelpers;
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class TimeSheetActivity extends ListActivity {
-	private static final String TAG = "TimeSheetActivity";
+    private static final String TAG = "TimeSheetActivity";
 	private static final int CROSS_DIALOG = 0x40;
 	private static final int CONFIRM_RESTORE_DIALOG = 0x41;
-	static PreferenceHelper prefs;
+    private static final int MY_NOTIFICATION_ID = 0x73;
+    static PreferenceHelper prefs;
 	TimeSheetDbAdapter db;
 	Menu optionsMenu;
 	private ListView tasksList;
@@ -59,9 +60,12 @@ public class TimeSheetActivity extends ListActivity {
 	private Cursor taskCursor;
 	private Cursor reportCursor;
 	private String applicationName;
-	private String myPackage;
+    private String myPackage;
+    static NotificationManager notificationManager;
+    static Notification myNotification;
+    static PendingIntent contentIntent;
 
-	/**
+    /**
 	 * Called when the activity is first created.
 	 */
 	@Override
@@ -84,6 +88,13 @@ public class TimeSheetActivity extends ListActivity {
 
 		Resources res = getResources();
 		applicationName = res.getString(R.string.app_name);
+
+        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Intent notificationIntent =
+                new Intent(this, TimeSheetActivity.class);
+        contentIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 		try {
 			// Register listeners for the list items.
@@ -196,17 +207,45 @@ public class TimeSheetActivity extends ListActivity {
 		if (timeOut == 0 && lastTaskID == taskID) {
 			db.closeEntry(taskID);
 			tasksList.clearChoices();
+            stopNotification();
 			Log.d(TAG, "Closed task ID: " + taskID);
 		} else {
 			if (timeOut == 0 && lastTaskID != taskID)
 				db.closeEntry();
 			db.createEntry(taskID);
+
+            lastRowID = db.lastClockEntry();
+            Cursor tempClockCursor = db.fetchEntry(lastRowID);
+            long timeIn = tempClockCursor.getLong(tempClockCursor
+                    .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+
+            startNotification(db.getTaskNameByID(taskID), timeIn);
 			Log.d(TAG, "processChange ID from " + lastTaskID + " to " + taskID);
 		}
         // Refresh the UI to reflect the change.
         fillData();
         setSelected();
 	}
+
+    void startNotification(String taskName, long timeIn) {
+        if (! prefs.getPersistentNotification()) {
+            return;
+        }
+        myNotification = new NotificationCompat.Builder(this)
+                .setContentTitle(getResources().getString(R.string.notification_title))
+                .setContentText(taskName)
+                .setWhen(timeIn)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(false)
+                .setSmallIcon(R.drawable.icon_small)
+                .build();
+
+        notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
+    }
+
+    void stopNotification() {
+        notificationManager.cancel(MY_NOTIFICATION_ID);
+    }
 
 	/**
 	 * Encapsulate what's needed to open the database and make sure something is

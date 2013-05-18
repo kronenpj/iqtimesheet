@@ -17,6 +17,7 @@
         android:summaryOff="@string/auto_align_summary_off"
         android:summaryOn="@string/auto_align_summary_on"
         android:title="@string/align_minutes_auto" />
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="align.time.picker"
@@ -33,6 +34,7 @@
         android:summary="@string/hours_day_summary"
         android:title="@string/hours_day_title" >
     </EditTextPreference>
+
     <EditTextPreference
         android:defaultValue="40"
         android:key="hours.week"
@@ -60,6 +62,14 @@
             android:order="70"
             android:summary="@string/tz_anchor_summary"
             android:title="@string/tz_anchor_title"/>
+
+    <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="persistent.notification"
+            android:order="80"
+            android:summaryOff="Enable persistent notifications"
+            android:summaryOn="Disable persistent notifications"
+            android:title="Persistent notifications" />
 
     <CheckBoxPreference
         android:defaultValue="true"
