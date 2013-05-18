@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="Android 2.3.3 Platform (1)" jdk_type="Android SDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<module name="IQTimeSheet" scope="PROVIDED"/>
+	<lib name="robotium" scope="PROVIDED"/>
+	<levels>
+		<level name="robotium" value="project"/>
+	</levels>
+</component>

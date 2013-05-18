@@ -11,7 +11,6 @@ Medium-priority items to do:
 * Stand-alone application to edit / interpret / report on database.
 * Alarm when 8h/day is reached and 40h/week.
 * Alarm when particular time occurs & still clocked in, eg: 5:00pm.
-* Persistent icon when clocked in.
 * Use DatePickerDialog rather than a separate activity.
 * Use TimePickerDialog rather than a separate activity.
 * Year-end database purge.
@@ -33,3 +32,4 @@ Completed Items:
 * Fix Add-task crash following screen rotation (onResume problem)
 * Database scrub to find cross-day clockings that weren't caught.
 * Database scrub to find floating 0-time-out clockings.
+* Persistent notification when clocked in.
