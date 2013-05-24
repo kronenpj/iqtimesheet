@@ -3,32 +3,28 @@ package com.googlecode.iqapps.IQTimeSheet.test;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
-import com.googlecode.iqapps.testtools.Positron;
 import com.jayway.android.robotium.solo.Solo;
 
-// @Suppress //#$##
+//@Suppress //#$##
 public class EditTaskHandlerTest extends
 		ActivityInstrumentationTestCase2<TimeSheetActivity> {
 	private static final String EXAMPLE_TASK_ENTRY = "Example task entry";
 	private static final String CHILD_TASK_1_65 = "Child Task 1 - 65%";
 	private static final String CHILD_TASK_2_35 = "Child Task 2 - 35%";
 
-	private static final int SLEEPTIME = 50;
+	private static final int SLEEPTIME = 99;
 
 	final String renamedTaskText = "Renamed Task";
 
 	private Solo solo;
 	private TimeSheetActivity mActivity;
-	private ListView mView;
-	private Context mCtx;
+    private Context mCtx;
 	private Instrumentation mInstr;
 
 	// private Positron mPositron;
@@ -53,7 +49,7 @@ public class EditTaskHandlerTest extends
 		mActivity = getActivity();
 		assertNotNull(mActivity);
 
-		mView = (ListView) mActivity.findViewById(android.R.id.list);
+        ListView mView = (ListView) mActivity.findViewById(android.R.id.list);
 		assertNotNull(mView);
 	}
 
@@ -77,10 +73,10 @@ public class EditTaskHandlerTest extends
 
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 
 	public void test03ForEmptyDatabase() {
@@ -120,18 +116,18 @@ public class EditTaskHandlerTest extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
+        assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 
 		// Select the first item in the list, which was just created.
-		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
+        solo.waitForText(EXAMPLE_TASK_ENTRY, 1, SLEEPTIME*5);
+        solo.searchText(EXAMPLE_TASK_ENTRY);
+
+        solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
 		solo.sleep(SLEEPTIME);
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
 		solo.sleep(SLEEPTIME);
 		solo.sendKey(KeyEvent.KEYCODE_ENTER);
 		solo.sleep(SLEEPTIME);
-
-//		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
-		solo.sleep(SLEEPTIME*5);
 
 		// Find the start time button and select it.
 		// The method of using the arrow keys is used because the buttons have
@@ -188,7 +184,7 @@ public class EditTaskHandlerTest extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
+        assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 
 		// Select the first item in the list, which was just created.
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
@@ -197,9 +193,6 @@ public class EditTaskHandlerTest extends
 		solo.sleep(SLEEPTIME);
 		solo.sendKey(KeyEvent.KEYCODE_ENTER);
 		solo.sleep(SLEEPTIME);
-
-//		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
-		solo.sleep(SLEEPTIME*5);
 
 		// Select the cancel button.
 		solo.clickOnButton(mActivity
@@ -216,6 +209,7 @@ public class EditTaskHandlerTest extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
+        assertTrue(solo.waitForActivity("DayReport", 1500));
 
 		// Locate the larger percentage task
 		assertTrue(solo.searchText("0.65"));
@@ -240,7 +234,7 @@ public class EditTaskHandlerTest extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
+        assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 
 		// Select the first item in the list, which was just created.
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
@@ -249,9 +243,6 @@ public class EditTaskHandlerTest extends
 		solo.sleep(SLEEPTIME);
 		solo.sendKey(KeyEvent.KEYCODE_ENTER);
 		solo.sleep(SLEEPTIME);
-
-//		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
-		solo.sleep(SLEEPTIME*5);
 
 		// Select the delete button.
 		solo.clickOnButton(mActivity

@@ -24,9 +24,6 @@
  */
 package com.googlecode.iqapps.IQTimeSheet.test;
 
-import java.util.ArrayList;
-
-import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
@@ -36,14 +33,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetDbAdapter;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
-import com.googlecode.iqapps.testtools.Positron;
 import com.jayway.android.robotium.solo.Solo;
+import junit.framework.Assert;
+
+import java.util.ArrayList;
 
 /**
  * @author kronenpj
@@ -63,8 +61,7 @@ public class CrossDayCheck extends
 	private TimeSheetActivity mActivity;
 	private Instrumentation mInstr;
 	private Solo solo;
-	private Positron mPositron;
-	private TimeSheetDbAdapter db;
+    private TimeSheetDbAdapter db;
 
 	public CrossDayCheck() {
 		super(TimeSheetActivity.class);
@@ -75,7 +72,7 @@ public class CrossDayCheck extends
 		mActivity = getActivity();
 		mInstr = getInstrumentation();
 		solo = new Solo(mInstr, mActivity);
-		mPositron = new Positron(mInstr);
+        // Positron mPositron = new Positron(mInstr);
 
 		Helpers.backup(solo, mInstr, mActivity);
 		// mPositron.backup();
@@ -165,7 +162,8 @@ public class CrossDayCheck extends
 		Toast.makeText(mActivity, "About to request android:list",
 				Toast.LENGTH_LONG).show();
 		// String appHourString = mPositron.stringAt("#android:list.0.1.text");
-		ArrayList<ListView> listViews = solo.getCurrentListViews();
+		// ArrayList<ListView> listViews = solo.getCurrentListViews();
+        ArrayList<ListView> listViews = solo.getCurrentViews(ListView.class);
 		String appHourString = null;
 		try {
 			appHourString = listViews.get(0).getChildAt(1).toString();

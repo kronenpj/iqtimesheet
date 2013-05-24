@@ -6,10 +6,9 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
 import com.jayway.android.robotium.solo.Solo;
 
@@ -69,10 +68,10 @@ public class TimeSheetActivityBasic extends
 
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 
 	public void test11ForEmptyDatabase() {
@@ -113,12 +112,13 @@ public class TimeSheetActivityBasic extends
 		assertNotNull(mActivity);
 
 		// Press the task to start recording time.
-		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
+        solo.searchText(renamedTaskText);
+		//solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
 		solo.sendKey(KeyEvent.KEYCODE_ENTER);
-		solo.sleep(SLEEPTIME);
+		solo.sleep(SLEEPTIME * 2);
 
 		// Press the task to stop recording time.
-		solo.sendKey(KeyEvent.KEYCODE_ENTER);
+        solo.sendKey(KeyEvent.KEYCODE_ENTER);
 	}
 
 	public void test40EditTaskEnd() {
@@ -133,7 +133,7 @@ public class TimeSheetActivityBasic extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
+        assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 
 		// Select the first item in the list, which was just created.
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
@@ -196,7 +196,7 @@ public class TimeSheetActivityBasic extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
+        assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 
 		// Select the first item in the list, which was just created.
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
@@ -215,7 +215,7 @@ public class TimeSheetActivityBasic extends
 		solo.sleep(SLEEPTIME);
 		solo.sendKey(KeyEvent.KEYCODE_DPAD_LEFT);
 		solo.sleep(SLEEPTIME);
-		// If it's not midnight or the preceeding hour, change end time
+		// If it's not midnight or the preceding hour, change end time
 		if (whatHour != 23) {
 			solo.sendKey(KeyEvent.KEYCODE_DPAD_RIGHT);
 			solo.sleep(SLEEPTIME);
@@ -224,19 +224,19 @@ public class TimeSheetActivityBasic extends
 		solo.sleep(SLEEPTIME);
 
 		// Change the time to one hour prior.
-		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
-		solo.sleep(SLEEPTIME);
-		solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
-		solo.sleep(SLEEPTIME);
-		// If it's midnight or the following hour, increase instead
-		if (whatHour == 23) {
-			solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
-			solo.sleep(SLEEPTIME);
-			solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
-			solo.sleep(SLEEPTIME);
-		}
-		solo.sendKey(KeyEvent.KEYCODE_ENTER);
-		solo.sleep(SLEEPTIME);
+//		solo.sendKey(KeyEvent.KEYCODE_DPAD_DOWN);
+//		solo.sleep(SLEEPTIME);
+//		solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
+//		solo.sleep(SLEEPTIME);
+//		// If it's midnight or the following hour, increase instead
+//		if (whatHour == 23) {
+//			solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
+//			solo.sleep(SLEEPTIME);
+//			solo.sendKey(KeyEvent.KEYCODE_DPAD_UP);
+//			solo.sleep(SLEEPTIME);
+//		}
+//		solo.sendKey(KeyEvent.KEYCODE_ENTER);
+//		solo.sleep(SLEEPTIME);
 
 		// Accept this change.
 		solo.clickOnButton(mActivity
@@ -253,12 +253,13 @@ public class TimeSheetActivityBasic extends
 		mActivity = getActivity();
 		assertNotNull(mActivity);
 
-		// Bring up the edit day activity.
+		// Bring up the day report activity.
 		solo.sendKey(KeyEvent.KEYCODE_MENU);
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
 
+        assertTrue(solo.waitForActivity("DayReport", 1500));
 		// Select the footer
 		assertTrue(solo.searchText("1.00"));
 		solo.sleep(SLEEPTIME);

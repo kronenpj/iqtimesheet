@@ -305,9 +305,9 @@ public class TimeSheetActivityAlignTime extends
 	private void eraseDatabase() {
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 }

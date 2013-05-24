@@ -24,11 +24,6 @@
  */
 package com.googlecode.iqapps.IQTimeSheet.test;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
@@ -37,15 +32,19 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 import android.util.Log;
 import android.view.KeyEvent;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetDbAdapter;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
 import com.googlecode.iqapps.testtools.Positron;
 import com.googlecode.iqapps.testtools.ViewShorthand;
 import com.jayway.android.robotium.solo.Solo;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author kronenpj
@@ -74,11 +73,18 @@ public class WeekReportTest extends
 
 	public WeekReportTest() {
 		super(TimeSheetActivity.class);
+        Log.d(TAG, "WeekReportTest Constructor");
 	}
 
-	protected void setUp() throws Exception {
+    /**
+     * Routine to perform setup before each test case is run.
+     *
+     * @throws Exception
+     */
+    protected void setUp() throws Exception {
 		super.setUp();
 
+        Log.d(TAG, "In setUp...");
 		mActivity = getActivity();
 		mInstr = getInstrumentation();
 		mCtx = mInstr.getTargetContext();
@@ -95,8 +101,6 @@ public class WeekReportTest extends
 			assertFalse(e.toString(), true);
 		}
 
-		test++;
-		// log.info("value of test: " + test);
 		Helpers.backup(solo, mInstr, mActivity);
 		// prefBackup();
 		db.runSQL("DELETE FROM tasks;");
@@ -105,7 +109,8 @@ public class WeekReportTest extends
 		db.runSQL(insertIntoTasks + Helpers.text2 + "', 0, 30);");
 		db.runSQL(insertIntoTasks + Helpers.text3 + "', 1, 50);");
 		db.runSQL(insertIntoTasks + Helpers.text4 + "', 1, 20);");
-		setupTimeSheetDB();
+		db.runSQL(insertIntoTasks + Helpers.text5 + "', 1, 10);");
+        db.dumpTasks();
 		// startActivity("com.googlecode.iqapps.IQTimeSheet",
 		// "com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity");
 		solo.sleep(SLEEPTIME);
@@ -122,36 +127,38 @@ public class WeekReportTest extends
 		long thursday = wednesday + 24 * 3600000;
 		long friday = thursday + 24 * 3600000;
 
+        Log.d(TAG, "Test number " +test);
 		switch (test) {
-		case 1:
-			db.runSQL(insertIntoTimeSheet + "2, " + monday + ", "
-					+ (monday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "4, " + tuesday + ", "
-					+ (tuesday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "5, " + wednesday + ", "
-					+ (wednesday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "4, " + thursday + ", "
-					+ (thursday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "2, " + friday + ", "
-					+ (friday + 8 * 3600000) + ");");
-			break;
-		case 2:
-			db.runSQL(insertIntoTimeSheet + "2, " + monday + ", "
-					+ (monday + 3 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "4, " + (monday + 4 * 3600000)
-					+ ", " + (monday + 9 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "4, " + tuesday + ", "
-					+ (tuesday + 5 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "2, " + (tuesday + 6 * 3600000)
-					+ ", " + (tuesday + 9 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "5, " + wednesday + ", "
-					+ (wednesday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "4, " + thursday + ", "
-					+ (thursday + 8 * 3600000) + ");");
-			db.runSQL(insertIntoTimeSheet + "2, " + friday + ", "
-					+ (friday + 8 * 3600000) + ");");
-			break;
-		}
+            case 1:
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text2) + ", " + monday + ", "
+                        + (monday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text4) + ", " + tuesday + ", "
+                        + (tuesday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text5) + ", " + wednesday + ", "
+                        + (wednesday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text4) + ", " + thursday + ", "
+                        + (thursday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text2) + ", " + friday + ", "
+                        + (friday + 8 * 3600000) + ");");
+                break;
+            case 2:
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text2) + ", " + monday + ", "
+                        + (monday + 3 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text4) + ", " + (monday + 4 * 3600000)
+                        + ", " + (monday + 9 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text4) + ", " + tuesday + ", "
+                        + (tuesday + 5 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text2) + ", " + (tuesday + 6 * 3600000)
+                        + ", " + (tuesday + 9 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text5) + ", " + wednesday + ", "
+                        + (wednesday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text4) + ", " + thursday + ", "
+                        + (thursday + 8 * 3600000) + ");");
+                db.runSQL(insertIntoTimeSheet + db.getTaskIDByName(Helpers.text2) + ", " + friday + ", "
+                        + (friday + 8 * 3600000) + ");");
+                break;
+        }
+        db.dumpClockings();
 	}
 
 	public void tearDown() {
@@ -162,6 +169,7 @@ public class WeekReportTest extends
 	/**
 	 * Restore the database after we're done messing with it.
 	 */
+    @Suppress
 	public void test000RestoreDB() {
 		mActivity = getActivity();
 		assertNotNull(mActivity);
@@ -194,10 +202,10 @@ public class WeekReportTest extends
 	private void eraseDatabase() {
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 
 	/**
@@ -212,52 +220,60 @@ public class WeekReportTest extends
 	}
 
 	public void testweeklyReportTest1() {
+        test = 1;
+        setupTimeSheetDB();
+        solo.sleep(SLEEPTIME);
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.WEEK_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
-		assertTrue(solo.waitForActivity("WeekReport", 500));
+
+		assertTrue(solo.waitForActivity("WeekReport", 1500));
 		// assertEquals(Helpers.text1, stringAt("#reportlist.0.0.text"));
-		assertTrue(solo.searchText(Helpers.text1));
+		assertTrue(solo.searchText(Helpers.text2));
 		// assertEquals("16.00 hours", stringAt("#reportlist.0.1.text"));
 		assertTrue(solo.searchText("16.00 hours"));
 		// assertEquals(Helpers.text3, stringAt("#reportlist.1.0.text"));
-		assertTrue(solo.searchText(Helpers.text3));
+		assertTrue(solo.searchText(Helpers.text4));
 		// assertEquals("16.00 hours", stringAt("#reportlist.1.1.text"));
 		assertTrue(solo.searchText("16.00 hours"));
 		// assertEquals(Helpers.text4, stringAt("#reportlist.2.0.text"));
-		assertTrue(solo.searchText(Helpers.text4));
+		assertTrue(solo.searchText(Helpers.text5));
 		// assertEquals("8.00 hours", stringAt("#reportlist.2.1.text"));
 		assertTrue(solo.searchText("8.00 hours"));
 		// assertEquals("Hours worked this week: 40.00",
 		// stringAt("#reportlist.3.text"));
 		assertTrue(solo.searchText("Hours worked this week: 40.00"));
+        test = 0;
 		solo.goBack();
 	}
 
 	public void testweeklyReportTest2() {
+        test = 2;
+        setupTimeSheetDB();
+        solo.sleep(SLEEPTIME);
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.WEEK_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		// solo.sleep(SLEEPTIME);
-		assertTrue(solo.waitForActivity("WeekReport", 500));
+
+		assertTrue(solo.waitForActivity("WeekReport", 1500));
 		// assertEquals(Helpers.text3, stringAt("#reportlist.0.0.text"));
-		assertTrue(solo.searchText(Helpers.text3));
+		assertTrue(solo.searchText(Helpers.text4));
 		// assertEquals("18.00 hours", stringAt("#reportlist.0.1.text"));
 		assertTrue(solo.searchText("18.00 hours"));
 		// assertEquals(Helpers.text1, stringAt("#reportlist.1.0.text"));
-		assertTrue(solo.searchText(Helpers.text1));
+		assertTrue(solo.searchText(Helpers.text2));
 		// assertEquals("14.00 hours", stringAt("#reportlist.1.1.text"));
 		assertTrue(solo.searchText("14.00 hours"));
 		// assertEquals(Helpers.text4, stringAt("#reportlist.2.0.text"));
-		assertTrue(solo.searchText(Helpers.text4));
+		assertTrue(solo.searchText(Helpers.text5));
 		// assertEquals("8.00 hours", stringAt("#reportlist.2.1.text"));
 		assertTrue(solo.searchText("8.00 hours"));
 		// assertEquals("Hours worked this week: 40.00",
 		// stringAt("#reportlist.3.text"));
 		assertTrue(solo.searchText("Hours worked this week: 40.00"));
+        test = 0;
 		solo.goBack();
 	}
 

@@ -426,6 +426,7 @@ public class TimeSheetDbAdapter {
         taskCursor.moveToFirst();
         long timeIn = taskCursor.getLong(taskCursor
                 .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+        // TODO: Need a boolean preference to enable / disable this...
         long boundary = TimeHelpers.millisToEoDBoundary(timeIn, TimeSheetActivity.prefs.getTimeZone());
         if (timeOut > boundary) timeOut = boundary - 1000;
 
@@ -1855,4 +1856,69 @@ public class TimeSheetDbAdapter {
 	public void runSQL(String sqlTorun) {
 		mDb.execSQL(sqlTorun);
 	}
+
+       /**
+        * Generic SQL update wrapper, Exposes the update method for testing.
+        *
+        * @param table the table being updated
+     *
+     * @param values the ContentValues being updated
+     *
+     * @param whereClause clause to limit updates
+     *
+     * @param whereArgs arguments to fill any ? in the whereClause.
+        */
+       public int runUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        Log.d(TAG, "Running update on '" + table + "'...");
+               return mDb.update(table, values, whereClause, whereArgs);
+       }
+
+       /**
+        * Generic SQL insert wrapper, Exposes the insert method for testing.
+        *
+        * @param table the table being updated
+     *
+     * @param nullColHack Null column hack.
+     *
+     * @param values the ContentValues being updated
+        */
+       public long runInsert(String table, String nullColHack, ContentValues values) {
+        Log.d(TAG, "Running update on '" + table + "'...");
+               return mDb.insert(table, nullColHack, values);
+       }
+       /**
+        * Dumps the contents of the tasks table to logcat, for testing.
+        */
+    public void dumpTasks() {
+        Log.d(TAG, "Dumping tasks table");
+        String myQuery = "select * from " + TASKS_DATABASE_TABLE; // + " order by KEY_ROWID";
+        Cursor tasksC = mDb.rawQuery(myQuery, null);
+        try {
+            tasksC.moveToFirst();
+            while (!tasksC.isAfterLast()) {
+                Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
+                tasksC.moveToNext();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Cursor usage threw " + e.toString());
+        }
+    }
+
+       /**
+        * Dumps the contents of the tasks table to logcat, for testing.
+        */
+    public void dumpClockings() {
+        Log.d(TAG, "Dumping clock table");
+        Cursor tasksC = mDb.rawQuery("select * from " + CLOCK_DATABASE_TABLE +
+                " order by " + KEY_ROWID, null);
+        try {
+            tasksC.moveToFirst();
+            while (!tasksC.isAfterLast()) {
+                Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
+                tasksC.moveToNext();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Cursor usage threw " + e.toString());
+        }
+    }
 }

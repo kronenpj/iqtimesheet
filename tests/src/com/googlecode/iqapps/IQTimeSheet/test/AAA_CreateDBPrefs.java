@@ -15,18 +15,15 @@
  */
 package com.googlecode.iqapps.IQTimeSheet.test;
 
-import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
-import com.googlecode.iqapps.testtools.Helpers;
 import com.jayway.android.robotium.solo.Solo;
+import junit.framework.Assert;
 
 /**
  * Test to invoke the application once so that there is a database and
@@ -34,7 +31,7 @@ import com.jayway.android.robotium.solo.Solo;
  * 
  * @author kronenpj
  */
-//@Suppress //#$##
+// @Suppress //#$##
 public class AAA_CreateDBPrefs extends
 		ActivityInstrumentationTestCase2<TimeSheetActivity> {
 	// private static final String TAG = "AAA_CreateDBPrefs";
@@ -43,8 +40,7 @@ public class AAA_CreateDBPrefs extends
 	private Solo solo;
 
 	private TimeSheetActivity mActivity;
-	private ListView mView;
-	private Instrumentation mInstr;
+    private Instrumentation mInstr;
 
 	public AAA_CreateDBPrefs() {
 		super(TimeSheetActivity.class);
@@ -64,7 +60,7 @@ public class AAA_CreateDBPrefs extends
 		mActivity = getActivity();
 		assertNotNull(mActivity);
 
-		mView = (ListView) mActivity.findViewById(android.R.id.list);
+        ListView mView = (ListView) mActivity.findViewById(android.R.id.list);
 		assertNotNull(mView);
 	}
 
@@ -98,7 +94,7 @@ public class AAA_CreateDBPrefs extends
 	}
 
 	public void tearDown() {
-		solo.finishInactiveActivities();
+		// solo.finishInactiveActivities();
 		solo.finishOpenedActivities();
 	}
 
@@ -117,7 +113,11 @@ public class AAA_CreateDBPrefs extends
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
 		solo.sleep(SLEEPTIME);
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-		assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
+		assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
+        solo.searchText("anchor time zone");
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+        solo.searchText("America/New York");
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
 		solo.goBack();
 	}
 }

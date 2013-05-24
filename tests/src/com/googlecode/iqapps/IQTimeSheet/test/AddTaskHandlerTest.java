@@ -6,8 +6,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.testtools.Helpers;
@@ -26,8 +24,7 @@ public class AddTaskHandlerTest extends
 
 	private Solo solo;
 	private TimeSheetActivity mActivity;
-	private ListView mView;
-	private Context mCtx;
+    private Context mCtx;
 	private Instrumentation mInstr;
 
 	// private Positron mPositron;
@@ -52,7 +49,7 @@ public class AddTaskHandlerTest extends
 		mActivity = getActivity();
 		assertNotNull(mActivity);
 
-		mView = (ListView) mActivity.findViewById(android.R.id.list);
+        ListView mView = (ListView) mActivity.findViewById(android.R.id.list);
 		assertNotNull(mView);
 	}
 
@@ -76,10 +73,10 @@ public class AddTaskHandlerTest extends
 
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 
 	public void test03ForEmptyDatabase() {

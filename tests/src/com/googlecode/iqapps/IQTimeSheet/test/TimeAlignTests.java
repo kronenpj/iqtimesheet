@@ -19,19 +19,15 @@ import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.SQLException;
-import android.preference.Preference;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.ListView;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
-import com.googlecode.iqapps.IQTimeSheet.PreferenceHelper;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetDbAdapter;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
-import com.googlecode.iqapps.testtools.Positron;
 import com.jayway.android.robotium.solo.Solo;
 
 //@Suppress //#$##
@@ -43,12 +39,12 @@ public class TimeAlignTests extends
 
 	private Solo solo;
 	private TimeSheetActivity mActivity;
-	private ListView mView;
+	// private ListView mView;
 	private Context mCtx;
 	private Instrumentation mInstr;
-	private Positron mPositron;
-	private TimeSheetDbAdapter db;
-	private boolean oldAlignAuto;
+    private TimeSheetDbAdapter db;
+    private static final String insertIntoTasks = "INSERT INTO tasks (task, active, usage) "
+            + "VALUES ('";	private boolean oldAlignAuto;
 
 	public TimeAlignTests() {
 		super(TimeSheetActivity.class);
@@ -56,11 +52,12 @@ public class TimeAlignTests extends
 
 	public void setUp() throws Exception {
 		super.setUp();
+        Log.i(TAG, "Entering setup.");
 		mActivity = getActivity();
 		mInstr = getInstrumentation();
 		mCtx = mInstr.getTargetContext();
 		solo = new Solo(mInstr, getActivity());
-		mPositron = new Positron(mInstr);
+        // Positron mPositron = new Positron(mInstr);
 
 		Helpers.backup(solo, mInstr, mActivity);
 		// mPositron.backup();
@@ -71,19 +68,17 @@ public class TimeAlignTests extends
 		} catch (SQLException e) {
 			assertFalse(e.toString(), true);
 		}
-		db.runSQL("DELETE FROM tasks; "
-				+ "INSERT INTO tasks (task, active, usage) " + "VALUES ('"
-				+ Helpers.text1 + "', 1, 40); "
-				+ "INSERT INTO tasks (task, active, usage) " + "VALUES ('"
-				+ Helpers.text2 + "', 0, 30);"
-				+ "INSERT INTO tasks (task, active, usage) " + "VALUES ('"
-				+ Helpers.text3 + "', 1, 50); "
-				+ "INSERT INTO tasks (task, active, usage) " + "VALUES ('"
-				+ Helpers.text4 + "', 1, 20);");
-		db.runSQL("DELETE FROM timesheet; ");
+        db.runSQL("DELETE FROM tasks;");
+        db.runSQL("DELETE FROM timesheet; ");
+        db.runSQL(insertIntoTasks + Helpers.text1 + "', 1, 40);");
+        db.runSQL(insertIntoTasks + Helpers.text2 + "', 0, 30);");
+        db.runSQL(insertIntoTasks + Helpers.text3 + "', 1, 50);");
+        db.runSQL(insertIntoTasks + Helpers.text4 + "', 1, 20);");
+        db.runSQL(insertIntoTasks + Helpers.text5 + "', 1, 10);");
 		// startActivity("com.googlecode.iqapps.IQTimeSheet",
 		// "com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity");
 		solo.sleep(SLEEPTIME);
+        Log.i(TAG, "Leaving setup.");
 	}
 
 	public void tearDown() {
@@ -98,14 +93,16 @@ public class TimeAlignTests extends
 	}
 
 	public void test000SetupPreferences() {
+        Log.i(TAG, "Entering test000SetupPreferences.");
 		mActivity = getActivity();
 		assertNotNull(mActivity);
 
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.SETTINGS.ordinal()).getItemId();
+        solo.sleep(SLEEPTIME);
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
+		assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
 		solo.sleep(SLEEPTIME);
 
 		// The align button disappears if this option is set.
@@ -121,6 +118,7 @@ public class TimeAlignTests extends
 			assertTrue(solo.searchText(prefText));
 			solo.clickOnText(prefText);
 		}
+        Log.i(TAG, "Leaving test000SetupPreferences.");
 	}
 
 	public void testzzzRestorePreferences() {
@@ -132,7 +130,7 @@ public class TimeAlignTests extends
 			int menuItemID = mActivity.getOptionsMenu()
 					.getItem(MenuItems.SETTINGS.ordinal()).getItemId();
 			assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-			assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
+			assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
 			solo.sleep(SLEEPTIME);
 
 			String prefText = mActivity
@@ -158,7 +156,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		solo.searchText(Helpers.text1);
@@ -183,7 +181,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -208,7 +206,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -233,7 +231,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -244,7 +242,7 @@ public class TimeAlignTests extends
 		checkDayReport("3.00");
 	}
 
-	// @Suppress
+	@Suppress
 	public void testverifyTime6Align() {
 		long now = TimeHelpers.millisNow();
 		long eightAM = TimeHelpers.millisSetTime(now, 8, 2);
@@ -258,10 +256,10 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
-		assertTrue(solo.searchText(Helpers.text1));
+        assertTrue(solo.searchText(Helpers.text1));
 		// assertEquals("08:02 to 10:58",
 		// mPositron.stringAt("#reportlist.0.1.text"));
 		solo.searchText("08:02 to 10:58");
@@ -283,7 +281,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -308,7 +306,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -333,7 +331,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -358,7 +356,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -383,7 +381,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -408,7 +406,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -432,7 +430,8 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -457,7 +456,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -482,7 +481,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -523,7 +522,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
 		assertTrue(solo.searchText(Helpers.text1));
@@ -550,7 +549,7 @@ public class TimeAlignTests extends
 		menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.EDITDAY_ENTRIES.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 500));
+		assertTrue(solo.waitForActivity("EditDayEntriesHandler", 1500));
 		// mPositron.press(PositronAPI.Key.DOWN);
 		// mPositron.press(PositronAPI.Key.ENTER);
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
@@ -601,7 +600,7 @@ public class TimeAlignTests extends
 		menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("DayReport", 500));
+		assertTrue(solo.waitForActivity("DayReport", 1500));
 		// log.info(TAG + ": Post wait for DayReport.");
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));
@@ -634,10 +633,12 @@ public class TimeAlignTests extends
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_UP);
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_UP);
 		for (int i = 0; i < taskNo; i++)
-			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+            mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		//mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_CENTER);
 		solo.sleep(SLEEPTIME * 2); // Needed to make the test consistent.
 		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		//mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_CENTER);
 	}
 
 	private void setAlignTimePreferenceViaMenu(int downCount) {
@@ -645,8 +646,9 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.SETTINGS.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
+		//mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_CENTER);
 		solo.sleep(SLEEPTIME);
 		while (solo.scrollUpList(0))
 			;
@@ -654,12 +656,13 @@ public class TimeAlignTests extends
 			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
 			solo.sleep(SLEEPTIME);
 		}
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		//mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_CENTER);
 		solo.sleep(SLEEPTIME);
-		for (int i = downCount; i < Helpers.alignments; i++)
-			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+//		for (int i = downCount; i < Helpers.alignments; i++)
+//			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
+//		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
+//		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
 		solo.goBack();
 	}
 
@@ -686,7 +689,7 @@ public class TimeAlignTests extends
 		int menuItemID = mActivity.getOptionsMenu()
 				.getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("DayReport", 500));
+		assertTrue(solo.waitForActivity("DayReport", 1500));
 		// log.info(TAG + ": Post wait for DayReport.");
 		// assertEquals(Helpers.text1,
 		// mPositron.stringAt("#reportlist.0.0.text"));

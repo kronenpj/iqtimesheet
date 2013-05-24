@@ -24,12 +24,10 @@ import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
-
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetDbAdapter;
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
-import com.googlecode.iqapps.testtools.Positron;
 import com.jayway.android.robotium.solo.Solo;
 
 @Suppress
@@ -91,7 +89,7 @@ public class TimeSheetActivityTest extends
 		// prefRestore();
 		// restore();
 		db.close();
-		solo.finishInactiveActivities();
+		// solo.finishInactiveActivities();
 		solo.finishOpenedActivities();
 	}
 
@@ -129,10 +127,10 @@ public class TimeSheetActivityTest extends
 	private void eraseDatabase() {
 		// Delete the databases associated with the project.
 		String[] databases = mCtx.databaseList();
-		for (int db = 0; db < databases.length; db++) {
-			// assertTrue("dbList: " + databases[db], false);
-			mCtx.deleteDatabase(databases[db]);
-		}
+        for (String database : databases) {
+            // assertTrue("dbList: " + databases[db], false);
+            mCtx.deleteDatabase(database);
+        }
 	}
 
 	// Perform Initial Setup
