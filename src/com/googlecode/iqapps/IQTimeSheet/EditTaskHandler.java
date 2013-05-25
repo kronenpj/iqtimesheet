@@ -46,8 +46,7 @@ import android.widget.TextView.OnEditorActionListener;
 public class EditTaskHandler extends Activity {
 	private static final String TAG = "EditTaskHandler";
 	private EditText textField;
-	private Button child[];
-	private String oldData;
+    private String oldData;
 	private Spinner taskSpinner;
 	private CheckBox splitTask;
 	private TextView parentLabel;
@@ -72,7 +71,8 @@ public class EditTaskHandler extends Activity {
 	/**
 	 * Called when the activity is resumed or created.
 	 */
-	public void onResume() {
+	@Override
+    public void onResume() {
 		super.onResume();
 		Log.d(TAG, "In onResume.");
 
@@ -92,7 +92,7 @@ public class EditTaskHandler extends Activity {
 		parents.moveToFirst();
 		int i = 0;
 		while (!parents.isAfterLast()) {
-			items[i] = new String(parents.getString(1));
+			items[i] = parents.getString(1);
 			parents.moveToNext();
 			i++;
 		}
@@ -109,7 +109,7 @@ public class EditTaskHandler extends Activity {
 			oldPercentage = db.getSplitTaskPercentage(oldData);
 			oldSplitState = db.getSplitTaskFlag(oldData);
 
-			splitTask.setChecked(oldSplitState == 1 ? true : false);
+			splitTask.setChecked(oldSplitState == 1);
 			// TODO: There must be a better way to find a string in the spinner.
 			String parentName = db.getTaskNameByID(oldParent);
 			Log.d(TAG, "showTaskEdit: trying to find: " + parentName);
@@ -148,8 +148,6 @@ public class EditTaskHandler extends Activity {
 		setContentView(R.layout.addtask);
 
 		textField = (EditText) findViewById(R.id.EditTask);
-		child = new Button[] { (Button) findViewById(R.id.ChangeTask),
-				(Button) findViewById(R.id.CancelEdit) };
 		parentLabel = (TextView) findViewById(R.id.ParentLabel);
 		percentLabel = (EditText) findViewById(R.id.PercentLabel);
 		percentSymbol = (TextView) findViewById(R.id.PercentSymbol);
@@ -169,17 +167,16 @@ public class EditTaskHandler extends Activity {
 		percentLabel.setOnFocusChangeListener(mTextListener);
 		percentLabel.setOnEditorActionListener(mEditorListener);
 
-		child = new Button[] { (Button) findViewById(R.id.ChangeTask),
+        Button[] child = new Button[] { (Button) findViewById(R.id.ChangeTask),
 				(Button) findViewById(R.id.CancelEdit) };
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Log.e(TAG, "NullPointerException adding listener to button.");
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "NullPointerException adding listener to button.");
+            }
+        }
 	}
 
 	/**
@@ -290,9 +287,7 @@ public class EditTaskHandler extends Activity {
 	private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
 		@Override
 		public void onFocusChange(View v, boolean hasFocus) {
-			if (hasFocus) {
-				// percentLabel.setSelected(true);
-			} else {
+			if (!hasFocus) {
 				try {
 					int temp = Integer.valueOf(((TextView) v).getText()
 							.toString());
@@ -309,7 +304,7 @@ public class EditTaskHandler extends Activity {
 		}
 	};
 
-	/**
+    /**
 	 * This method is registered with the percent label to cause an action to
 	 * occur when it is changed.
 	 */

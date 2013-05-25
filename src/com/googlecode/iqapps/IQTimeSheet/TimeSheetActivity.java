@@ -35,7 +35,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.googlecode.iqapps.TimeHelpers;
 
@@ -54,7 +53,7 @@ public class TimeSheetActivity extends ListActivity {
 	TimeSheetDbAdapter db;
 	Menu optionsMenu;
 	private ListView tasksList;
-	private TextView taskListItem;
+	// private TextView taskListItem;
 	// private TimeListWrapper timeWrapper;
 	// private TimeListAdapter timeAdapter;
 	private Cursor taskCursor;
@@ -77,7 +76,7 @@ public class TimeSheetActivity extends ListActivity {
 		Log.d(TAG, "onCreate.");
 
 		prefs = new PreferenceHelper(this);
-		myPackage = new String(this.getPackageName());
+		myPackage = this.getPackageName();
 
 		try {
 			tasksList = (ListView) findViewById(android.R.id.list);
@@ -188,13 +187,15 @@ public class TimeSheetActivity extends ListActivity {
 		Cursor c = db.fetchEntry(lastRowID, TimeSheetDbAdapter.KEY_TIMEOUT);
 
 		long timeOut = -1;
-		if (c == null)
-			Log.d(TAG, "Cursor is null...  :(");
-		if (!c.moveToFirst())
-			Log.d(TAG, "Moving cursor to first failed.");
-		else {
-			timeOut = c.getLong(0);
-			Log.d(TAG, "Last clock out at: " + timeOut);
+		try {
+			if (!c.moveToFirst())
+				Log.d(TAG, "Moving cursor to first failed.");
+			else {
+				timeOut = c.getLong(0);
+				Log.d(TAG, "Last clock out at: " + timeOut);
+			}
+		} catch (NullPointerException e) {
+			Log.d(TAG, "Using cursor: " + e.toString());
 		}
 		try {
 			c.close();
@@ -210,7 +211,7 @@ public class TimeSheetActivity extends ListActivity {
             stopNotification();
 			Log.d(TAG, "Closed task ID: " + taskID);
 		} else {
-			if (timeOut == 0 && lastTaskID != taskID)
+			if (timeOut == 0)
 				db.closeEntry();
 			db.createEntry(taskID);
 
@@ -301,7 +302,7 @@ public class TimeSheetActivity extends ListActivity {
 		taskCursor.moveToFirst();
 		int i = 0;
 		while (!taskCursor.isAfterLast()) {
-			items[i] = new String(taskCursor.getString(1));
+			items[i] = taskCursor.getString(1);
 			taskCursor.moveToNext();
 			i++;
 		}
@@ -344,8 +345,7 @@ public class TimeSheetActivity extends ListActivity {
 		long lastRowID = db.lastClockEntry();
 		Cursor tempClockCursor = db.fetchEntry(lastRowID);
 
-		long timeOut = -1;
-		timeOut = tempClockCursor.getLong(tempClockCursor
+		long timeOut = tempClockCursor.getLong(tempClockCursor
 				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
 
 		if (timeOut < 1) {
@@ -373,8 +373,7 @@ public class TimeSheetActivity extends ListActivity {
 		long lastTaskID = db.taskIDForLastClockEntry();
 		Cursor tempClockCursor = db.fetchEntry(lastRowID);
 
-		long timeOut = -1;
-		timeOut = tempClockCursor.getLong(tempClockCursor
+		long timeOut = tempClockCursor.getLong(tempClockCursor
 				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
 
 		if (timeOut != 0) {
@@ -428,16 +427,22 @@ public class TimeSheetActivity extends ListActivity {
 		Cursor tempClockCursor = db.fetchEntry(lastRowID);
 
 		long timeOut = -1;
-		if (tempClockCursor == null)
-			Log.d(TAG, "Cursor is null...  :(");
-		if (!tempClockCursor.moveToFirst())
-			Log.d(TAG, "Moving cursor to first failed.");
-		else {
-			timeOut = tempClockCursor.getLong(tempClockCursor
-					.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
-			Log.d(TAG, "Last clock out at: " + timeOut);
+		try {
+			if (!tempClockCursor.moveToFirst())
+				Log.d(TAG, "Moving cursor to first failed.");
+			else {
+				timeOut = tempClockCursor.getLong(tempClockCursor
+						.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+				Log.d(TAG, "Last clock out at: " + timeOut);
+			}
+		} catch (NullPointerException e) {
+			Log.d(TAG, "Using tempClockCursor: " + e.toString());
 		}
-		tempClockCursor.close();
+		try {
+			tempClockCursor.close();
+		} catch (Exception e) {
+			Log.d(TAG, "Closing tempClockCursor: " + e.toString());
+		}
 
 		if (timeOut != 0) {
 			Log.d(TAG, "Returning.");
@@ -467,7 +472,7 @@ public class TimeSheetActivity extends ListActivity {
 	@Override
 	protected Dialog onCreateDialog(int dialogId) {
 		Dialog dialog = null;
-		AlertDialog.Builder builder = null;
+		AlertDialog.Builder builder;
 		switch (dialogId) {
 		case CROSS_DIALOG:
 			builder = new AlertDialog.Builder(this);
@@ -618,10 +623,11 @@ public class TimeSheetActivity extends ListActivity {
 			item.setIcon(R.drawable.ic_menu_info_details);
 		}
 		item = menu.add(0, MenuItems.ABOUT.ordinal(), 9, R.string.menu_about);
-		item = menu.add(0, MenuItems.SCRUB_DB.ordinal(), 10, R.string.scrub_database);
 		// Hanging on to this so it can be used for testing.
 		optionsMenu = menu;
 		item.setIcon(R.drawable.ic_menu_info_details);
+		item = menu.add(0, MenuItems.SCRUB_DB.ordinal(), 10, R.string.scrub_database);
+		item.setIcon(R.drawable.ic_menu_preferences);
 		return true;
 	}
 
@@ -744,8 +750,7 @@ public class TimeSheetActivity extends ListActivity {
             taskCursor.moveToFirst();
             int count = 0;
             while (!taskCursor.isAfterLast()) {
-                long timeOut = -1;
-                timeOut = taskCursor.getLong(taskCursor
+                long timeOut = taskCursor.getLong(taskCursor
                         .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
                 long timeIn = taskCursor.getLong(taskCursor
                         .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));

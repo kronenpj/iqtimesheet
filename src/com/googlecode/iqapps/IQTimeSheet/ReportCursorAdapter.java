@@ -56,8 +56,8 @@ public class ReportCursorAdapter extends SimpleCursorAdapter {
 		t.setText(tempString);
 
 		t = (TextView) view.findViewById(android.R.id.text2);
-		Float temp = Float.valueOf(cursor.getFloat(cursor
-				.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL)));
+		Float temp = cursor.getFloat(cursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
 		Log.d(TAG, "bindView: task: " + tempString + ", total: "
 				+ String.format("%1.2f hours", temp));
 		t.setText(String.format("%1.2f hours", temp));

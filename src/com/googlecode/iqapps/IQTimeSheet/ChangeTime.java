@@ -65,15 +65,14 @@ public class ChangeTime extends Activity {
 		Button[] child = new Button[] { (Button) findViewById(R.id.changeok),
 				(Button) findViewById(R.id.changecancel) };
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Toast.makeText(ChangeTime.this, "NullPointerException",
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Toast.makeText(ChangeTime.this, "NullPointerException",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
 
 	/**

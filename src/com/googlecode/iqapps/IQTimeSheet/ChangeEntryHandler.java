@@ -92,7 +92,7 @@ public class ChangeEntryHandler extends Activity {
 	/** Called when the activity is first created to create a dialog. */
 	@Override
 	protected Dialog onCreateDialog(int dialogId) {
-		Dialog dialog = null;
+		Dialog dialog;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Are you sure you want to delete this entry?")
 				.setCancelable(true)
@@ -131,15 +131,14 @@ public class ChangeEntryHandler extends Activity {
 				(Button) findViewById(R.id.changealign),
 				(Button) findViewById(R.id.changeadjacent) };
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Toast.makeText(ChangeEntryHandler.this, "NullPointerException",
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Toast.makeText(ChangeEntryHandler.this, "NullPointerException",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
 
 	private void retrieveData() {

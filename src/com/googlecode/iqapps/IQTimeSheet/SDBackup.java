@@ -31,8 +31,8 @@ public class SDBackup {
 			if (sd.canWrite()) {
 				String currentDBPath = "/data/" + packageName + "/databases/"
 						+ databaseName;
-				String backupDBPath = new String(packageName
-						.substring(packageName.lastIndexOf('.') + 1));
+				String backupDBPath = packageName
+                        .substring(packageName.lastIndexOf('.') + 1);
 				File currentDB = new File(data, currentDBPath);
 				File backupDir = new File(sd, backupDBPath);
 				File backupDB = new File(sd, backupDBPath + "/" + databaseName);
@@ -112,8 +112,8 @@ public class SDBackup {
 			if (sd.canWrite()) {
 				String currentDBPath = "/data/" + packageName + "/databases/"
 						+ databaseName;
-				String backupDBPath = new String(packageName
-						.substring(packageName.lastIndexOf('.') + 1));
+				String backupDBPath = packageName
+                        .substring(packageName.lastIndexOf('.') + 1);
 				File currentDB = new File(data, currentDBPath);
 				File currentDBbak = new File(data, currentDBPath + ".bak");
 				File backupDB = new File(sd, backupDBPath + "/" + databaseName);
@@ -125,15 +125,13 @@ public class SDBackup {
                 File currentPref = new File(data, currentPrefPath);
                 File backupPref = new File(sd, backupDBPath + "/" + "preferences.xml");
 
-                if (currentDBbak.exists()) {
-					currentDBbak.delete();
-				}
+                if (currentDBbak.exists()) currentDBbak.delete();
 
                 FileChannel src;
                 FileChannel dst;
 				if (backupDB.exists()) {
-					currentDB.renameTo(currentDBbak);
-					src = new FileInputStream(backupDB).getChannel();
+                    currentDB.renameTo(currentDBbak);
+                    src = new FileInputStream(backupDB).getChannel();
 					dst = new FileOutputStream(currentDB).getChannel();
 					dst.transferFrom(src, 0, src.size());
 					src.close();

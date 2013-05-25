@@ -35,14 +35,13 @@ import com.googlecode.iqapps.TimeHelpers;
  */
 public class DayReport extends ListActivity {
 	private static final String TAG = "DayReport";
-	private final int FOOTER_ID = -1;
+	//private final int FOOTER_ID = -1;
 	private ListView reportList;
 	private TimeSheetDbAdapter db;
 	private Cursor timeEntryCursor;
 	private TextView footerView = null;
 	private long day = TimeHelpers.millisNow();
-	private Button[] child;
-	private float dayHours = -1;
+    private float dayHours = -1;
 
 	/**
 	 * Called when the activity is resumed or created.
@@ -187,21 +186,20 @@ public class DayReport extends ListActivity {
 		// reportList = (ListView) findViewById(R.id.reportlist);
 		reportList = (ListView) findViewById(android.R.id.list);
 		footerView = (TextView) findViewById(R.id.reportfooter);
-		footerView.setTextSize((float) TimeSheetActivity.prefs
+		footerView.setTextSize(TimeSheetActivity.prefs
 				.getTotalsFontSize());
 
-		child = new Button[] { (Button) findViewById(R.id.previous),
-				(Button) findViewById(R.id.today),
-				(Button) findViewById(R.id.next) };
+        Button[] child = new Button[]{(Button) findViewById(R.id.previous),
+                (Button) findViewById(R.id.today),
+                (Button) findViewById(R.id.next)};
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Log.e(TAG, "setOnClickListener: " + e.toString());
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "setOnClickListener: " + e.toString());
+            }
+        }
 	}
 
 	/**

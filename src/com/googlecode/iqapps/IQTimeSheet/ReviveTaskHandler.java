@@ -127,7 +127,7 @@ public class ReviveTaskHandler extends ListActivity {
 		taskCursor.moveToFirst();
 		int i = 0;
 		while (!taskCursor.isAfterLast()) {
-			items[i] = new String(taskCursor.getString(1));
+			items[i] = taskCursor.getString(1);
 			taskCursor.moveToNext();
 			i++;
 		}

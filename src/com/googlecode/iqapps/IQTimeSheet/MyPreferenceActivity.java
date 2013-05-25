@@ -77,13 +77,13 @@ public class MyPreferenceActivity extends PreferenceActivity implements
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
 
-        SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+        //SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
 
         ListPreference tzAnchor = (ListPreference) findPreference("tz.anchor");
         tzAnchor.setOrder(70);
         String[] timeZones = TimeZone.getAvailableIDs();
-        tzAnchor.setEntries((CharSequence[]) timeZones);
-        tzAnchor.setEntryValues((CharSequence[]) timeZones);
+        tzAnchor.setEntries(timeZones);
+        tzAnchor.setEntryValues(timeZones);
     }
 
     @Override

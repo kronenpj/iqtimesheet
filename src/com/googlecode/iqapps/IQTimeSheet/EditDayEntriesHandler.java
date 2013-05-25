@@ -44,8 +44,7 @@ public class EditDayEntriesHandler extends ListActivity {
 	private TimeSheetDbAdapter db;
 	private Cursor timeEntryCursor;
 	private long day = TimeHelpers.millisNow();
-	private Button[] child;
-	private final int ENTRY_CODE = 0x01;
+    private final int ENTRY_CODE = 0x01;
 	public final static String ENTRY_ID = "entryID";
 
 	/** Called when the activity is first created. */
@@ -145,14 +144,13 @@ public class EditDayEntriesHandler extends ListActivity {
 				+ " entries.");
 
         try {
-		reportList.setAdapter(new SimpleCursorAdapter(this,
+			reportList.setAdapter(new SimpleCursorAdapter(this,
 				android.R.layout.simple_list_item_2, timeEntryCursor,
 				new String[] { TimeSheetDbAdapter.KEY_TASK,
 						TimeSheetDbAdapter.KEY_RANGE }, new int[] {
 						android.R.id.text1, android.R.id.text2 }));
         } catch (Exception e) {
             Log.d(TAG, "reportList.setAdapter: " + e.toString());
-            return;
         }
 	}
 
@@ -170,19 +168,18 @@ public class EditDayEntriesHandler extends ListActivity {
 		}
 
 		reportList = (ListView) findViewById(android.R.id.list);
-		child = new Button[] { (Button) findViewById(R.id.previous),
-				(Button) findViewById(R.id.today),
-				(Button) findViewById(R.id.next) };
+        Button[] child = new Button[]{(Button) findViewById(R.id.previous),
+                (Button) findViewById(R.id.today),
+                (Button) findViewById(R.id.next)};
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Toast.makeText(EditDayEntriesHandler.this,
-						"NullPointerException", Toast.LENGTH_SHORT).show();
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Toast.makeText(EditDayEntriesHandler.this,
+                        "NullPointerException", Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
 
 	/*

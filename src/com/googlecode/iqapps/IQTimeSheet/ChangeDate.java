@@ -16,9 +16,6 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,8 +27,10 @@ import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.googlecode.iqapps.TimeHelpers;
+
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 /**
  * Activity that provides an interface to change the date of an entry.
@@ -41,8 +40,7 @@ import com.googlecode.iqapps.TimeHelpers;
 public class ChangeDate extends Activity {
 	private DatePicker dateChange;
 	private final static String TAG = "ChangeDate";
-	private long timeMillis = -1;
-	private TextView dateText;
+    private TextView dateText;
 
 	/**
 	 * Called when the activity is first created.
@@ -55,7 +53,7 @@ public class ChangeDate extends Activity {
 		dateText = (TextView) findViewById(R.id.DateText);
 
 		Bundle extras = getIntent().getExtras();
-		timeMillis = extras.getLong("time");
+        long timeMillis = extras.getLong("time");
 
 		dateChange = (DatePicker) findViewById(R.id.DatePicker01);
 
@@ -78,15 +76,14 @@ public class ChangeDate extends Activity {
 		Button[] child = new Button[] { (Button) findViewById(R.id.changeok),
 				(Button) findViewById(R.id.changecancel) };
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Toast.makeText(ChangeDate.this, "NullPointerException",
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Toast.makeText(ChangeDate.this, "NullPointerException",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
 
 	/**

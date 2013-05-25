@@ -546,12 +546,12 @@ public class TimeSheetDbAdapter {
 		Cursor mCursor = mDb.query(true, CLOCK_DATABASE_TABLE,
 				new String[] { KEY_CHARGENO }, KEY_ROWID + " = " + lastClockID,
 				null, null, null, null, null);
-		if (mCursor != null) {
-			mCursor.moveToFirst();
-		}
 
-		if (mCursor.isAfterLast())
-			return -1;
+        if (mCursor == null) return -1;
+
+        mCursor.moveToFirst();
+
+		if (mCursor.isAfterLast()) return -1;
 
 		long response = mCursor.getLong(0);
 		mCursor.close();
@@ -778,8 +778,8 @@ public class TimeSheetDbAdapter {
 		Cursor mCursor = mDb.query(false, CLOCK_DATABASE_TABLE,
 				new String[] { KEY_ROWID }, KEY_TIMEIN + ">=? and ("
 						+ KEY_TIMEOUT + "<=? or " + KEY_TIMEOUT + "= 0)",
-				new String[] { String.valueOf(todayStart).toString(),
-						String.valueOf(todayEnd).toString() }, null, null,
+				new String[] { String.valueOf(todayStart),
+                        String.valueOf(todayEnd) }, null, null,
 				null, null);
 		if (mCursor != null) {
 			mCursor.moveToLast();
@@ -844,8 +844,8 @@ public class TimeSheetDbAdapter {
 		Log.d(TAG, "getEntryCursorReport: Selection arguments: " + start + ", "
 				+ end);
 		Cursor mCursor = mDb.query(distinct, ENTRYREPORT_VIEW, columns,
-				selection, new String[] { String.valueOf(start).toString(),
-						String.valueOf(end).toString() }, groupBy, null,
+				selection, new String[] {String.valueOf(start),
+                    String.valueOf(end)}, groupBy, null,
 				orderBy, null);
 		if (mCursor != null) {
 			mCursor.moveToLast();
@@ -910,7 +910,7 @@ public class TimeSheetDbAdapter {
 		// String.valueOf(end).toString() }, groupBy, null,
 		// orderBy, null);
 
-		String select = new String("SELECT ");
+		String select = "SELECT ";
 		if (distinct)
 			select = select.concat("DISTINCT ");
 		for (int c = 0; c < columns.length; c++) {
@@ -1208,10 +1208,10 @@ public class TimeSheetDbAdapter {
 		Log.d(TAG, "populateSummary: Cleaning summary table.");
 		mDb.execSQL(SUMMARY_TABLE_CLEAN);
 
-		String omitOpenQuery = new String("");
+		String omitOpenQuery = "";
 		if (omitOpen) {
-			omitOpenQuery = new String(CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT
-					+ " > 0 " + " AND ");
+			omitOpenQuery = CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT
+                    + " > 0 " + " AND ";
 		}
 		// TODO: Figure out autoalign
 		final String populateTemp1 = "INSERT INTO " + SUMMARY_DATABASE_TABLE
@@ -1461,8 +1461,8 @@ public class TimeSheetDbAdapter {
 		Log.d(TAG, "getSplitTaskParent: Issuing DB query.");
 		long ret;
 		Cursor mCursor = null;
-		String query = new String("SELECT " + KEY_CHARGENO + " FROM "
-				+ TASKSPLIT_DATABASE_TABLE + " WHERE " + KEY_TASK + " = ?");
+		String query = "SELECT " + KEY_CHARGENO + " FROM "
+                + TASKSPLIT_DATABASE_TABLE + " WHERE " + KEY_TASK + " = ?";
 		Log.d(TAG, "getSplitTaskParent: query: " + query + ", " + rowId);
 		try {
 			// mCursor = mDb.query(true, TASKSPLIT_DATABASE_TABLE,
@@ -1613,7 +1613,7 @@ public class TimeSheetDbAdapter {
 			// update(String table, ContentValues values, String whereClause,
 			// String[] whereArgs)
 			mDb.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?",
-					new String[] { String.valueOf(taskID).toString() });
+					new String[] {String.valueOf(taskID)});
 		} catch (RuntimeException e) {
 			Log.e(TAG, e.getLocalizedMessage());
 		}
@@ -1673,7 +1673,7 @@ public class TimeSheetDbAdapter {
 				// String[] whereArgs)
 				int i = mDb.update(TASKSPLIT_DATABASE_TABLE, newData, KEY_TASK
 						+ "=?",
-						new String[] { String.valueOf(rowID).toString() });
+						new String[] {String.valueOf(rowID)});
 				Log.d(TAG, "Setting child task " + rowID
 						+ " details returned: " + i);
 				if (i == 0) {
@@ -1707,7 +1707,7 @@ public class TimeSheetDbAdapter {
 				// whereClause,
 				// String[] whereArgs)
 				int i = mDb.delete(TASKSPLIT_DATABASE_TABLE, KEY_TASK + "=?",
-						new String[] { String.valueOf(rowID).toString() });
+						new String[] {String.valueOf(rowID)});
 				Log.d(TAG, "Setting child task " + rowID
 						+ " details returned: " + i);
 			} catch (RuntimeException e) {
@@ -1730,8 +1730,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
-	 * @return rowId or -1 if failed
 	 */
 	public void deactivateTask(String taskName) {
 		Log.d(TAG, "deactivateTask: Issuing DB query.");
@@ -1742,8 +1740,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
-	 * @return rowId or -1 if failed
 	 */
 	public void deactivateTask(long taskID) {
 		Log.d(TAG, "deactivateTask: Issuing DB query.");
@@ -1751,7 +1747,7 @@ public class TimeSheetDbAdapter {
 		newData.put(KEY_ACTIVE, DB_FALSE);
 		try {
 			mDb.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?",
-					new String[] { String.valueOf(taskID).toString() });
+					new String[] {String.valueOf(taskID)});
 		} catch (RuntimeException e) {
 			Log.e(TAG, e.getLocalizedMessage());
 		}
@@ -1760,8 +1756,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
-	 * @return rowId or -1 if failed
 	 */
 	public void activateTask(String taskName) {
 		Log.d(TAG, "activateTask: Issuing DB query.");
@@ -1772,8 +1766,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
-	 * @return rowId or -1 if failed
 	 */
 	public void activateTask(long taskID) {
 		Log.d(TAG, "activateTask: Issuing DB query.");
@@ -1781,7 +1773,7 @@ public class TimeSheetDbAdapter {
 		newData.put(KEY_ACTIVE, DB_TRUE);
 		try {
 			mDb.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?",
-					new String[] { String.valueOf(taskID).toString() });
+					new String[] {String.valueOf(taskID)});
 		} catch (RuntimeException e) {
 			Log.e(TAG, e.getLocalizedMessage());
 		}
@@ -1790,8 +1782,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
-	 * @return rowId or -1 if failed
 	 */
 	private void incrementTaskUsage(long taskID) {
 		Log.d(TAG, "incrementTaskUsage: Issuing DB query.");
@@ -1828,8 +1818,6 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return a Cursor positioned at the note that matches the given rowId
 	 * 
-	 * @param rowId
-	 *            id of note to retrieve
 	 * @return Cursor positioned to matching note, if found
 	 * @throws SQLException
 	 *             if note could not be found/retrieved
@@ -1850,75 +1838,71 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Generic SQL exec wrapper, for use with statements which do not return
 	 * values.
-	 * 
-	 * @param sqlTorun
 	 */
 	public void runSQL(String sqlTorun) {
 		mDb.execSQL(sqlTorun);
 	}
 
-       /**
-        * Generic SQL update wrapper, Exposes the update method for testing.
-        *
-        * @param table the table being updated
-     *
-     * @param values the ContentValues being updated
-     *
-     * @param whereClause clause to limit updates
-     *
-     * @param whereArgs arguments to fill any ? in the whereClause.
-        */
-       public int runUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        Log.d(TAG, "Running update on '" + table + "'...");
-               return mDb.update(table, values, whereClause, whereArgs);
-       }
+	/**
+	 * Generic SQL update wrapper, Exposes the update method for testing.
+	 *
+	 * @param table       the table being updated
+	 * @param values      the ContentValues being updated
+	 * @param whereClause clause to limit updates
+	 * @param whereArgs   arguments to fill any ? in the whereClause.
+     * @return The number of rows affected
+	 */
+	public int runUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
+		Log.d(TAG, "Running update on '" + table + "'...");
+		return mDb.update(table, values, whereClause, whereArgs);
+	}
 
-       /**
-        * Generic SQL insert wrapper, Exposes the insert method for testing.
-        *
-        * @param table the table being updated
-     *
-     * @param nullColHack Null column hack.
-     *
-     * @param values the ContentValues being updated
-        */
-       public long runInsert(String table, String nullColHack, ContentValues values) {
-        Log.d(TAG, "Running update on '" + table + "'...");
-               return mDb.insert(table, nullColHack, values);
-       }
-       /**
-        * Dumps the contents of the tasks table to logcat, for testing.
-        */
-    public void dumpTasks() {
-        Log.d(TAG, "Dumping tasks table");
-        String myQuery = "select * from " + TASKS_DATABASE_TABLE; // + " order by KEY_ROWID";
-        Cursor tasksC = mDb.rawQuery(myQuery, null);
-        try {
-            tasksC.moveToFirst();
-            while (!tasksC.isAfterLast()) {
-                Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
-                tasksC.moveToNext();
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Cursor usage threw " + e.toString());
-        }
-    }
+	/**
+	 * Generic SQL insert wrapper, Exposes the insert method for testing.
+	 *
+	 * @param table       the table being updated
+	 * @param nullColHack Null column hack.
+	 * @param values      the ContentValues being updated
+     * @return The rowID is the just-inserted row
+	 */
+	public long runInsert(String table, String nullColHack, ContentValues values) {
+		Log.d(TAG, "Running update on '" + table + "'...");
+		return mDb.insert(table, nullColHack, values);
+	}
 
-       /**
-        * Dumps the contents of the tasks table to logcat, for testing.
-        */
-    public void dumpClockings() {
-        Log.d(TAG, "Dumping clock table");
-        Cursor tasksC = mDb.rawQuery("select * from " + CLOCK_DATABASE_TABLE +
-                " order by " + KEY_ROWID, null);
-        try {
-            tasksC.moveToFirst();
-            while (!tasksC.isAfterLast()) {
-                Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
-                tasksC.moveToNext();
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Cursor usage threw " + e.toString());
-        }
-    }
+	/**
+	 * Dumps the contents of the tasks table to logcat, for testing.
+	 */
+	public void dumpTasks() {
+		Log.d(TAG, "Dumping tasks table");
+		String myQuery = "select * from " + TASKS_DATABASE_TABLE; // + " order by KEY_ROWID";
+		Cursor tasksC = mDb.rawQuery(myQuery, null);
+		try {
+			tasksC.moveToFirst();
+			while (!tasksC.isAfterLast()) {
+				Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
+				tasksC.moveToNext();
+			}
+		} catch (Exception e) {
+			Log.d(TAG, "Cursor usage threw " + e.toString());
+		}
+	}
+
+	/**
+	 * Dumps the contents of the tasks table to logcat, for testing.
+	 */
+	public void dumpClockings() {
+		Log.d(TAG, "Dumping clock table");
+		Cursor tasksC = mDb.rawQuery("select * from " + CLOCK_DATABASE_TABLE +
+				" order by " + KEY_ROWID, null);
+		try {
+			tasksC.moveToFirst();
+			while (!tasksC.isAfterLast()) {
+				Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
+				tasksC.moveToNext();
+			}
+		} catch (Exception e) {
+			Log.d(TAG, "Cursor usage threw " + e.toString());
+		}
+	}
 }

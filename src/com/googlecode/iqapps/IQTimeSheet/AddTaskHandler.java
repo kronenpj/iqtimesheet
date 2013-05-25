@@ -44,8 +44,7 @@ public class AddTaskHandler extends Activity {
 	private static final String TAG = "AddTaskHandler";
 
 	private EditText textField;
-	private Button child[];
-	private TextView parentLabel;
+    private TextView parentLabel;
 	private Spinner taskSpinner;
 	private CheckBox splitTask;
 	private EditText percentLabel;
@@ -82,7 +81,7 @@ public class AddTaskHandler extends Activity {
 		parents.moveToFirst();
 		int i = 0;
 		while (!parents.isAfterLast()) {
-			items[i] = new String(parents.getString(1));
+			items[i] = parents.getString(1);
 			parents.moveToNext();
 			i++;
 		}
@@ -101,8 +100,8 @@ public class AddTaskHandler extends Activity {
 		setContentView(R.layout.addtask);
 
 		textField = (EditText) findViewById(R.id.EditTask);
-		child = new Button[] { (Button) findViewById(R.id.ChangeTask),
-				(Button) findViewById(R.id.CancelEdit) };
+        Button[] child = new Button[]{(Button) findViewById(R.id.ChangeTask),
+                (Button) findViewById(R.id.CancelEdit)};
 		parentLabel = (TextView) findViewById(R.id.ParentLabel);
 		taskSpinner = (Spinner) findViewById(R.id.TaskSpinner);
 		splitTask = (CheckBox) findViewById(R.id.SplitTask);
@@ -116,14 +115,13 @@ public class AddTaskHandler extends Activity {
 		percentLabel.setOnFocusChangeListener(mTextListener);
 		percentLabel.setOnEditorActionListener(mEditorListener);
 
-		for (int count = 0; count < child.length; count++) {
-			try {
-				final int index = count;
-				child[index].setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Log.e(TAG, "NullPointerException adding listener to button.");
-			}
-		}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "NullPointerException adding listener to button.");
+            }
+        }
 	}
 
 	/**
@@ -225,23 +223,21 @@ public class AddTaskHandler extends Activity {
 	private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
 		@Override
 		public void onFocusChange(View v, boolean hasFocus) {
-			if (hasFocus) {
-				// percentLabel.setSelected(true);
-			} else {
-				try {
-					int temp = Integer.valueOf(((TextView) v).getText()
-							.toString());
-					if (temp > 100)
-						temp = 100;
-					if (temp < 0)
-						temp = 0;
-					percentSlider.setProgress(temp);
-				} catch (NumberFormatException e) {
-					percentLabel.setText(String.valueOf(percentSlider
-							.getProgress()));
-				}
-			}
-		}
+            if (!hasFocus) {
+                try {
+                    int temp = Integer.valueOf(((TextView) v).getText()
+                            .toString());
+                    if (temp > 100)
+                        temp = 100;
+                    if (temp < 0)
+                        temp = 0;
+                    percentSlider.setProgress(temp);
+                } catch (NumberFormatException e) {
+                    percentLabel.setText(String.valueOf(percentSlider
+                            .getProgress()));
+                }
+            }
+        }
 	};
 
 	/**

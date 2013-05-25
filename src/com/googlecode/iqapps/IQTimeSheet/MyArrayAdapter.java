@@ -1,9 +1,5 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MyArrayAdapter<T> extends ArrayAdapter<T> {
 	/**
@@ -20,14 +19,13 @@ public class MyArrayAdapter<T> extends ArrayAdapter<T> {
 	private int mResource;
 
 	/**
-	 * If the inflated resource is not a TextView, {@link #mFieldId} is used to
+	 * If the inflated resource is not a TextView, #mFieldId is used to
 	 * find a TextView inside the inflated views hierarchy. This field must
 	 * contain the identifier that matches the one defined in the resource file.
 	 */
 	private int mFieldId = 0;
 
-	private Context mContext;
-	private LayoutInflater mInflater;
+    private LayoutInflater mInflater;
 
 	/**
 	 * {@inheritDoc}
@@ -81,8 +79,7 @@ public class MyArrayAdapter<T> extends ArrayAdapter<T> {
 	}
 
 	private void init(Context context, int resource, int textViewResourceId) {
-		mContext = context;
-		mResource = resource;
+        mResource = resource;
 		mFieldId = textViewResourceId;
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -129,7 +126,7 @@ public class MyArrayAdapter<T> extends ArrayAdapter<T> {
 			text.setText(item.toString());
 		}
 
-		text.setTextSize((float) TimeSheetActivity.prefs.getFontSizeTaskList());
+		text.setTextSize(TimeSheetActivity.prefs.getFontSizeTaskList());
 
 		return view;
 	}
