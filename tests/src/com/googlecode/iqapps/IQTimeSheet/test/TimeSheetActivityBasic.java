@@ -3,7 +3,6 @@ package com.googlecode.iqapps.IQTimeSheet.test;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
@@ -261,7 +260,9 @@ public class TimeSheetActivityBasic extends
 
         assertTrue(solo.waitForActivity("DayReport", 1500));
 		// Select the footer
-		assertTrue(solo.searchText("1.00"));
+        // The percentage of time accumulated can vary a little due to rounding when the snap time
+        // is one minute.  Account for that variance here.
+		assertTrue(solo.searchText("1.00") || solo.searchText("1.01") || solo.searchText("1.02"));
 		solo.sleep(SLEEPTIME);
 	}
 

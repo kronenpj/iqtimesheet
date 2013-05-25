@@ -212,15 +212,21 @@ public class EditTaskHandlerTest extends
         assertTrue(solo.waitForActivity("DayReport", 1500));
 
 		// Locate the larger percentage task
-		assertTrue(solo.searchText("0.65"));
+        // The percentage of time accumulated can vary a little due to rounding when the snap time
+        // is one minute.  Account for that variance here.
+		assertTrue(solo.searchText("0.65") || solo.searchText("0.66"));
 		solo.sleep(SLEEPTIME);
 
 		// Locate the smaller percentage task
-		assertTrue(solo.searchText("0.35"));
+        // The percentage of time accumulated can vary a little due to rounding when the snap time
+        // is one minute.  Account for that variance here.
+		assertTrue(solo.searchText("0.35") || solo.searchText("0.36"));
 		solo.sleep(SLEEPTIME);
 
 		// Locate the footer
-		assertTrue(solo.searchText("1.00"));
+        // The total time accumulated can vary a little due to rounding when the snap time
+        // is one minute.  Account for that variance here.
+        assertTrue(solo.searchText("1.00") || solo.searchText("1.01") || solo.searchText("1.02"));
 		solo.sleep(SLEEPTIME);
 	}
 

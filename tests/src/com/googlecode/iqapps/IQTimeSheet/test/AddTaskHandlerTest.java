@@ -3,7 +3,6 @@ package com.googlecode.iqapps.IQTimeSheet.test;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
 import android.widget.ListView;
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
@@ -97,6 +96,7 @@ public class AddTaskHandlerTest extends
 				.getItem(MenuItems.NEW_TASK.ordinal()).getItemId();
 		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
 		solo.sleep(SLEEPTIME);
+        //assertTrue(solo.waitForActivity("DayReport", 1500));
 
 		// Enter the name of the new task
 		solo.clearEditText(0);
