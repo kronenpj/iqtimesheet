@@ -21,7 +21,7 @@
  * @return      (methods only)
  * @exception   (@throws is a synonym added in Javadoc 1.2)
  * @see         
- * @deprecated  (see How and When To Deprecate APIs)
+ * @ deprecated  (see How and When To Deprecate APIs)
  */
 package com.googlecode.iqapps.IQTimeSheet;
 
