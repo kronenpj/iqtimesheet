@@ -2,7 +2,6 @@ High-priority items to do:
 * Implement timezone anchor for cross-day checks.
 ** Start time < anchored midnight < End time / now = cross day...
 * Address deprecated functions while keeping compatibility at ~ API 8.
-* Examine redundant & other suggested items identified by IdeaIC IDE.
 
 Medium-priority items to do:
 * Move everything possible into preferences.
@@ -10,7 +9,7 @@ Medium-priority items to do:
 * Look for places to separate user interface code from functionality code.
 * Stand-alone application to edit / interpret / report on database.
 * Alarm when 8h/day is reached and 40h/week.
-* Alarm when particular time occurs & still clocked in, eg: 5:00pm.
+* Alarm when particular time occurs & still clocked in, eg: 5:00pm, 8h, 40h.
 * Use DatePickerDialog rather than a separate activity.
 * Use TimePickerDialog rather than a separate activity.
 * Year-end database purge.
@@ -33,3 +32,4 @@ Completed Items:
 * Database scrub to find cross-day clockings that weren't caught.
 * Database scrub to find floating 0-time-out clockings.
 * Persistent notification when clocked in.
+* Examine redundant & other suggested items identified by IdeaIC IDE.
