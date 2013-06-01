@@ -28,96 +28,96 @@ import junit.framework.Assert;
 /**
  * Test to invoke the application once so that there is a database and
  * preferences file we can backup later.
- * 
+ *
  * @author kronenpj
  */
 // @Suppress //#$##
 public class AAA_CreateDBPrefs extends
-		ActivityInstrumentationTestCase2<TimeSheetActivity> {
-	// private static final String TAG = "AAA_CreateDBPrefs";
-	private static final int SLEEPTIME = 50;
+        ActivityInstrumentationTestCase2<TimeSheetActivity> {
+    // private static final String TAG = "AAA_CreateDBPrefs";
+    private static final int SLEEPTIME = 50;
 
-	private Solo solo;
+    private Solo solo;
 
-	private TimeSheetActivity mActivity;
+    private TimeSheetActivity mActivity;
     private Instrumentation mInstr;
 
-	public AAA_CreateDBPrefs() {
-		super(TimeSheetActivity.class);
-	}
+    public AAA_CreateDBPrefs() {
+        super(TimeSheetActivity.class);
+    }
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		mInstr = getInstrumentation();
-		solo = new Solo(mInstr, getActivity());
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        mInstr = getInstrumentation();
+        solo = new Solo(mInstr, getActivity());
+    }
 
-	/**
-	 * Make sure the application is ready for us to test it.
-	 */
-	public void test00Preconditions() {
-		mActivity = getActivity();
-		assertNotNull(mActivity);
+    /**
+     * Make sure the application is ready for us to test it.
+     */
+    public void test00Preconditions() {
+        mActivity = getActivity();
+        assertNotNull(mActivity);
 
         ListView mView = (ListView) mActivity.findViewById(android.R.id.list);
-		assertNotNull(mView);
-	}
+        assertNotNull(mView);
+    }
 
-	/**
-	 * Start to restore the database but cancel before actually doing it.
-	 */
-	public void test10RestoreDBCancel() {
-		mActivity = getActivity();
-		assertNotNull(mActivity);
+    /**
+     * Start to restore the database but cancel before actually doing it.
+     */
+    public void test10RestoreDBCancel() {
+        mActivity = getActivity();
+        assertNotNull(mActivity);
 
-		while (!solo.getCurrentActivity().isTaskRoot()) {
-			solo.goBack();
-		}
-		try {
-			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-			int menuItemID = mActivity.getOptionsMenu()
-					.getItem(MenuItems.RESTORE.ordinal()).getItemId();
-			Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity,
-					menuItemID, 0));
-			solo.sleep(SLEEPTIME);
+        while (!solo.getCurrentActivity().isTaskRoot()) {
+            solo.goBack();
+        }
+        try {
+            mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+            int menuItemID = mActivity.getOptionsMenu()
+                    .getItem(MenuItems.RESTORE.ordinal()).getItemId();
+            Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity,
+                    menuItemID, 0));
+            solo.sleep(SLEEPTIME);
 
-			solo.sendKey(KeyEvent.KEYCODE_DPAD_RIGHT);
-			solo.sleep(SLEEPTIME);
-			solo.sendKey(KeyEvent.KEYCODE_ENTER);
-			solo.sleep(SLEEPTIME);
-		} catch (IndexOutOfBoundsException e) {
-			Toast.makeText(mActivity,
-					"Cancellation of database restore failed.",
-					Toast.LENGTH_LONG).show();
-		}
-	}
+            solo.sendKey(KeyEvent.KEYCODE_DPAD_RIGHT);
+            solo.sleep(SLEEPTIME);
+            solo.sendKey(KeyEvent.KEYCODE_ENTER);
+            solo.sleep(SLEEPTIME);
+        } catch (IndexOutOfBoundsException e) {
+            Toast.makeText(mActivity,
+                    "Cancellation of database restore failed.",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
-	public void tearDown() {
-		// solo.finishInactiveActivities();
-		solo.finishOpenedActivities();
-	}
+    public void tearDown() {
+        // solo.finishInactiveActivities();
+        solo.finishOpenedActivities();
+    }
 
-	public void empty() {
-		assurePreferencesAreCreated();
-	}
+    public void empty() {
+        assurePreferencesAreCreated();
+    }
 
-	private void assurePreferencesAreCreated() {
+    private void assurePreferencesAreCreated() {
 
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		int menuItemID = mActivity.getOptionsMenu()
-				.getItem(MenuItems.BACKUP.ordinal()).getItemId();
-		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		solo.sleep(SLEEPTIME);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
-		solo.sleep(SLEEPTIME);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-		assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+        int menuItemID = mActivity.getOptionsMenu()
+                .getItem(MenuItems.BACKUP.ordinal()).getItemId();
+        assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
+        solo.sleep(SLEEPTIME);
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
+        solo.sleep(SLEEPTIME);
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+        assertTrue(solo.waitForActivity("MyPreferenceActivity", 1500));
         solo.searchText("anchor time zone");
         mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
         solo.searchText("America/New York");
         mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-		solo.goBack();
-	}
+        solo.goBack();
+    }
 }

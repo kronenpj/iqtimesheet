@@ -15,12 +15,12 @@
  */
 
 /**
- * @author      (classes and interfaces only, required)
- * @version     (classes and interfaces only, required. See footnote 1)
+ * @author (classes and interfaces only, required)
+ * @version (classes and interfaces only, required. See footnote 1)
  * @param       (methods and constructors only)
- * @return      (methods only)
- * @exception   (@throws is a synonym added in Javadoc 1.2)
- * @see         
+ * @return (methods only)
+ * @exception (@throws is a synonym added in Javadoc 1.2)
+ * @see
  * @ deprecated  (see How and When To Deprecate APIs)
  */
 package com.googlecode.iqapps.IQTimeSheet;
@@ -32,27 +32,26 @@ import android.widget.TextView;
 
 /**
  * @author kronenpj
- * 
  */
 public class AboutDialog extends Activity {
-	private static final String TAG = "AboutDialog";
+    private static final String TAG = "AboutDialog";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Log.d(TAG, "In onCreate.");
-		
-		setContentView(R.layout.about);
-		TextView version = (TextView) findViewById(R.id.version);
-		TextView aboutText = (TextView) findViewById(R.id.abouttext);
-		
-		version.setText(R.string.msg_version);
-		aboutText.setText(R.string.about_summary);
-		Log.d(TAG, "Falling out of onCreate.");
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "In onCreate.");
+
+        setContentView(R.layout.about);
+        TextView version = (TextView) findViewById(R.id.version);
+        TextView aboutText = (TextView) findViewById(R.id.abouttext);
+
+        version.setText(R.string.msg_version);
+        aboutText.setText(R.string.about_summary);
+        Log.d(TAG, "Falling out of onCreate.");
+    }
 }

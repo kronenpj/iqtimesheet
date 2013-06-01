@@ -16,8 +16,6 @@
 
 package com.googlecode.iqapps;
 
-import com.googlecode.iqapps.IQTimeSheet.R;
-
 import android.content.Context;
 import android.os.Handler;
 import android.text.InputFilter;
@@ -30,11 +28,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.googlecode.iqapps.IQTimeSheet.R;
 
 /**
  * A view for selecting a number
- *
+ * <p/>
  * For a dialog using this view, see {@link android.app.TimePickerDialog}.
+ *
  * @hide
  */
 @Widget
@@ -70,13 +70,14 @@ public class NumberPicker extends LinearLayout {
                 final StringBuilder mBuilder = new StringBuilder();
                 final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
                 final Object[] mArgs = new Object[1];
+
                 public String toString(int value) {
                     mArgs[0] = value;
                     mBuilder.delete(0, mBuilder.length());
                     mFmt.format("%02d", mArgs);
                     return mFmt.toString();
                 }
-        };
+            };
 
     private final Handler mHandler;
     private final Runnable mRunnable = new Runnable() {
@@ -124,6 +125,7 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Create a new number picker
+     *
      * @param context the application environment
      */
     public NumberPicker(Context context) {
@@ -132,8 +134,9 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Create a new number picker
+     *
      * @param context the application environment
-     * @param attrs a collection of attributes
+     * @param attrs   a collection of attributes
      */
     public NumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -205,7 +208,7 @@ public class NumberPicker extends LinearLayout {
 
         mText = (EditText) findViewById(R.id.timepicker_input);
         mText.setOnFocusChangeListener(focusListener);
-        mText.setFilters(new InputFilter[] {inputFilter});
+        mText.setFilters(new InputFilter[]{inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 
         if (!isEnabled()) {
@@ -229,6 +232,7 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Set the callback that indicates the number has been adjusted by the user.
+     *
      * @param listener the callback, should not be null.
      */
     public void setOnChangeListener(OnChangedListener listener) {
@@ -237,8 +241,9 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Set the formatter that will be used to format the number for presentation
+     *
      * @param formatter the formatter object.  If formatter is null, String.valueOf()
-     * will be used
+     *                  will be used
      */
     public void setFormatter(Formatter formatter) {
         mFormatter = formatter;
@@ -249,7 +254,7 @@ public class NumberPicker extends LinearLayout {
      * value will be automatically set to the start.
      *
      * @param start the start of the range (inclusive)
-     * @param end the end of the range (inclusive)
+     * @param end   the end of the range (inclusive)
      */
     public void setRange(int start, int end) {
         setRange(start, end, null/*displayedValues*/);
@@ -260,8 +265,8 @@ public class NumberPicker extends LinearLayout {
      * value will be automatically set to the start. Also provide a mapping
      * for values used to display to the user.
      *
-     * @param start the start of the range (inclusive)
-     * @param end the end of the range (inclusive)
+     * @param start           the start of the range (inclusive)
+     * @param end             the end of the range (inclusive)
      * @param displayedValues the values displayed to the user.
      */
     public void setRange(int start, int end, String[] displayedValues) {
@@ -277,7 +282,7 @@ public class NumberPicker extends LinearLayout {
      *
      * @param current the current value the start of the range (inclusive)
      * @throws IllegalArgumentException when current is not within the range
-     *         of of the number picker
+     *                                  of of the number picker
      */
     public void setCurrent(int current) {
         if (current < mStart || current > mEnd) {
@@ -293,7 +298,7 @@ public class NumberPicker extends LinearLayout {
      * buttons are longpressed
      *
      * @param speed The speed (in milliseconds) at which the numbers will scroll
-     * default 300ms
+     *              default 300ms
      */
     public void setSpeed(long speed) {
         mSpeed = speed;
@@ -309,7 +314,7 @@ public class NumberPicker extends LinearLayout {
      * Sets the current value of this NumberPicker, and sets mPrevious to the previous
      * value.  If current is greater than mEnd less than mStart, the value of mCurrent
      * is wrapped around.
-     *
+     * <p/>
      * Subclasses can override this to change the wrapping behavior
      *
      * @param current the new value of the NumberPicker
@@ -395,8 +400,8 @@ public class NumberPicker extends LinearLayout {
         mDecrement = false;
     }
 
-    private static final char[] DIGIT_CHARACTERS = new char[] {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    private static final char[] DIGIT_CHARACTERS = new char[]{
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
     private NumberPickerButton mIncrementButton;
@@ -404,7 +409,7 @@ public class NumberPicker extends LinearLayout {
 
     private class NumberPickerInputFilter implements InputFilter {
         public CharSequence filter(CharSequence source, int start, int end,
-                Spanned dest, int dstart, int dend) {
+                                   Spanned dest, int dstart, int dend) {
             if (mDisplayedValues == null) {
                 return mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
             }
@@ -438,7 +443,7 @@ public class NumberPicker extends LinearLayout {
 
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
-                Spanned dest, int dstart, int dend) {
+                                   Spanned dest, int dstart, int dend) {
 
             CharSequence filtered = super.filter(source, start, end, dest, dstart, dend);
             if (filtered == null) {
@@ -498,6 +503,7 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Returns the current value of the NumberPicker
+     *
      * @return the current value.
      */
     public int getCurrent() {
@@ -506,6 +512,7 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Returns the upper value of the range of the NumberPicker
+     *
      * @return the uppper number of the range.
      */
     protected int getEndRange() {
@@ -514,6 +521,7 @@ public class NumberPicker extends LinearLayout {
 
     /**
      * Returns the lower value of the range of the NumberPicker
+     *
      * @return the lower number of the range.
      */
     protected int getBeginRange() {

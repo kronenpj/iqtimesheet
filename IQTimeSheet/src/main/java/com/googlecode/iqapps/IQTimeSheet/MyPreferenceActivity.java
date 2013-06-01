@@ -15,11 +15,11 @@
  */
 
 /**
- * @author      (classes and interfaces only, required)
- * @version     (classes and interfaces only, required. See footnote 1)
+ * @author (classes and interfaces only, required)
+ * @version (classes and interfaces only, required. See footnote 1)
  * @param       (methods and constructors only)
- * @return      (methods only)
- * @exception   (@throws is a synonym added in Javadoc 1.2)
+ * @return (methods only)
+ * @exception (@throws is a synonym added in Javadoc 1.2)
  * @see
  * @ deprecated  (see How and When To Deprecate APIs)
  */
@@ -35,17 +35,17 @@ import java.util.TimeZone;
 
 /**
  * @author kronenpj
- * Borrowed heavily from ConnectBot's SettingsActivity.
+ *         Borrowed heavily from ConnectBot's SettingsActivity.
  */
 public class MyPreferenceActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     protected void onResume() {
-		super.onResume();
+        super.onResume();
 
 /*
-		try {
+        try {
 			addPreferencesFromResource(R.xml.preferences);
 		} catch (Exception e) {
 			// Something bad happened when reading the preferences. Try to
@@ -69,7 +69,7 @@ public class MyPreferenceActivity extends PreferenceActivity implements
 */
 
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-	}
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

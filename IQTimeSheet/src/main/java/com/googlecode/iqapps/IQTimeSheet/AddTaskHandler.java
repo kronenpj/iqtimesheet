@@ -25,14 +25,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.SeekBar;
+import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 /**
@@ -41,230 +35,232 @@ import android.widget.TextView.OnEditorActionListener;
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class AddTaskHandler extends Activity {
-	private static final String TAG = "AddTaskHandler";
+    private static final String TAG = "AddTaskHandler";
 
-	private EditText textField;
-	private TextView parentLabel;
-	private Spinner taskSpinner;
-	private CheckBox splitTask;
-	private EditText percentLabel;
-	private TextView percentSymbol;
-	private SeekBar percentSlider;
-	private TimeSheetDbAdapter db;
-	private Cursor parents;
+    private EditText textField;
+    private TextView parentLabel;
+    private Spinner taskSpinner;
+    private CheckBox splitTask;
+    private EditText percentLabel;
+    private TextView percentSymbol;
+    private SeekBar percentSlider;
+    private TimeSheetDbAdapter db;
+    private Cursor parents;
 
-	/** Called when the activity is first created. */
-	// @Override
-	// public void onCreate(Bundle savedInstanceState) {
-	// super.onCreate(savedInstanceState);
-	// Log.d(TAG, "In onCreate.");
-	// }
+    /** Called when the activity is first created. */
+    // @Override
+    // public void onCreate(Bundle savedInstanceState) {
+    // super.onCreate(savedInstanceState);
+    // Log.d(TAG, "In onCreate.");
+    // }
 
-	/** Called when the activity is first created. */
-	public void onResume() {
-		super.onResume();
-		Log.d(TAG, "In onResume.");
+    /**
+     * Called when the activity is first created.
+     */
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "In onResume.");
 
-		showTaskAdd();
+        showTaskAdd();
 
-		db = new TimeSheetDbAdapter(this);
-		try {
-			db.open();
-		} catch (SQLException e) {
-			Log.i(TAG, "Database open failed.");
-			finish();
-		}
+        db = new TimeSheetDbAdapter(this);
+        try {
+            db.open();
+        } catch (SQLException e) {
+            Log.i(TAG, "Database open failed.");
+            finish();
+        }
 
-		parents = db.fetchParentTasks();
-		startManagingCursor(parents);
-		String[] items = new String[parents.getCount()];
-		parents.moveToFirst();
-		int i = 0;
-		while (!parents.isAfterLast()) {
-			items[i] = parents.getString(1);
-			parents.moveToNext();
-			i++;
-		}
+        parents = db.fetchParentTasks();
+        startManagingCursor(parents);
+        String[] items = new String[parents.getCount()];
+        parents.moveToFirst();
+        int i = 0;
+        while (!parents.isAfterLast()) {
+            items[i] = parents.getString(1);
+            parents.moveToNext();
+            i++;
+        }
 
-		taskSpinner.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, items));
+        taskSpinner.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, items));
 
-		percentSlider.setMax(100);
-		// TODO: Retrieve from database or default to 100 if none.
-		percentSlider.setProgress(100);
-		percentLabel.setText("100");
-	}
+        percentSlider.setMax(100);
+        // TODO: Retrieve from database or default to 100 if none.
+        percentSlider.setProgress(100);
+        percentLabel.setText("100");
+    }
 
-	protected void showTaskAdd() {
-		Log.d(TAG, "Changing to addtask layout.");
-		setContentView(R.layout.addtask);
+    protected void showTaskAdd() {
+        Log.d(TAG, "Changing to addtask layout.");
+        setContentView(R.layout.addtask);
 
-		textField = (EditText) findViewById(R.id.EditTask);
-		Button[] child = new Button[]{(Button) findViewById(R.id.ChangeTask),
-				(Button) findViewById(R.id.CancelEdit)};
-		parentLabel = (TextView) findViewById(R.id.ParentLabel);
-		taskSpinner = (Spinner) findViewById(R.id.TaskSpinner);
-		splitTask = (CheckBox) findViewById(R.id.SplitTask);
-		percentLabel = (EditText) findViewById(R.id.PercentLabel);
-		percentSymbol = (TextView) findViewById(R.id.PercentSymbol);
-		percentSlider = (SeekBar) findViewById(R.id.PercentSlider);
+        textField = (EditText) findViewById(R.id.EditTask);
+        Button[] child = new Button[]{(Button) findViewById(R.id.ChangeTask),
+                (Button) findViewById(R.id.CancelEdit)};
+        parentLabel = (TextView) findViewById(R.id.ParentLabel);
+        taskSpinner = (Spinner) findViewById(R.id.TaskSpinner);
+        splitTask = (CheckBox) findViewById(R.id.SplitTask);
+        percentLabel = (EditText) findViewById(R.id.PercentLabel);
+        percentSymbol = (TextView) findViewById(R.id.PercentSymbol);
+        percentSlider = (SeekBar) findViewById(R.id.PercentSlider);
 
-		splitTask.setOnClickListener(mCheckBoxListener);
+        splitTask.setOnClickListener(mCheckBoxListener);
 
-		percentSlider.setOnSeekBarChangeListener(mSeekBarListener);
-		percentLabel.setOnFocusChangeListener(mTextListener);
-		percentLabel.setOnEditorActionListener(mEditorListener);
+        percentSlider.setOnSeekBarChangeListener(mSeekBarListener);
+        percentLabel.setOnFocusChangeListener(mTextListener);
+        percentLabel.setOnEditorActionListener(mEditorListener);
 
-		for (Button aChild : child) {
-			try {
-				aChild.setOnClickListener(mButtonListener);
-			} catch (NullPointerException e) {
-				Log.e(TAG, "NullPointerException adding listener to button.");
-			}
-		}
-	}
+        for (Button aChild : child) {
+            try {
+                aChild.setOnClickListener(mButtonListener);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "NullPointerException adding listener to button.");
+            }
+        }
+    }
 
-	/**
-	 *
-	 */
-	private void closeCursorDB() {
-		Log.i(TAG, "Entering closeCursorDB");
-		try {
-			parents.close();
-		} catch (SQLException e) {
-			Log.i(TAG, "Cursor close: " + e.toString());
-		}
+    /**
+     *
+     */
+    private void closeCursorDB() {
+        Log.i(TAG, "Entering closeCursorDB");
+        try {
+            parents.close();
+        } catch (SQLException e) {
+            Log.i(TAG, "Cursor close: " + e.toString());
+        }
 
-		Log.i(TAG, "Closing db connection");
-		try {
-			db.close();
-		} catch (SQLException e) {
-			Log.i(TAG, "Database close: " + e.toString());
-		}
+        Log.i(TAG, "Closing db connection");
+        try {
+            db.close();
+        } catch (SQLException e) {
+            Log.i(TAG, "Database close: " + e.toString());
+        }
 
-		Log.i(TAG, "Leaving closeCursorDB");
-	}
+        Log.i(TAG, "Leaving closeCursorDB");
+    }
 
-	/**
-	 * This method is what is registered with the button to cause an action to
-	 * occur when it is pressed.
-	 */
-	private OnClickListener mButtonListener = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// Perform action chosen by the user.
+    /**
+     * This method is what is registered with the button to cause an action to
+     * occur when it is pressed.
+     */
+    private OnClickListener mButtonListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Perform action chosen by the user.
 
-			String item = ((Button) v).getText().toString();
-			if (item.equalsIgnoreCase("cancel")) {
-				setResult(RESULT_CANCELED, (new Intent()).setAction(item));
-			} else {
-				String result = textField.getText().toString();
-				Intent mIntent = new Intent();
-				mIntent.putExtra("split", splitTask.isChecked());
-				if (splitTask.isChecked()) {
-					mIntent.putExtra("parent",
-							(String) taskSpinner.getSelectedItem());
-					mIntent.putExtra("percentage", percentSlider.getProgress());
-				}
-				mIntent.setAction(result);
-				setResult(RESULT_OK, mIntent);
-			}
-			closeCursorDB();
-			finish();
-		}
-	};
+            String item = ((Button) v).getText().toString();
+            if (item.equalsIgnoreCase("cancel")) {
+                setResult(RESULT_CANCELED, (new Intent()).setAction(item));
+            } else {
+                String result = textField.getText().toString();
+                Intent mIntent = new Intent();
+                mIntent.putExtra("split", splitTask.isChecked());
+                if (splitTask.isChecked()) {
+                    mIntent.putExtra("parent",
+                            (String) taskSpinner.getSelectedItem());
+                    mIntent.putExtra("percentage", percentSlider.getProgress());
+                }
+                mIntent.setAction(result);
+                setResult(RESULT_OK, mIntent);
+            }
+            closeCursorDB();
+            finish();
+        }
+    };
 
-	/**
-	 * This method is what is registered with the checkbox to cause an action to
-	 * occur when it is pressed.
-	 */
-	private OnClickListener mCheckBoxListener = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// Perform action on selected list item.
+    /**
+     * This method is what is registered with the checkbox to cause an action to
+     * occur when it is pressed.
+     */
+    private OnClickListener mCheckBoxListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Perform action on selected list item.
 
-			if (((CheckBox) v).isChecked()) {
-				parentLabel.setVisibility(View.VISIBLE);
-				taskSpinner.setVisibility(View.VISIBLE);
-				percentLabel.setVisibility(View.VISIBLE);
-				percentSymbol.setVisibility(View.VISIBLE);
-				percentSlider.setVisibility(View.VISIBLE);
-			} else {
-				parentLabel.setVisibility(View.INVISIBLE);
-				taskSpinner.setVisibility(View.INVISIBLE);
-				percentLabel.setVisibility(View.INVISIBLE);
-				percentSymbol.setVisibility(View.INVISIBLE);
-				percentSlider.setVisibility(View.INVISIBLE);
-			}
-		}
-	};
+            if (((CheckBox) v).isChecked()) {
+                parentLabel.setVisibility(View.VISIBLE);
+                taskSpinner.setVisibility(View.VISIBLE);
+                percentLabel.setVisibility(View.VISIBLE);
+                percentSymbol.setVisibility(View.VISIBLE);
+                percentSlider.setVisibility(View.VISIBLE);
+            } else {
+                parentLabel.setVisibility(View.INVISIBLE);
+                taskSpinner.setVisibility(View.INVISIBLE);
+                percentLabel.setVisibility(View.INVISIBLE);
+                percentSymbol.setVisibility(View.INVISIBLE);
+                percentSlider.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
 
-	/**
-	 * This method is registered with the percent slider to cause an action to
-	 * occur when it is changed.
-	 */
-	private OnSeekBarChangeListener mSeekBarListener = new OnSeekBarChangeListener() {
-		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress,
-				boolean fromUser) {
-			// percentLabel.setText(String.valueOf(seekBar.getProgress()));
-			percentLabel.setText(String.valueOf(progress));
-		}
+    /**
+     * This method is registered with the percent slider to cause an action to
+     * occur when it is changed.
+     */
+    private OnSeekBarChangeListener mSeekBarListener = new OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress,
+                                      boolean fromUser) {
+            // percentLabel.setText(String.valueOf(seekBar.getProgress()));
+            percentLabel.setText(String.valueOf(progress));
+        }
 
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {
-			seekBar.requestFocus();
-		}
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            seekBar.requestFocus();
+        }
 
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
-		}
-	};
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
+    };
 
-	/**
-	 * This method is registered with the percent slider to cause an action to
-	 * occur when it is changed.
-	 */
-	private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (!hasFocus) {
-				try {
-					int temp = Integer.valueOf(((TextView) v).getText()
-							.toString());
-					if (temp > 100)
-						temp = 100;
-					if (temp < 0)
-						temp = 0;
-					percentSlider.setProgress(temp);
-				} catch (NumberFormatException e) {
-					percentLabel.setText(String.valueOf(percentSlider
-							.getProgress()));
-				}
-			}
-		}
-	};
+    /**
+     * This method is registered with the percent slider to cause an action to
+     * occur when it is changed.
+     */
+    private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                try {
+                    int temp = Integer.valueOf(((TextView) v).getText()
+                            .toString());
+                    if (temp > 100)
+                        temp = 100;
+                    if (temp < 0)
+                        temp = 0;
+                    percentSlider.setProgress(temp);
+                } catch (NumberFormatException e) {
+                    percentLabel.setText(String.valueOf(percentSlider
+                            .getProgress()));
+                }
+            }
+        }
+    };
 
-	/**
-	 * This method is registered with the percent label to cause an action to
-	 * occur when it is changed.
-	 */
-	private OnEditorActionListener mEditorListener = new OnEditorActionListener() {
-		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			try {
-				int temp = Integer.valueOf(v.getText().toString());
-				if (temp > 100)
-					temp = 100;
-				if (temp < 0)
-					temp = 0;
-				percentSlider.setProgress(temp);
-			} catch (NumberFormatException e) {
-				percentLabel
-						.setText(String.valueOf(percentSlider.getProgress()));
-			}
-			v.clearFocus();
-			return true;
-		}
-	};
+    /**
+     * This method is registered with the percent label to cause an action to
+     * occur when it is changed.
+     */
+    private OnEditorActionListener mEditorListener = new OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            try {
+                int temp = Integer.valueOf(v.getText().toString());
+                if (temp > 100)
+                    temp = 100;
+                if (temp < 0)
+                    temp = 0;
+                percentSlider.setProgress(temp);
+            } catch (NumberFormatException e) {
+                percentLabel
+                        .setText(String.valueOf(percentSlider.getProgress()));
+            }
+            v.clearFocus();
+            return true;
+        }
+    };
 }

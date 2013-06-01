@@ -27,39 +27,39 @@ import android.widget.TextView;
  * An extension of the SimpleCursorAdapter to allow a list item to properly
  * display the desired data on the second line. In this case it's the number of
  * hours an entry represents.
- * 
+ *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class ReportCursorAdapter extends SimpleCursorAdapter {
-	private static final String TAG = "ReportCursorAdapter";
+    private static final String TAG = "ReportCursorAdapter";
 
-	/**
-	 * @param context
-	 * @param layout
-	 * @param c
-	 * @param from
-	 * @param to
-	 */
-	public ReportCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to) {
-		super(context, layout, c, from, to);
-	}
+    /**
+     * @param context
+     * @param layout
+     * @param c
+     * @param from
+     * @param to
+     */
+    public ReportCursorAdapter(Context context, int layout, Cursor c,
+                               String[] from, int[] to) {
+        super(context, layout, c, from, to);
+    }
 
-	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
 
-		// TODO: Remove the extraneous tempString and temp declarations and
-		// assignments.
-		TextView t = (TextView) view.findViewById(android.R.id.text1);
-		String tempString = cursor.getString(cursor
-				.getColumnIndex(TimeSheetDbAdapter.KEY_TASK));
-		t.setText(tempString);
+        // TODO: Remove the extraneous tempString and temp declarations and
+        // assignments.
+        TextView t = (TextView) view.findViewById(android.R.id.text1);
+        String tempString = cursor.getString(cursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TASK));
+        t.setText(tempString);
 
-		t = (TextView) view.findViewById(android.R.id.text2);
-		Float temp = cursor.getFloat(cursor
+        t = (TextView) view.findViewById(android.R.id.text2);
+        Float temp = cursor.getFloat(cursor
                 .getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
-		Log.d(TAG, "bindView: task: " + tempString + ", total: "
-				+ String.format("%1.2f hours", temp));
-		t.setText(String.format("%1.2f hours", temp));
-	}
+        Log.d(TAG, "bindView: task: " + tempString + ", total: "
+                + String.format("%1.2f hours", temp));
+        t.setText(String.format("%1.2f hours", temp));
+    }
 }

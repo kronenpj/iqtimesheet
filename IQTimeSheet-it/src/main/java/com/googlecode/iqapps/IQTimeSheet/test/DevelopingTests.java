@@ -19,7 +19,6 @@ import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
-
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.testtools.Positron;
@@ -27,59 +26,59 @@ import com.jayway.android.robotium.solo.Solo;
 
 @Suppress
 public class DevelopingTests extends
-		ActivityInstrumentationTestCase2<TimeSheetActivity> {
-	// private Log log = LogFactory.getLog(DevelopingTests.class);
-	// private static final String TAG = "TimeSheetActivityTest";
-	private static final int SLEEPTIME = 50;
+        ActivityInstrumentationTestCase2<TimeSheetActivity> {
+    // private Log log = LogFactory.getLog(DevelopingTests.class);
+    // private static final String TAG = "TimeSheetActivityTest";
+    private static final int SLEEPTIME = 50;
 
-	private TimeSheetActivity mActivity;
-	private Solo solo;
-	private Instrumentation mInstr;
-	private Positron mPositron;
+    private TimeSheetActivity mActivity;
+    private Solo solo;
+    private Instrumentation mInstr;
+    private Positron mPositron;
 
-	public DevelopingTests(Class<TimeSheetActivity> activityClass) {
-		super(activityClass);
-	}
+    public DevelopingTests(Class<TimeSheetActivity> activityClass) {
+        super(activityClass);
+    }
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		mInstr = getInstrumentation();
-		mPositron = new Positron(mInstr);
-		mPositron.prefBackup();
-		// startActivity("com.googlecode.iqapps.IQTimeSheet",
-		// "com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity");
-		mInstr = getInstrumentation();
-		solo = new Solo(mInstr, getActivity());
-	}
+        mInstr = getInstrumentation();
+        mPositron = new Positron(mInstr);
+        mPositron.prefBackup();
+        // startActivity("com.googlecode.iqapps.IQTimeSheet",
+        // "com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity");
+        mInstr = getInstrumentation();
+        solo = new Solo(mInstr, getActivity());
+    }
 
-	public void tearDown() {
-		solo.finishOpenedActivities();
-		mPositron.prefRestore();
-	}
+    public void tearDown() {
+        solo.finishOpenedActivities();
+        mPositron.prefRestore();
+    }
 
-	public void empty() {
-		setAlignTimePreferenceViaMenu(1); // 2-minute
-	}
+    public void empty() {
+        setAlignTimePreferenceViaMenu(1); // 2-minute
+    }
 
-	private void setAlignTimePreferenceViaMenu(int downCount) {
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		int menuItemID = mActivity.getOptionsMenu()
-				.getItem(MenuItems.SETTINGS.ordinal()).getItemId();
-		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-		solo.sleep(SLEEPTIME);
+    private void setAlignTimePreferenceViaMenu(int downCount) {
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+        int menuItemID = mActivity.getOptionsMenu()
+                .getItem(MenuItems.SETTINGS.ordinal()).getItemId();
+        assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
+        assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+        solo.sleep(SLEEPTIME);
 
-		while (solo.scrollUpList(0))
-			;
-		solo.clickOnText(mActivity.getResources().getStringArray(
-				com.googlecode.iqapps.IQTimeSheet.R.array.alignminutetext)[downCount]);
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-		solo.sleep(SLEEPTIME);
-		solo.clickOnText(mActivity
-				.getString(com.googlecode.iqapps.IQTimeSheet.R.string.accept));
-		solo.goBack();
-	}
+        while (solo.scrollUpList(0))
+            ;
+        solo.clickOnText(mActivity.getResources().getStringArray(
+                com.googlecode.iqapps.IQTimeSheet.R.array.alignminutetext)[downCount]);
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+        solo.sleep(SLEEPTIME);
+        solo.clickOnText(mActivity
+                .getString(com.googlecode.iqapps.IQTimeSheet.R.string.accept));
+        solo.goBack();
+    }
 }

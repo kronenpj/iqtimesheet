@@ -2,46 +2,44 @@ package com.googlecode.iqapps.IQTimeSheet.test;
 
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.Suppress;
 import android.view.KeyEvent;
-
 import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.jayway.android.robotium.solo.Solo;
 
 //@Suppress //#$##
 public class AboutDialogTest extends
-		ActivityInstrumentationTestCase2<TimeSheetActivity> {
-	// private static final String TAG = "AboutDialogTest";
-	private Instrumentation mInstr;
-	private TimeSheetActivity mActivity;
-	private Solo solo;
+        ActivityInstrumentationTestCase2<TimeSheetActivity> {
+    // private static final String TAG = "AboutDialogTest";
+    private Instrumentation mInstr;
+    private TimeSheetActivity mActivity;
+    private Solo solo;
 
-	public AboutDialogTest() {
-		super(TimeSheetActivity.class);
-	}
+    public AboutDialogTest() {
+        super(TimeSheetActivity.class);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		mActivity = getActivity();
-		mInstr = getInstrumentation();
-		solo = new Solo(mInstr, mActivity);
-	}
+        mActivity = getActivity();
+        mInstr = getInstrumentation();
+        solo = new Solo(mInstr, mActivity);
+    }
 
-	public void testdismissTest() {
-		mActivity = getActivity();
+    public void testdismissTest() {
+        mActivity = getActivity();
 
-		mInstr = getInstrumentation();
+        mInstr = getInstrumentation();
 
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		int menuItemID = mActivity.getOptionsMenu()
-				.getItem(MenuItems.ABOUT.ordinal()).getItemId();
-		assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-		assertTrue(solo.waitForActivity("AboutDialog", 750));
-		while (!solo.getCurrentActivity().isTaskRoot()) {
-			solo.goBack();
-		}
-		solo.goBack();
-	}
+        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+        int menuItemID = mActivity.getOptionsMenu()
+                .getItem(MenuItems.ABOUT.ordinal()).getItemId();
+        assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
+        assertTrue(solo.waitForActivity("AboutDialog", 750));
+        while (!solo.getCurrentActivity().isTaskRoot()) {
+            solo.goBack();
+        }
+        solo.goBack();
+    }
 }
