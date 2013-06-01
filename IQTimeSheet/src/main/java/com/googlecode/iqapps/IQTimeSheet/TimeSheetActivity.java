@@ -45,11 +45,11 @@ import com.googlecode.iqapps.TimeHelpers;
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class TimeSheetActivity extends ListActivity {
-    private static final String TAG = "TimeSheetActivity";
+	private static final String TAG = "TimeSheetActivity";
 	private static final int CROSS_DIALOG = 0x40;
 	private static final int CONFIRM_RESTORE_DIALOG = 0x41;
-    private static final int MY_NOTIFICATION_ID = 0x73;
-    static PreferenceHelper prefs;
+	private static final int MY_NOTIFICATION_ID = 0x73;
+	static PreferenceHelper prefs;
 	TimeSheetDbAdapter db;
 	Menu optionsMenu;
 	private ListView tasksList;
@@ -59,12 +59,12 @@ public class TimeSheetActivity extends ListActivity {
 	private Cursor taskCursor;
 	private Cursor reportCursor;
 	private String applicationName;
-    private String myPackage;
-    static NotificationManager notificationManager;
-    static Notification myNotification;
-    static PendingIntent contentIntent;
+	private String myPackage;
+	static NotificationManager notificationManager;
+	static Notification myNotification;
+	static PendingIntent contentIntent;
 
-    /**
+	/**
 	 * Called when the activity is first created.
 	 */
 	@Override
@@ -88,12 +88,12 @@ public class TimeSheetActivity extends ListActivity {
 		Resources res = getResources();
 		applicationName = res.getString(R.string.app_name);
 
-        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent notificationIntent =
-                new Intent(this, TimeSheetActivity.class);
-        contentIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		Intent notificationIntent =
+				new Intent(this, TimeSheetActivity.class);
+		contentIntent =
+				PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 		try {
 			// Register listeners for the list items.
@@ -111,7 +111,7 @@ public class TimeSheetActivity extends ListActivity {
 			Log.e(TAG, "register listeners: " + e.toString());
 		}
 
-        // Register the context menu below with the tasksList ListView.
+		// Register the context menu below with the tasksList ListView.
 		registerForContextMenu(tasksList);
 	}
 
@@ -137,7 +137,7 @@ public class TimeSheetActivity extends ListActivity {
 		}
 
 		try {
-            checkBoundary();
+			checkBoundary();
 		} catch (Exception e) {
 			Log.d(TAG, "onResume: (checkBoundary) " + e.toString());
 		}
@@ -169,7 +169,11 @@ public class TimeSheetActivity extends ListActivity {
 		} catch (Exception e) {
 			Log.i(TAG, "onDestroy: (reportCursor) " + e.toString());
 		}
-		db.close();
+		try {
+			db.close();
+		} catch (Exception e) {
+			Log.i(TAG, "onDestroy: (db close) " + e.toString());
+		}
 
 		super.onDestroy();
 	}
@@ -196,6 +200,8 @@ public class TimeSheetActivity extends ListActivity {
 			}
 		} catch (NullPointerException e) {
 			Log.d(TAG, "Using cursor: " + e.toString());
+		} catch (Exception e) {
+			Log.d(TAG, "Using cursor: " + e.toString());
 		}
 		try {
 			c.close();
@@ -208,45 +214,50 @@ public class TimeSheetActivity extends ListActivity {
 		if (timeOut == 0 && lastTaskID == taskID) {
 			db.closeEntry(taskID);
 			tasksList.clearChoices();
-            stopNotification();
+			stopNotification();
 			Log.d(TAG, "Closed task ID: " + taskID);
 		} else {
 			if (timeOut == 0)
 				db.closeEntry();
 			db.createEntry(taskID);
 
-            lastRowID = db.lastClockEntry();
-            Cursor tempClockCursor = db.fetchEntry(lastRowID);
-            long timeIn = tempClockCursor.getLong(tempClockCursor
-                    .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+			lastRowID = db.lastClockEntry();
+			Cursor tempClockCursor = db.fetchEntry(lastRowID);
+			long timeIn = tempClockCursor.getLong(tempClockCursor
+					.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+			try {
+				tempClockCursor.close();
+			} catch (IllegalStateException e) {
+				Log.d(TAG, "processChange " + e.toString());
+			}
 
-            startNotification(db.getTaskNameByID(taskID), timeIn);
+			startNotification(db.getTaskNameByID(taskID), timeIn);
 			Log.d(TAG, "processChange ID from " + lastTaskID + " to " + taskID);
 		}
-        // Refresh the UI to reflect the change.
-        fillData();
-        setSelected();
+		// Refresh the UI to reflect the change.
+		fillData();
+		setSelected();
 	}
 
-    void startNotification(String taskName, long timeIn) {
-        if (! prefs.getPersistentNotification()) {
-            return;
-        }
-        myNotification = new NotificationCompat.Builder(this)
-                .setContentTitle(getResources().getString(R.string.notification_title))
-                .setContentText(taskName)
-                .setWhen(timeIn)
-                .setContentIntent(contentIntent)
-                .setAutoCancel(false)
-                .setSmallIcon(R.drawable.icon_small)
-                .build();
+	void startNotification(String taskName, long timeIn) {
+		if (! prefs.getPersistentNotification()) {
+			return;
+		}
+		myNotification = new NotificationCompat.Builder(this)
+				.setContentTitle(getResources().getString(R.string.notification_title))
+				.setContentText(taskName)
+				.setWhen(timeIn)
+				.setContentIntent(contentIntent)
+				.setAutoCancel(false)
+				.setSmallIcon(R.drawable.icon_small)
+				.build();
 
-        notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
-    }
+		notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
+	}
 
-    void stopNotification() {
-        notificationManager.cancel(MY_NOTIFICATION_ID);
-    }
+	void stopNotification() {
+		notificationManager.cancel(MY_NOTIFICATION_ID);
+	}
 
 	/**
 	 * Encapsulate what's needed to open the database and make sure something is
@@ -259,8 +270,7 @@ public class TimeSheetActivity extends ListActivity {
 			db.open();
 		} catch (SQLException e) {
 			Log.e(TAG, e.toString());
-			Toast.makeText(this, e.toString() + " - Exiting", Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(this, e.toString() + " - Exiting", Toast.LENGTH_LONG).show();
 			finish();
 		}
 
@@ -278,6 +288,11 @@ public class TimeSheetActivity extends ListActivity {
 	}
 
 	void reloadTaskCursor() {
+		try {
+			taskCursor.close();
+		} catch (Exception e) {
+			Log.i(TAG, "reloadTaskCursor " + e.toString());
+		}
 		taskCursor = db.fetchAllTaskEntries();
 	}
 
@@ -308,7 +323,7 @@ public class TimeSheetActivity extends ListActivity {
 		}
 
 		tasksList.setAdapter(new MyArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_single_choice, items));
+				android.R.layout.simple_list_item_single_choice, items));
 		updateTitleBar();
 	}
 
@@ -336,11 +351,16 @@ public class TimeSheetActivity extends ListActivity {
 					+ String.format("(%.2fh / %.2fh)", accum, hoursPerDay
 							- accum));
 		}
+		try {
+			reportCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "updateTitleBar " + e.toString());
+		}
 	}
 
-    /**
-     * Checks database entries for cross-boundary entries.
-     */
+	/**
+	 * Checks database entries for cross-boundary entries.
+	 */
 	void checkBoundary() {
 		long lastRowID = db.lastClockEntry();
 		Cursor tempClockCursor = db.fetchEntry(lastRowID);
@@ -350,6 +370,11 @@ public class TimeSheetActivity extends ListActivity {
 
 		if (timeOut < 1) {
 			tempClockCursor.close();
+			try {
+				tempClockCursor.close();
+			} catch (Exception e) {
+				Log.d(TAG, "checkBoundary " + e.toString());
+			}
 			return;
 		}
 
@@ -358,14 +383,18 @@ public class TimeSheetActivity extends ListActivity {
 		long boundary = TimeHelpers.millisToEndOfDay(timeIn);
 
 		// Want to know whether the last entry follows: timeIn < boundary < timeOut
-        // TODO: Should this be something more interactive?
-        if (timeIn<boundary && boundary<timeOut) {
-            Toast.makeText(this, "checkBoundary: Found entry.", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "checkBoundary: Clipping: row " + lastRowID + ", timeOut: " + timeOut);
-            db.updateEntry(lastRowID, -1, null, timeIn, boundary);
-        }
+		// TODO: Should this be something more interactive?
+		if (timeIn<boundary && boundary<timeOut) {
+			Toast.makeText(this, "checkBoundary: Found entry.", Toast.LENGTH_LONG).show();
+			Log.d(TAG, "checkBoundary: Clipping: row " + lastRowID + ", timeOut: " + timeOut);
+			db.updateEntry(lastRowID, -1, null, timeIn, boundary);
+		}
 
-		tempClockCursor.close();
+		try {
+			tempClockCursor.close();
+		} catch (Exception e) {
+			Log.d(TAG, "checkBoundary " + e.toString());
+		}
 	}
 
 	void checkCrossDayClock() {
@@ -377,7 +406,11 @@ public class TimeSheetActivity extends ListActivity {
 				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
 
 		if (timeOut != 0) {
-			tempClockCursor.close();
+			try {
+				tempClockCursor.close();
+			} catch (IllegalStateException e) {
+				Log.d(TAG, "checkCrossDayClock " + e.toString());
+			}
 			return;
 		}
 
@@ -385,10 +418,10 @@ public class TimeSheetActivity extends ListActivity {
 		// tempClockCursor.moveToFirst();
 		long now = TimeHelpers.millisNow();
 		long lastClockIn = tempClockCursor.getLong(tempClockCursor
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-        long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn, prefs.getTimeZone());
+				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+		long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn, prefs.getTimeZone());
 
-        // Calculate where we are in relation to the boundary time.
+		// Calculate where we are in relation to the boundary time.
 		long delta = now - boundary;
 
 		// If the difference in days is 1, ask. If it's greater than 1, just
@@ -404,18 +437,23 @@ public class TimeSheetActivity extends ListActivity {
 		// Less than one day
 		if (delta < 1) {
 			Log.d(TAG, "Ignoring.  delta = " + delta);
-        } else if ((now - TimeHelpers.millisToStartOfDay(lastClockIn)) > 86400000) { // More than one day.
-            Log.d(TAG, "Closing entry.  delta = " + delta / 86400000.0 + " days.");
-            Log.d(TAG, "With timeOut = " + boundary);
-            db.closeEntry(lastTaskID, boundary);
-            taskCursor.requery();
-        } else if (delta > 0) { // Now is beyond the boundary.
+		} else if ((now - TimeHelpers.millisToStartOfDay(lastClockIn)) > 86400000) { // More than one day.
+			Log.d(TAG, "Closing entry.  delta = " + delta / 86400000.0 + " days.");
+			Log.d(TAG, "With timeOut = " + boundary);
+			db.closeEntry(lastTaskID, boundary);
+			reloadTaskCursor();
+			//taskCursor.requery();
+		} else if (delta > 0) { // Now is beyond the boundary.
 			Log.d(TAG, "Opening dialog.  delta = " + delta);
-            db.closeEntry(lastTaskID, boundary);
+			db.closeEntry(lastTaskID, boundary);
 			showDialog(CROSS_DIALOG);
 		}
 
-		tempClockCursor.close();
+		try {
+			tempClockCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "taskIDForLastClockEntry " + e.toString());
+		}
 	}
 
 	void setSelected() {
@@ -454,6 +492,7 @@ public class TimeSheetActivity extends ListActivity {
 		tasksList.clearChoices();
 		// Iterate over the entire cursor to find the name of the
 		// entry that is to be selected.
+		if (taskCursor == null) reloadTaskCursor();
 		taskCursor.moveToFirst();
 		while (!taskCursor.isAfterLast()) {
 			Log.d(TAG, "Checking item at " + taskCursor.getPosition());
@@ -744,49 +783,50 @@ public class TimeSheetActivity extends ListActivity {
 			}
 			return true;
 		}
-        if (item.getItemId() == MenuItems.SCRUB_DB.ordinal()) {
-            long lastDBentry = db.lastTaskEntry();
-            Cursor taskCursor = db.fetchAllTimeEntries();
-            taskCursor.moveToFirst();
-            int count = 0;
-            while (!taskCursor.isAfterLast()) {
-                long timeOut = taskCursor.getLong(taskCursor
-                        .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
-                long timeIn = taskCursor.getLong(taskCursor
-                        .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-                long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
+		if (item.getItemId() == MenuItems.SCRUB_DB.ordinal()) {
+			long lastDBentry = db.lastTaskEntry();
+			//Cursor taskCursor = db.fetchAllTimeEntries();
+			reloadTaskCursor();
+			taskCursor.moveToFirst();
+			int count = 0;
+			while (!taskCursor.isAfterLast()) {
+				long timeOut = taskCursor.getLong(taskCursor
+						.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+				long timeIn = taskCursor.getLong(taskCursor
+						.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+				long boundary = TimeHelpers.millisToEoDBoundary(timeIn, prefs.getTimeZone()) - 1000;
 
-                long thisRowID = taskCursor.getPosition();
-                // Want to know whether the last entry follows: timeIn < boundary < timeOut
-                // TODO: Should this be something more interactive?
-                if (timeOut > 0) {
-                    if (timeIn < boundary && boundary < timeOut) {
-                        Log.d(TAG, "ScrubDB: Clipping: row " + thisRowID);
-                        Log.d(TAG, "----> timeIn: " + TimeHelpers.millisToTimeDate(timeIn));
-                        Log.d(TAG, "---> timeOut: " + TimeHelpers.millisToTimeDate(timeOut));
-                        Log.d(TAG, "--> boundary: " + TimeHelpers.millisToTimeDate(boundary));
-                        // Toast.makeText(this, "ScrubDB: Found entry: " + lastRowID, Toast.LENGTH_LONG).show();
-                        db.updateEntry(thisRowID, -1, null, timeIn, boundary);
-                        count++;
-                    }
-                }
+				long thisRowID = taskCursor.getPosition();
+				// Want to know whether the last entry follows: timeIn < boundary < timeOut
+				// TODO: Should this be something more interactive?
+				if (timeOut > 0) {
+					if (timeIn < boundary && boundary < timeOut) {
+						Log.d(TAG, "ScrubDB: Clipping: row " + thisRowID);
+						Log.d(TAG, "----> timeIn: " + TimeHelpers.millisToTimeDate(timeIn));
+						Log.d(TAG, "---> timeOut: " + TimeHelpers.millisToTimeDate(timeOut));
+						Log.d(TAG, "--> boundary: " + TimeHelpers.millisToTimeDate(boundary));
+						// Toast.makeText(this, "ScrubDB: Found entry: " + lastRowID, Toast.LENGTH_LONG).show();
+						db.updateEntry(thisRowID, -1, null, timeIn, boundary);
+						count++;
+					}
+				}
 
-                // Locate "dangling" 0-timeOut entries, except the last one...
-                if ((timeOut == 0) && (thisRowID < lastDBentry)) {
-                    Log.d(TAG, "ScrubDB: Closing: row " + thisRowID);
-                    Log.d(TAG, "--> with time: " + TimeHelpers.millisToTimeDate(boundary));
-                    db.updateEntry(thisRowID, -1, null, timeIn, boundary);
-                    count++;
-                }
-                taskCursor.moveToNext();
-            }
-            Toast.makeText(this, "ScrubDB: Fixed " + count + " entries.", Toast.LENGTH_LONG).show();
-            return true;
-        }
-        return false;
-    }
+				// Locate "dangling" 0-timeOut entries, except the last one...
+				if ((timeOut == 0) && (thisRowID < lastDBentry)) {
+					Log.d(TAG, "ScrubDB: Closing: row " + thisRowID);
+					Log.d(TAG, "--> with time: " + TimeHelpers.millisToTimeDate(boundary));
+					db.updateEntry(thisRowID, -1, null, timeIn, boundary);
+					count++;
+				}
+				taskCursor.moveToNext();
+			}
+			Toast.makeText(this, "ScrubDB: Fixed " + count + " entries.", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		return false;
+	}
 
-    /**
+	/**
 	 * This method is called when the sending activity has finished, with the
 	 * result it supplied.
 	 * 

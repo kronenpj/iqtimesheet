@@ -16,9 +16,6 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import java.sql.Date;
-import java.util.TimeZone;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -30,16 +27,17 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.googlecode.iqapps.TimeHelpers;
+
+import java.sql.Date;
 
 /**
  * Simple time sheet database helper class. Defines the basic CRUD operations
  * for the time sheet application, and gives the ability to list all entries as
  * well as retrieve or modify a specific entry.
- * 
+ *
  * Graciously stolen from the Android Notepad example.
- * 
+ *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class TimeSheetDbAdapter {
@@ -236,7 +234,7 @@ public class TimeSheetDbAdapter {
 	 * Open the time sheet database. If it cannot be opened, try to create a new
 	 * instance of the database. If it cannot be created, throw an exception to
 	 * signal the failure
-	 * 
+	 *
 	 * @return this (self reference, allowing this to be chained in an
 	 *         initialization call)
 	 * @throws SQLException
@@ -263,10 +261,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createEntry(String task) {
@@ -278,10 +276,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createEntry(long chargeno) {
@@ -292,12 +290,12 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
 	 * @param timeIn
 	 *            the time in milliseconds of the clock-in
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createEntry(String task, long timeIn) {
@@ -309,12 +307,12 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
 	 * @param timeIn
 	 *            the time in milliseconds of the clock-in
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createEntry(long chargeno, long timeIn) {
@@ -337,10 +335,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry() {
@@ -350,7 +348,11 @@ public class TimeSheetDbAdapter {
 		c.moveToFirst();
 
 		long chargeno = c.getLong(0);
-		c.close();
+		try {
+			c.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "closeEntry "+ e.toString());
+		}
 		return closeEntry(chargeno);
 	}
 
@@ -358,10 +360,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry(String task) {
@@ -373,10 +375,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number ID provided. If the entry
 	 * is successfully created return the new rowId for that note, otherwise
 	 * return a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry(long chargeno) {
@@ -387,10 +389,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number ID provided. If the entry
 	 * is successfully created return the new rowId for that note, otherwise
 	 * return a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry(String task, long timeOut) {
@@ -402,12 +404,12 @@ public class TimeSheetDbAdapter {
 	 * Close an existing time entry using the charge number provided. If the
 	 * entry is successfully created return the new rowId for that note,
 	 * otherwise return a -1 to indicate failure.
-	 * 
+	 *
 	 * @param chargeno
 	 *            the charge number for the entry
 	 * @param timeOut
 	 *            the time in milliseconds of the clock-out
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry(long chargeno, long timeOut) {
@@ -421,16 +423,16 @@ public class TimeSheetDbAdapter {
 			// timeOut = origTimeOut;
 		}
 
-        // Stop the time closed from landing on a day boundary.
-        Cursor taskCursor = fetchEntry(lastClockEntry());
-        taskCursor.moveToFirst();
-        long timeIn = taskCursor.getLong(taskCursor
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-        // TODO: Need a boolean preference to enable / disable this...
-        long boundary = TimeHelpers.millisToEoDBoundary(timeIn, TimeSheetActivity.prefs.getTimeZone());
-        if (timeOut > boundary) timeOut = boundary - 1000;
+		// Stop the time closed from landing on a day boundary.
+		Cursor taskCursor = fetchEntry(lastClockEntry());
+		taskCursor.moveToFirst();
+		long timeIn = taskCursor.getLong(taskCursor
+				.getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+		// TODO: Need a boolean preference to enable / disable this...
+		long boundary = TimeHelpers.millisToEoDBoundary(timeIn, TimeSheetActivity.prefs.getTimeZone());
+		if (timeOut > boundary) timeOut = boundary - 1000;
 
-        ContentValues updateValues = new ContentValues();
+		ContentValues updateValues = new ContentValues();
 		updateValues.put(KEY_TIMEOUT, timeOut);
 
 		Log.d(TAG, "closeEntry: " + chargeno);
@@ -444,7 +446,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Delete the entry with the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            code id of note to delete
 	 * @return true if deleted, false otherwise
@@ -456,7 +458,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor over the list of all entries in the database
-	 * 
+	 *
 	 * @return Cursor over all database entries
 	 */
 	public Cursor fetchAllTimeEntries() {
@@ -467,7 +469,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor positioned at the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of entry to retrieve
 	 * @return Cursor positioned to matching entry, if found
@@ -486,7 +488,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor positioned at the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of entry to retrieve
 	 * @return Cursor positioned to matching entry, if found
@@ -507,7 +509,7 @@ public class TimeSheetDbAdapter {
 	 * Update the note using the details provided. The entry to be updated is
 	 * specified using the rowId, and it is altered to use the title and body
 	 * values passed in
-	 * 
+	 *
 	 * @param rowId
 	 *            id of entry to update
 	 * @param title
@@ -537,7 +539,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long taskIDForLastClockEntry() {
@@ -547,14 +549,18 @@ public class TimeSheetDbAdapter {
 				new String[] { KEY_CHARGENO }, KEY_ROWID + " = " + lastClockID,
 				null, null, null, null, null);
 
-        if (mCursor == null) return -1;
+		if (mCursor == null) return -1;
 
-        mCursor.moveToFirst();
+		mCursor.moveToFirst();
 
 		if (mCursor.isAfterLast()) return -1;
 
 		long response = mCursor.getLong(0);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "taskIDForLastClockEntry " + e.toString());
+		}
 
 		return response;
 	}
@@ -562,7 +568,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long lastTaskEntry() {
@@ -570,13 +576,17 @@ public class TimeSheetDbAdapter {
 				new String[] { MAX_ROW }, null, null, null, null, null, null);
 		mCursor.moveToFirst();
 		long response = mCursor.getLong(0);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "lastTaskEntry " + e.toString());
+		}
 		return response;
 	}
 
 	/**
 	 * Return a Cursor positioned at the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of entry to retrieve
 	 * @return Cursor positioned to matching entry, if found
@@ -596,7 +606,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the entry in the timesheet table immediately prior to the
 	 * supplied entry.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long getPreviousClocking(long rowID) {
@@ -616,8 +626,11 @@ public class TimeSheetDbAdapter {
 				thisTimeIn = Long.parseLong(response);
 				Log.d(TAG, "timeIn for current: " + thisTimeIn);
 			} catch (IllegalStateException e) {
-			} finally {
+			}
+			try {
 				mCurrent.close();
+			} catch (IllegalStateException e) {
+				Log.d(TAG, "getPreviousClocking " + e.toString());
 			}
 		}
 
@@ -625,14 +638,17 @@ public class TimeSheetDbAdapter {
 		Cursor mCursor = mDb.query(true, CLOCK_DATABASE_TABLE,
 				new String[] { KEY_ROWID }, KEY_ROWID + " < '" + rowID + "'",
 				null, null, null, KEY_ROWID + " desc", "1");
-		if (mCursor != null) {
-			mCursor.moveToFirst();
-		} else {
-			return -1;
-		}
+		if (mCursor == null) return -1;
+
+		mCursor.moveToFirst();
+
 		String response = mCursor.getString(0);
 		long prevRowID = Long.parseLong(response);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "getPreviousClocking " + e.toString());
+		}
 		Log.d(TAG, "rowID for previous: " + prevRowID);
 
 		// Get the tuple from the just-retrieved row
@@ -660,7 +676,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the entry in the timesheet table immediately following to the
 	 * supplied entry.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	// TODO: Should this be chronological or ordered by _id? as it is now?
@@ -681,8 +697,11 @@ public class TimeSheetDbAdapter {
 				thisTimeOut = Long.parseLong(response);
 				Log.d(TAG, "timeOut for current: " + thisTimeOut);
 			} catch (IllegalStateException e) {
-			} finally {
+			}
+			try {
 				mCurrent.close();
+			} catch (IllegalStateException e) {
+				Log.d(TAG, "getNextClocking " + e.toString());
 			}
 		}
 
@@ -697,11 +716,9 @@ public class TimeSheetDbAdapter {
 			Log.i(TAG, e.toString());
 			return -1;
 		}
-		if (mCursor != null) {
-			mCursor.moveToFirst();
-		} else {
-			return -1;
-		}
+		if (mCursor == null) return -1;
+
+		mCursor.moveToFirst();
 
 		long nextRowID = -1;
 		try {
@@ -715,8 +732,11 @@ public class TimeSheetDbAdapter {
 			Log.i(TAG, "Caught exception retrieving row.");
 			Log.i(TAG, e.toString());
 			return -1;
-		} finally {
+		}
+		try {
 			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "getNextClocking " + e.toString());
 		}
 		Log.d(TAG, "rowID for next: " + nextRowID);
 
@@ -730,9 +750,13 @@ public class TimeSheetDbAdapter {
 				nextTimeIn = Long.parseLong(response1);
 				Log.d(TAG, "timeIn for next: " + nextTimeIn);
 			} catch (IllegalStateException e) {
-			} finally {
-				mCurrent.close();
 			}
+			try {
+				mCurrent.close();
+			} catch (IllegalStateException e) {
+				Log.d(TAG, "taskIDForLastClockEntry " + e.toString());
+			}
+
 			// If the two tasks don't flow from one to another, don't allow the
 			// entry to be adjusted.
 			if (thisTimeOut != nextTimeIn)
@@ -745,7 +769,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long lastClockEntry() {
@@ -755,14 +779,18 @@ public class TimeSheetDbAdapter {
 			mCursor.moveToFirst();
 		}
 		long response = mCursor.getLong(0);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "lastClockEntry " + e.toString());
+		}
 		return response;
 	}
 
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long[] todaysEntries() {
@@ -779,7 +807,7 @@ public class TimeSheetDbAdapter {
 				new String[] { KEY_ROWID }, KEY_TIMEIN + ">=? and ("
 						+ KEY_TIMEOUT + "<=? or " + KEY_TIMEOUT + "= 0)",
 				new String[] { String.valueOf(todayStart),
-                        String.valueOf(todayEnd) }, null, null,
+						String.valueOf(todayEnd) }, null, null,
 				null, null);
 		if (mCursor != null) {
 			mCursor.moveToLast();
@@ -800,13 +828,17 @@ public class TimeSheetDbAdapter {
 			rows[mCursor.getPosition()] = mCursor.getLong(0);
 			mCursor.moveToNext();
 		}
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "todaysEntries " + e.toString());
+		}
 		return rows;
 	}
 
 	/**
 	 * Retrieve list of entries for the day surrounding the supplied time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public Cursor getEntryReportCursor(boolean distinct, String[] columns,
@@ -816,7 +848,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the supplied time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	protected Cursor getEntryReportCursor(boolean distinct, String[] columns,
@@ -845,7 +877,7 @@ public class TimeSheetDbAdapter {
 				+ end);
 		Cursor mCursor = mDb.query(distinct, ENTRYREPORT_VIEW, columns,
 				selection, new String[] {String.valueOf(start),
-                    String.valueOf(end)}, groupBy, null,
+					String.valueOf(end)}, groupBy, null,
 				orderBy, null);
 		if (mCursor != null) {
 			mCursor.moveToLast();
@@ -866,7 +898,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the supplied time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public Cursor getSummaryCursor(boolean distinct, String[] columns,
@@ -876,7 +908,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the supplied time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	protected Cursor getSummaryCursor(boolean distinct, String[] columns,
@@ -947,7 +979,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the current time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public Cursor dayEntryReport() {
@@ -956,7 +988,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the supplied time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public Cursor dayEntryReport(long time) {
@@ -979,10 +1011,10 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Method that retrieves the entries for a single specified day from the
 	 * entry view.
-	 * 
+	 *
 	 * @param time
 	 *            Time, in milliseconds, within the day to be summarized.
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	public Cursor daySummaryOld(long time) {
@@ -1010,7 +1042,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Method that retrieves the entries for today from the entry view.
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	public Cursor daySummary() {
@@ -1019,7 +1051,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Method that retrieves the entries for today from the entry view.
-	 * 
+	 *
 	 * @param omitOpen
 	 *            Omit an open task in the result
 	 * @return Cursor over the results.
@@ -1030,7 +1062,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Method that retrieves the entries for today from the entry view.
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	public Cursor daySummary(long time) {
@@ -1040,12 +1072,12 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Method that populates a temporary table for a single specified day from
 	 * the entry view.
-	 * 
+	 *
 	 * @param time
 	 *            The time around which to report
 	 * @param omitOpen
 	 *            Include an open task in the result
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	// TODO: Finish and replace the other routines with it.
@@ -1078,7 +1110,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the day surrounding the current time.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public Cursor weekEntryReport() {
@@ -1087,7 +1119,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Retrieve list of entries for the week surrounding the supplied time.
-	 * 
+	 *
 	 * @return Cursor over the entries
 	 */
 	public Cursor weekEntryReport(long time) {
@@ -1114,7 +1146,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Method that retrieves the entries for a single specified day from the
 	 * entry view.
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	public Cursor weekSummaryOld(long time) {
@@ -1147,7 +1179,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Method that populates a temporary table for a single specified day from
 	 * the entry view.
-	 * 
+	 *
 	 * @return Cursor over the results.
 	 */
 	// TODO: Finish and replace the other routines with it.
@@ -1211,7 +1243,7 @@ public class TimeSheetDbAdapter {
 		String omitOpenQuery = "";
 		if (omitOpen) {
 			omitOpenQuery = CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT
-                    + " > 0 " + " AND ";
+					+ " > 0 " + " AND ";
 		}
 		// TODO: Figure out autoalign
 		final String populateTemp1 = "INSERT INTO " + SUMMARY_DATABASE_TABLE
@@ -1262,10 +1294,10 @@ public class TimeSheetDbAdapter {
 	 * Create a new time entry using the charge number provided. If the entry is
 	 * successfully created return the new rowId for that number, otherwise
 	 * return a -1 to indicate failure.
-	 * 
+	 *
 	 * @param task
 	 *            the charge number text for the entry
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createTask(String task) {
@@ -1282,14 +1314,14 @@ public class TimeSheetDbAdapter {
 	 * Create a new split time entry using the information provided. If the
 	 * entry is successfully created return the new rowId for that number,
 	 * otherwise return a -1 to indicate failure.
-	 * 
+	 *
 	 * @param task
 	 *            the charge number text for the entry
 	 * @param parent
 	 *            The parent for the split task
 	 * @param percentage
 	 *            The amount this task contributes to the task.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long createTask(String task, String parent, int percentage) {
@@ -1326,7 +1358,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return a Cursor over the list of all tasks in the database eligible to be
 	 * split task parents.
-	 * 
+	 *
 	 * @return Cursor over all database entries
 	 */
 	public Cursor fetchParentTasks() {
@@ -1338,7 +1370,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor over the list of all entries in the database
-	 * 
+	 *
 	 * @return Cursor over all database entries
 	 */
 	public Cursor fetchAllTaskEntries() {
@@ -1351,7 +1383,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor over the list of all entries in the database
-	 * 
+	 *
 	 * @return Cursor over all database entries
 	 */
 	public Cursor fetchAllDisabledTasks() {
@@ -1363,7 +1395,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return a Cursor positioned at the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of entry to retrieve
 	 * @return Cursor positioned to matching entry, if found
@@ -1385,7 +1417,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public long getTaskIDByName(String name) {
@@ -1399,7 +1431,11 @@ public class TimeSheetDbAdapter {
 			return -1;
 		}
 		long response = mCursor.getLong(0);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "getTaskIDByName " + e.toString());
+		}
 		Log.d(TAG, "getTaskIDByName: " + response);
 		return response;
 	}
@@ -1407,7 +1443,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Retrieve the last entry in the table. Hopefully this will be deprecated
 	 * in favor of something a little more robust in the future.
-	 * 
+	 *
 	 * @return rowId or -1 if failed
 	 */
 	public String getTaskNameByID(long taskID) {
@@ -1430,6 +1466,8 @@ public class TimeSheetDbAdapter {
 				mCursor.close();
 			} catch (SQLException e) {
 				Log.i(TAG, "getTaskNameByID: " + e.toString());
+			} catch (IllegalStateException e) {
+				Log.i(TAG, "getTaskNameByID: " + e.toString());
 			} catch (CursorIndexOutOfBoundsException e) {
 				Log.i(TAG, "getTaskNameByID: " + e.toString());
 			}
@@ -1440,7 +1478,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1452,7 +1490,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1462,7 +1500,7 @@ public class TimeSheetDbAdapter {
 		long ret;
 		Cursor mCursor = null;
 		String query = "SELECT " + KEY_CHARGENO + " FROM "
-                + TASKSPLIT_DATABASE_TABLE + " WHERE " + KEY_TASK + " = ?";
+				+ TASKSPLIT_DATABASE_TABLE + " WHERE " + KEY_TASK + " = ?";
 		Log.d(TAG, "getSplitTaskParent: query: " + query + ", " + rowId);
 		try {
 			// mCursor = mDb.query(true, TASKSPLIT_DATABASE_TABLE,
@@ -1483,6 +1521,9 @@ public class TimeSheetDbAdapter {
 		} catch (CursorIndexOutOfBoundsException e) {
 			Log.i(TAG, "getSplitTaskParent: " + e.toString());
 			ret = 0;
+		} catch (IllegalStateException e) {
+			Log.i(TAG, "getSplitTaskParent: " + e.toString());
+			ret = 0;
 		}
 		Log.d(TAG, "getSplitTaskParent: " + ret + " / " + getTaskNameByID(ret));
 		return ret;
@@ -1490,7 +1531,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1502,7 +1543,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return the entry that matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1522,6 +1563,9 @@ public class TimeSheetDbAdapter {
 		} catch (SQLException e) {
 			Log.i(TAG, "getSplitTaskPercentage: " + e.toString());
 			ret = 0;
+		} catch (IllegalStateException e) {
+			Log.i(TAG, "getSplitTaskPercentage: " + e.toString());
+			ret = 0;
 		}
 		Log.d(TAG, "getSplitTaskPercentage: " + ret);
 		return ret;
@@ -1530,7 +1574,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return the flag whether the task that matches the given rowId is a split
 	 * task.
-	 * 
+	 *
 	 * @param splitTask
 	 *            name of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1543,7 +1587,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return the flag whether the task that matches the given rowId is a split
 	 * task.
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
@@ -1564,6 +1608,9 @@ public class TimeSheetDbAdapter {
 		} catch (SQLException e) {
 			Log.i(TAG, "getSplitTaskPercentage: " + e.toString());
 			ret = 0;
+		} catch (IllegalStateException e) {
+			Log.i(TAG, "getSplitTaskPercentage: " + e.toString());
+			ret = 0;
 		}
 		Log.d(TAG, "getSplitTaskFlag: " + ret);
 		return ret;
@@ -1571,7 +1618,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Return the number of children whose parent matches the given rowId
-	 * 
+	 *
 	 * @param rowId
 	 *            id of task to retrieve
 	 * @return Number of "children" of this task, 0 if none.
@@ -1591,6 +1638,9 @@ public class TimeSheetDbAdapter {
 		} catch (SQLException e) {
 			Log.i(TAG, "getQuantityOfSplits: " + e.toString());
 			ret = 0;
+		} catch (IllegalStateException e) {
+			Log.i(TAG, "getQuantityOfSplits: " + e.toString());
+			ret = 0;
 		}
 		Log.d(TAG, "getQuantityOfSplits: " + ret);
 		return ret;
@@ -1598,7 +1648,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Rename specified task
-	 * 
+	 *
 	 * @param origName
 	 *            Old task name
 	 * @param newName
@@ -1621,7 +1671,7 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Alter specified split task
-	 * 
+	 *
 	 * @param rowID
 	 *            Task ID to change
 	 * @param parentID
@@ -1812,12 +1862,16 @@ public class TimeSheetDbAdapter {
 		mDb.update(TASKS_DATABASE_TABLE, updateValues,
 				KEY_ROWID + "=" + taskID, null);
 
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "incrementTaskUsage " + e.toString());
+		}
 	}
 
 	/**
 	 * Return a Cursor positioned at the note that matches the given rowId
-	 * 
+	 *
 	 * @return Cursor positioned to matching note, if found
 	 * @throws SQLException
 	 *             if note could not be found/retrieved
@@ -1831,7 +1885,11 @@ public class TimeSheetDbAdapter {
 			mCursor.moveToFirst();
 		}
 		int response = mCursor.getInt(0);
-		mCursor.close();
+		try {
+			mCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "fetchVersion " + e.toString());
+		}
 		return response;
 	}
 
@@ -1850,7 +1908,7 @@ public class TimeSheetDbAdapter {
 	 * @param values      the ContentValues being updated
 	 * @param whereClause clause to limit updates
 	 * @param whereArgs   arguments to fill any ? in the whereClause.
-     * @return The number of rows affected
+	 * @return The number of rows affected
 	 */
 	public int runUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
 		Log.d(TAG, "Running update on '" + table + "'...");
@@ -1863,7 +1921,7 @@ public class TimeSheetDbAdapter {
 	 * @param table       the table being updated
 	 * @param nullColHack Null column hack.
 	 * @param values      the ContentValues being updated
-     * @return The rowID is the just-inserted row
+	 * @return The rowID is the just-inserted row
 	 */
 	public long runInsert(String table, String nullColHack, ContentValues values) {
 		Log.d(TAG, "Running update on '" + table + "'...");
@@ -1883,6 +1941,7 @@ public class TimeSheetDbAdapter {
 				Log.d(TAG, tasksC.getLong(0) + " / " + tasksC.getString(1));
 				tasksC.moveToNext();
 			}
+			tasksC.close();
 		} catch (Exception e) {
 			Log.d(TAG, "Cursor usage threw " + e.toString());
 		}

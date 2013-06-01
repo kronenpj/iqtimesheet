@@ -37,14 +37,14 @@ import android.widget.TextView.OnEditorActionListener;
 
 /**
  * Activity to provide an interface to add a task to the database.
- * 
+ *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class AddTaskHandler extends Activity {
 	private static final String TAG = "AddTaskHandler";
 
 	private EditText textField;
-    private TextView parentLabel;
+	private TextView parentLabel;
 	private Spinner taskSpinner;
 	private CheckBox splitTask;
 	private EditText percentLabel;
@@ -100,8 +100,8 @@ public class AddTaskHandler extends Activity {
 		setContentView(R.layout.addtask);
 
 		textField = (EditText) findViewById(R.id.EditTask);
-        Button[] child = new Button[]{(Button) findViewById(R.id.ChangeTask),
-                (Button) findViewById(R.id.CancelEdit)};
+		Button[] child = new Button[]{(Button) findViewById(R.id.ChangeTask),
+				(Button) findViewById(R.id.CancelEdit)};
 		parentLabel = (TextView) findViewById(R.id.ParentLabel);
 		taskSpinner = (Spinner) findViewById(R.id.TaskSpinner);
 		splitTask = (CheckBox) findViewById(R.id.SplitTask);
@@ -115,29 +115,34 @@ public class AddTaskHandler extends Activity {
 		percentLabel.setOnFocusChangeListener(mTextListener);
 		percentLabel.setOnEditorActionListener(mEditorListener);
 
-        for (Button aChild : child) {
-            try {
-                aChild.setOnClickListener(mButtonListener);
-            } catch (NullPointerException e) {
-                Log.e(TAG, "NullPointerException adding listener to button.");
-            }
-        }
+		for (Button aChild : child) {
+			try {
+				aChild.setOnClickListener(mButtonListener);
+			} catch (NullPointerException e) {
+				Log.e(TAG, "NullPointerException adding listener to button.");
+			}
+		}
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void closeCursorDB() {
+		Log.i(TAG, "Entering closeCursorDB");
 		try {
 			parents.close();
 		} catch (SQLException e) {
 			Log.i(TAG, "Cursor close: " + e.toString());
 		}
+
+		Log.i(TAG, "Closing db connection");
 		try {
 			db.close();
 		} catch (SQLException e) {
 			Log.i(TAG, "Database close: " + e.toString());
 		}
+
+		Log.i(TAG, "Leaving closeCursorDB");
 	}
 
 	/**
@@ -223,21 +228,21 @@ public class AddTaskHandler extends Activity {
 	private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
 		@Override
 		public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
-                try {
-                    int temp = Integer.valueOf(((TextView) v).getText()
-                            .toString());
-                    if (temp > 100)
-                        temp = 100;
-                    if (temp < 0)
-                        temp = 0;
-                    percentSlider.setProgress(temp);
-                } catch (NumberFormatException e) {
-                    percentLabel.setText(String.valueOf(percentSlider
-                            .getProgress()));
-                }
-            }
-        }
+			if (!hasFocus) {
+				try {
+					int temp = Integer.valueOf(((TextView) v).getText()
+							.toString());
+					if (temp > 100)
+						temp = 100;
+					if (temp < 0)
+						temp = 0;
+					percentSlider.setProgress(temp);
+				} catch (NumberFormatException e) {
+					percentLabel.setText(String.valueOf(percentSlider
+							.getProgress()));
+				}
+			}
+		}
 	};
 
 	/**
