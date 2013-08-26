@@ -1,142 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.googlecode.iqapps.IQTimeSheet</groupId>
-	<artifactId>IQTimeSheet</artifactId>
-	<version>1.0.0</version>
-	<packaging>apk</packaging>
-	<name>IQTimeSheet</name>
+
+	<groupId>com.googlecode.iqapps</groupId>
+	<artifactId>IQTimeSheet-parent</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>IQTimeSheet - Parent</name>
+
+	<scm>
+		<url>https://code.google.com/p/iqapps.iqtimesheet2</url>
+		<connection>scm:git:https://code.google.com/p/iqapps.iqtimesheet2</connection>  
+		<developerConnection>scm:git:https://code.google.com/p/iqapps.iqtimesheet2</developerConnection>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<email>kronenpj@gmail.com</email>
+			<name>Paul Kronenwetter</name>
+			<url>https://code.google.com/p/iqapps</url>
+			<id>kronenpj</id>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>IQTimeSheet</module>
+		<module>IQTimeSheet-it</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<!-- Plugins -->
-		<android-maven-plugin.version>3.6.1</android-maven-plugin.version>
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-		<api.platform>16</api.platform>
-
-		<!-- Dependencies -->
-		<actionBarSherlock.version>4.4.0</actionBarSherlock.version>
-		<android.version>4.1.1.4</android.version>
-		<roboguice.version>2.0</roboguice.version>
-		<roboguice-sherlock.version>1.5</roboguice-sherlock.version>
+		<!--
+		<platform.version>4.1.1.4</platform.version>
+		-->
+		<platform.version>2.3.3</platform.version>
+		<android.plugin.version>3.6.0</android.plugin.version>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>android</artifactId>
-			<scope>provided</scope>
-			<version>${android.version}</version>
-		</dependency>
-		<!-- <dependency> <groupId>com.google.android</groupId> <artifactId>support-v4</artifactId> 
-			<scope>provided</scope> <type>jar</type> <version>r18</version> </dependency> -->
-		<dependency>
-			<groupId>com.actionbarsherlock</groupId>
-			<artifactId>actionbarsherlock</artifactId>
-			<version>${actionBarSherlock.version}</version>
-			<type>apklib</type>
-		</dependency>
-		<dependency>
-			<groupId>com.actionbarsherlock</groupId>
-			<artifactId>actionbarsherlock</artifactId>
-			<version>${actionBarSherlock.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.roboguice</groupId>
-			<artifactId>roboguice</artifactId>
-			<version>${roboguice.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.rtyley.</groupId>
-			<artifactId>roboguice-sherlock</artifactId>
-			<version>${roboguice-sherlock.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.android.robotium</groupId>
-			<artifactId>robotium-solo</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>android-test</artifactId>
-			<version>4.1.1.4</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.google.android</groupId>
+				<artifactId>android</artifactId>
+				<version>${platform.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.android</groupId>
+				<artifactId>android-test</artifactId>
+				<version>${platform.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-				<version>${android-maven-plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<sdk>
-						<platform>${api.platform}</platform>
-					</sdk>
-					<!-- Proguard is not skipped by default -->
-					<proguard>
-						<skip>false</skip>
-					</proguard>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
 				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
+					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+					<artifactId>android-maven-plugin</artifactId>
+					<version>${android.plugin.version}</version>
 					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											com.jayway.maven.plugins.android.generation2
-										</groupId>
-										<artifactId>
-											android-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.6.1,)
-										</versionRange>
-										<goals>
-											<goal>
-												generate-sources
-											</goal>
-											<goal>proguard</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
+						<sdk>
+							<platform>16</platform>
+						</sdk> 
 					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
