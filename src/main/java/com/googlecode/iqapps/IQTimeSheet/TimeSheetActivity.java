@@ -16,7 +16,12 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ListActivity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +41,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -239,7 +245,7 @@ public class TimeSheetActivity extends ListActivity {
                 .setContentIntent(contentIntent)
                 .setAutoCancel(false)
                 .setSmallIcon(R.drawable.icon_small)
-                .build();
+                .getNotification();
 
         notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
     }
