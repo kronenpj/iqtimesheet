@@ -232,7 +232,6 @@ public class EditTaskHandler extends Activity {
      * occur when it is pressed.
      */
     private OnClickListener mCheckBoxListener = new OnClickListener() {
-        @Override
         public void onClick(View v) {
             // Perform action on selected list item.
 
@@ -257,19 +256,16 @@ public class EditTaskHandler extends Activity {
      * occur when it is changed.
      */
     private OnSeekBarChangeListener mSeekBarListener = new OnSeekBarChangeListener() {
-        @Override
         public void onProgressChanged(SeekBar seekBar, int progress,
                                       boolean fromUser) {
             // percentLabel.setText(String.valueOf(seekBar.getProgress()));
             percentLabel.setText(String.valueOf(progress));
         }
 
-        @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             seekBar.requestFocus();
         }
 
-        @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
         }
     };
@@ -279,7 +275,6 @@ public class EditTaskHandler extends Activity {
      * occur when it is changed.
      */
     private OnFocusChangeListener mTextListener = new OnFocusChangeListener() {
-        @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (!hasFocus) {
                 try {
@@ -303,7 +298,6 @@ public class EditTaskHandler extends Activity {
      * occur when it is changed.
      */
     private OnEditorActionListener mEditorListener = new OnEditorActionListener() {
-        @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             try {
                 int temp = Integer.valueOf(v.getText().toString());

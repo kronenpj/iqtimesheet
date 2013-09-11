@@ -58,7 +58,6 @@ public class ChangeDate extends Activity {
         dateChange = (DatePicker) findViewById(R.id.DatePicker01);
 
         DatePicker.OnDateChangedListener mDateChangedListener = new OnDateChangedListener() {
-            @Override
             public void onDateChanged(DatePicker view, int year,
                                       int monthOfYear, int dayOfMonth) {
                 updateDateText(year, monthOfYear, dayOfMonth);

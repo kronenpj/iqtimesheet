@@ -2,14 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>com.googlecode.iqapps</groupId>
 		<artifactId>IQTimeSheet-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
 	</parent>
 
-	<groupId>com.googlecode.iqapps</groupId>
+	<groupId>com.googlecode.iqapps.iqtimesheet</groupId>
 	<artifactId>IQTimeSheet</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>apk</packaging>
@@ -19,15 +20,44 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>${platform.version}</version>
+			<!-- <version>${platform.version}</version> -->
 			<scope>provided</scope>
 		</dependency>
-		<!-- Support library (aka compatibility library) from the central repository as well
-		note that this uses default scope (NOT provided) since the library will need to be added to your apk -->
+		<!-- Actionbarsherlock library from the central repository 
+			note that this uses default scope (NOT provided) since the library 
+			will need to be added to your apk -->
 		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>support-v4</artifactId>
-			<version>r7</version>
+			<groupId>com.actionbarsherlock</groupId>
+			<artifactId>actionbarsherlock</artifactId>
+			<version>4.4.0</version>
+			<type>apklib</type>
+		</dependency>
+		<dependency>
+		    <groupId>com.actionbarsherlock</groupId>
+		    <artifactId>actionbarsherlock</artifactId>
+		    <version>4.4.0</version>
+		    <type>jar</type>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.roboguice</groupId>
+			<artifactId>roboguice</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.rtyley</groupId>
+			<artifactId>roboguice-sherlock</artifactId>
+			<version>${roboguice-sherlock.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -41,32 +71,32 @@
 		</plugins>
 	</build>
 
- 
 
-<profiles>
-    <profile>
-            <id>emma</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-                    <configuration>
-                      <!-- emma start -->
-                        <emma>
-                             <enable>true</enable>
-                             <classFolders>${project.basedir}/target/classes/</classFolders>
-                        <outputMetaFile>${project.basedir}/target/emma/coverage.em</outputMetaFile>
-                        </emma>
-                        <!-- emma stop -->
-                        <dex>
-                             <noLocals>true</noLocals> <!--  must be set for emma -->
-                        </dex>
-                    </configuration>
-                    <extensions>true</extensions>
-                   </plugin>
-                 </plugins>
-              </build>
-    </profile>
-</profiles>
+
+	<profiles>
+		<profile>
+			<id>emma</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+						<artifactId>android-maven-plugin</artifactId>
+						<configuration>
+							<!-- emma start -->
+							<emma>
+								<enable>true</enable>
+								<classFolders>${project.basedir}/target/classes/</classFolders>
+								<outputMetaFile>${project.basedir}/target/emma/coverage.em</outputMetaFile>
+							</emma>
+							<!-- emma stop -->
+							<dex>
+								<noLocals>true</noLocals> <!-- must be set for emma -->
+							</dex>
+						</configuration>
+						<extensions>true</extensions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

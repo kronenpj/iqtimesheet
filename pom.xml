@@ -38,11 +38,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!--
 		<platform.version>4.1.1.4</platform.version>
-		-->
+		<!--
 		<platform.version>2.3.3</platform.version>
-		<android.plugin.version>3.6.0</android.plugin.version>
+		-->
+		<android.plugin.version>3.6.1</android.plugin.version>
+		<roboguice-sherlock.version>1.5</roboguice-sherlock.version>
 	</properties>
 
 	<dependencyManagement>
@@ -51,19 +52,46 @@
 				<groupId>com.google.android</groupId>
 				<artifactId>android</artifactId>
 				<version>${platform.version}</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
 				<artifactId>android-test</artifactId>
 				<version>${platform.version}</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
 			</dependency>
+			<!--
+			<dependency>
+				<groupId>com.google.android</groupId>
+				<artifactId>support-v4</artifactId>
+				<version>r7</version>
+			</dependency>
+			-->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
+			</dependency>
+			<dependency>
+				<groupId>com.github.rtyley</groupId>
+				<artifactId>roboguice-sherlock</artifactId>
+				<version>${roboguice-sherlock.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.inject</groupId>
+				<artifactId>javax.inject</artifactId>
+				<version>1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.roboguice</groupId>
+				<artifactId>roboguice</artifactId>
+				<version>2.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -80,10 +108,15 @@
 							<platform>16</platform>
 						</sdk> 
 					</configuration>
+					<extensions>true</extensions>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
