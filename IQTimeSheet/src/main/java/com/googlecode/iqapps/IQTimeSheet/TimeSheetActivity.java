@@ -23,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,6 +35,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
+import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockDialogFragment;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.googlecode.iqapps.TimeHelpers;
 
@@ -69,6 +69,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	static Notification myNotification;
 	static PendingIntent contentIntent;
 
+	// @Override
 	protected void onCreateOff(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
@@ -267,9 +268,13 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 		case R.id.menu_restore: {
 			if (prefs.getSDCardBackup()) {
-				showDialog(CONFIRM_RESTORE_DIALOG);
+				// showDialog(CONFIRM_RESTORE_DIALOG);
+				RoboSherlockDialogFragment newFragment = MyYesNoDialog
+						.newInstance(R.string.restore_title);
+				newFragment.show(getSupportFragmentManager(), "restore_dialog");
 			}
 			// FIXME: Need to trigger task list view refresh here!!!
+			refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));	
 			setSelected();
 			return true;
 		}
@@ -788,12 +793,13 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			TimeSheetDbAdapter db = new TimeSheetDbAdapter(
 					getApplicationContext());
 			float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
-			String date = TimeHelpers.millisToDate(day);
+			String date = TimeHelpers.millisToDate(TimeHelpers
+					.millisToEndOfWeek(day));
 			Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date);
 
 			TextView headerView = (TextView) myReportList.getRootView()
 					.findViewById(R.id.weekheader);
-			headerView.setText("Week Report - " + date);
+			headerView.setText("Week Report - W/E: " + date);
 
 			TextView footerView = (TextView) myReportList.getRootView()
 					.findViewById(R.id.weekfooter);
@@ -956,5 +962,18 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	 */
 	public Menu getOptionsMenu() {
 		return optionsMenu;
+	}
+
+	public void doRestoreClick() {
+		if (!SDBackup.doSDRestore(TimeSheetDbAdapter.DATABASE_NAME,
+				getApplicationContext().getPackageName())) {
+			Log.w(TAG, "doSDRestore failed.");
+			Toast.makeText(getApplicationContext(), "Database restore failed.",
+					Toast.LENGTH_LONG).show();
+		} else {
+			Log.i(TAG, "doSDRestore succeeded.");
+			Toast.makeText(getApplicationContext(),
+					"Database restore succeeded.", Toast.LENGTH_SHORT).show();
+		}
 	}
 }
