@@ -934,7 +934,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 
 		footerView.setText("Hours worked this week: "
-				+ String.format("%.2f", accum) + "\nHours remaining this day: "
+				+ String.format("%.2f", accum) + "\nHours remaining this week: "
 				+ String.format("%.2f", weekHours - accum));
 
 		try {
