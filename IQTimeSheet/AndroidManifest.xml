@@ -36,6 +36,7 @@
         <activity android:name="MyPreferenceActivity" />
         <activity android:name="ReviveTaskHandler" />
         <activity android:name="WeekReport" />
-    </application>
+        <activity android:name="ReviveTaskFragment" />
+        </application>
 
 </manifest>
