@@ -16,7 +16,6 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -27,9 +26,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.actionbarsherlock.view.MenuItem;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 
 /**
  * Activity to provide an interface to change a task name and, potentially,
@@ -37,7 +45,7 @@ import android.widget.TextView.OnEditorActionListener;
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class EditTaskHandler extends Activity {
+public class EditTaskHandler extends RoboSherlockFragmentActivity {
     private static final String TAG = "EditTaskHandler";
     private EditText textField;
     private String oldData;
@@ -171,6 +179,8 @@ public class EditTaskHandler extends Activity {
                 Log.e(TAG, "NullPointerException adding listener to button.");
             }
         }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -293,7 +303,19 @@ public class EditTaskHandler extends Activity {
         }
     };
 
-    /**
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home: {
+			finish();
+			return true;
+		}
+		default:
+			return super
+					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+		}
+	}
+
+	/**
      * This method is registered with the percent label to cause an action to
      * occur when it is changed.
      */

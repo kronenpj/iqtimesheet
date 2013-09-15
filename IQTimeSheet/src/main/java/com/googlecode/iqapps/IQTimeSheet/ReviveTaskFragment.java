@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 
 /**
@@ -57,6 +58,7 @@ public class ReviveTaskFragment extends RoboSherlockListActivity {
 		} catch (Exception e) {
 			Log.e(TAG, e.toString());
 		}
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		try {
 			fillData();
@@ -125,5 +127,17 @@ public class ReviveTaskFragment extends RoboSherlockListActivity {
 
 		tasksList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, items));
+	}
+
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home: {
+			finish();
+			return true;
+		}
+		default:
+			return super
+					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+		}
 	}
 }

@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -65,7 +66,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	private static final int MY_NOTIFICATION_ID = 0x73;
 	static PreferenceHelper prefs;
 
-	static NotificationManager notificationManager;
+	// static NotificationManager notificationManager;
 	static Notification myNotification;
 	static PendingIntent contentIntent;
 
@@ -157,7 +158,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				try {
 					refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
 				} catch (NullPointerException e) {
-					Log.d(TAG, "TaskAdd fillData: " + e.toString());
+					Log.d(TAG,
+							"TaskAdd refreshTaskListAdapter: " + e.toString());
 				}
 			}
 		} else if (requestCode == ActivityCodes.TASKREVIVE.ordinal()) {
@@ -165,7 +167,13 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			// adapter, we let it change the state itself rather than passing
 			// the result back to us.
 			if (resultCode == RESULT_OK) {
-				refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+				try {
+					refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+				} catch (NullPointerException e) {
+					Log.d(TAG,
+							"TaskRevive refreshTaskListAdapter: "
+									+ e.toString());
+				}
 			}
 		} else if (requestCode == ActivityCodes.TASKEDIT.ordinal()) {
 			if (resultCode == RESULT_OK) {
@@ -193,11 +201,18 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 					if (oldData != null && result != null) {
 						db.renameTask(oldData, result);
 					}
-
 				}
-				refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+				try {
+					refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+					refreshReportListAdapter((ListView) findViewById(R.id.reportList));
+					refreshWeekReportListAdapter((ListView) findViewById(R.id.weekList));
+				} catch (NullPointerException e) {
+					Log.d(TAG,
+							"TaskEdit refreshTaskListAdapter: " + e.toString());
+				}
 			}
 		}
+		db.close();
 	}
 
 	public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -228,7 +243,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 		case R.id.menu_revive_task: {
 			Intent intent = new Intent(getApplicationContext(),
-					ReviveTaskHandler.class);
+					ReviveTaskFragment.class);
 			try {
 				startActivityForResult(intent,
 						ActivityCodes.TASKREVIVE.ordinal());
@@ -274,7 +289,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				newFragment.show(getSupportFragmentManager(), "restore_dialog");
 			}
 			// FIXME: Need to trigger task list view refresh here!!!
-			refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));	
+			refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
 			setSelected();
 			return true;
 		}
@@ -719,141 +734,6 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			return rootView;
 		}
 
-		private void refreshReportListAdapter(ListView myReportList) {
-			Log.d(TAG, "In refreshReportListAdapter.");
-
-			TimeSheetDbAdapter db = new TimeSheetDbAdapter(
-					getApplicationContext());
-			float dayHours = TimeSheetActivity.prefs.getHoursPerDay();
-			String date = TimeHelpers.millisToDate(day);
-			Log.d(TAG, "refreshDayReportListAdapter: Updating to " + date);
-
-			TextView headerView = (TextView) myReportList.getRootView()
-					.findViewById(R.id.reportheader);
-			headerView.setText("Day Report - " + date);
-
-			TextView footerView = (TextView) myReportList.getRootView()
-					.findViewById(R.id.reportfooter);
-			footerView
-					.setText("Hours worked this day: 0\nHours remaining this day: "
-							+ String.format("%.2f", dayHours));
-
-			Cursor timeEntryCursor;// = db.dayEntryReport();
-
-			// If the day being reported is the current week, most probably
-			// where the current open task exists, then include it, otherwise
-			// omit.
-			if (day >= TimeHelpers.millisToStartOfDay(TimeHelpers.millisNow())
-					&& day <= TimeHelpers.millisToEndOfDay(TimeHelpers
-							.millisNow())) {
-				timeEntryCursor = db.daySummary(day, false);
-			} else {
-				timeEntryCursor = db.daySummary(day, true);
-			}
-
-			try {
-				timeEntryCursor.moveToFirst();
-			} catch (NullPointerException e) {
-				Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
-				myReportList.setAdapter(null);
-				return;
-			} catch (Exception e) {
-				Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
-				return;
-			}
-
-			float accum = 0;
-			while (!timeEntryCursor.isAfterLast()) {
-				accum = accum
-						+ timeEntryCursor.getFloat(timeEntryCursor
-								.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
-				timeEntryCursor.moveToNext();
-			}
-
-			footerView.setText("Hours worked this day: "
-					+ String.format("%.2f", accum)
-					+ "\nHours remaining this day: "
-					+ String.format("%.2f", dayHours - accum));
-
-			try {
-				myReportList.setAdapter(new ReportCursorAdapter(getActivity(),
-						R.layout.mysimple_list_item_2, timeEntryCursor,
-						new String[] { TimeSheetDbAdapter.KEY_TASK,
-								TimeSheetDbAdapter.KEY_TOTAL }, new int[] {
-								android.R.id.text1, android.R.id.text2 }));
-				Log.i(TAG, "reportList.setAdapter: updated");
-			} catch (Exception e) {
-				Log.e(TAG, "reportList.setAdapter: " + e.toString());
-			}
-		}
-
-		private void refreshWeekReportListAdapter(ListView myReportList) {
-			Log.d(TAG, "In refreshWeekReportListAdapter.");
-
-			TimeSheetDbAdapter db = new TimeSheetDbAdapter(
-					getApplicationContext());
-			float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
-			String date = TimeHelpers.millisToDate(TimeHelpers
-					.millisToEndOfWeek(day));
-			Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date);
-
-			TextView headerView = (TextView) myReportList.getRootView()
-					.findViewById(R.id.weekheader);
-			headerView.setText("Week Report - W/E: " + date);
-
-			TextView footerView = (TextView) myReportList.getRootView()
-					.findViewById(R.id.weekfooter);
-			footerView
-					.setText("Hours worked this week: 0\nHours remaining this week: "
-							+ String.format("%.2f", weekHours));
-
-			Cursor timeEntryCursor;// = db.weekEntryReport();
-
-			// If the day being reported is the current week, most probably
-			// where the current open task exists, then include it, otherwise
-			// omit.
-			if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow())
-					&& day <= TimeHelpers.millisToEndOfWeek(TimeHelpers
-							.millisNow())) {
-				timeEntryCursor = db.weekSummary(day, false);
-			} else {
-				timeEntryCursor = db.weekSummary(day, true);
-			}
-
-			try {
-				timeEntryCursor.moveToFirst();
-			} catch (NullPointerException e) {
-				Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
-				myReportList.setAdapter(null);
-				return;
-			} catch (Exception e) {
-				Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
-				return;
-			}
-
-			float accum = 0;
-			while (!timeEntryCursor.isAfterLast()) {
-				accum = accum
-						+ timeEntryCursor.getFloat(timeEntryCursor
-								.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
-				timeEntryCursor.moveToNext();
-			}
-
-			footerView.setText("Hours worked this week: "
-					+ String.format("%.2f", accum)
-					+ "\nHours remaining this day: "
-					+ String.format("%.2f", weekHours - accum));
-
-			try {
-				myReportList.setAdapter(new ReportCursorAdapter(getActivity(),
-						R.layout.mysimple_list_item_2, timeEntryCursor,
-						new String[] { TimeSheetDbAdapter.KEY_TASK,
-								TimeSheetDbAdapter.KEY_TOTAL }, new int[] {
-								android.R.id.text1, android.R.id.text2 }));
-			} catch (Exception e) {
-				Log.e(TAG, "reportList.setAdapter: " + e.toString());
-			}
-		}
 	}
 
 	void clearSelected() {
@@ -871,7 +751,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		Log.d(TAG, "clearSelected");
 		myTaskList.clearChoices();
 		for (int i = 0; i < myTaskList.getCount(); i++)
-			((Checkable) myTaskList.getChildAt(i)).setChecked(false);
+			try {
+				((Checkable) myTaskList.getChildAt(i)).setChecked(false);
+			} catch (NullPointerException e) {
+				Log.d(TAG, "NullPointerException at item " + i);
+			}
 	}
 
 	void setSelected() {
@@ -921,7 +805,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	}
 
 	void refreshTaskListAdapter(ListView myTaskList) {
-		Log.d(TAG, "refreshTaskListAdapter");
+		Log.d(TAG, "In refreshTaskListAdapter");
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
 		db.open();
 		// (Re-)Populate the ListView with an array adapter with the task items.
@@ -929,6 +813,140 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, db
 						.getTasksList()));
+	}
+
+	void refreshReportListAdapter(ListView myReportList) {
+		Log.d(TAG, "In refreshReportListAdapter");
+
+		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+
+		float dayHours = TimeSheetActivity.prefs.getHoursPerDay();
+		String date = TimeHelpers.millisToDate(day);
+		Log.d(TAG, "refreshReportListAdapter: Updating to " + date);
+
+		TextView headerView = (TextView) myReportList.getRootView()
+				.findViewById(R.id.reportheader);
+		headerView.setText("Day Report - " + date);
+
+		TextView footerView = (TextView) myReportList.getRootView()
+				.findViewById(R.id.reportfooter);
+		footerView
+				.setText("Hours worked this day: 0\nHours remaining this day: "
+						+ String.format("%.2f", dayHours));
+
+		Cursor timeEntryCursor;// = db.dayEntryReport();
+
+		// If the day being reported is the current week, most probably
+		// where the current open task exists, then include it, otherwise
+		// omit.
+		if (day >= TimeHelpers.millisToStartOfDay(TimeHelpers.millisNow())
+				&& day <= TimeHelpers.millisToEndOfDay(TimeHelpers.millisNow())) {
+			timeEntryCursor = db.daySummary(day, false);
+		} else {
+			timeEntryCursor = db.daySummary(day, true);
+		}
+
+		try {
+			timeEntryCursor.moveToFirst();
+		} catch (NullPointerException e) {
+			Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
+			myReportList.setAdapter(null);
+			return;
+		} catch (Exception e) {
+			Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
+			return;
+		}
+
+		float accum = 0;
+		while (!timeEntryCursor.isAfterLast()) {
+			accum = accum
+					+ timeEntryCursor.getFloat(timeEntryCursor
+							.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
+			timeEntryCursor.moveToNext();
+		}
+
+		footerView.setText("Hours worked this day: "
+				+ String.format("%.2f", accum) + "\nHours remaining this day: "
+				+ String.format("%.2f", dayHours - accum));
+
+		try {
+			myReportList.setAdapter(new ReportCursorAdapter(
+					getApplicationContext(), R.layout.mysimple_list_item_2,
+					timeEntryCursor, new String[] {
+							TimeSheetDbAdapter.KEY_TASK,
+							TimeSheetDbAdapter.KEY_TOTAL }, new int[] {
+							android.R.id.text1, android.R.id.text2 }));
+			Log.i(TAG, "reportList.setAdapter: updated");
+		} catch (Exception e) {
+			Log.e(TAG, "reportList.setAdapter: " + e.toString());
+		}
+	}
+
+	void refreshWeekReportListAdapter(ListView myReportList) {
+		Log.d(TAG, "In refreshWeekReportListAdapter");
+
+		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+		float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
+		String date = TimeHelpers.millisToDate(TimeHelpers
+				.millisToEndOfWeek(day));
+		Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date);
+
+		TextView headerView = (TextView) myReportList.getRootView()
+				.findViewById(R.id.weekheader);
+		headerView.setText("Week Report - W/E: " + date);
+
+		TextView footerView = (TextView) myReportList.getRootView()
+				.findViewById(R.id.weekfooter);
+		footerView
+				.setText("Hours worked this week: 0\nHours remaining this week: "
+						+ String.format("%.2f", weekHours));
+
+		Cursor timeEntryCursor;// = db.weekEntryReport();
+
+		// If the day being reported is the current week, most probably
+		// where the current open task exists, then include it, otherwise
+		// omit.
+		if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow())
+				&& day <= TimeHelpers
+						.millisToEndOfWeek(TimeHelpers.millisNow())) {
+			timeEntryCursor = db.weekSummary(day, false);
+		} else {
+			timeEntryCursor = db.weekSummary(day, true);
+		}
+
+		try {
+			timeEntryCursor.moveToFirst();
+		} catch (NullPointerException e) {
+			Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
+			myReportList.setAdapter(null);
+			return;
+		} catch (Exception e) {
+			Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString());
+			return;
+		}
+
+		float accum = 0;
+		while (!timeEntryCursor.isAfterLast()) {
+			accum = accum
+					+ timeEntryCursor.getFloat(timeEntryCursor
+							.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
+			timeEntryCursor.moveToNext();
+		}
+
+		footerView.setText("Hours worked this week: "
+				+ String.format("%.2f", accum) + "\nHours remaining this day: "
+				+ String.format("%.2f", weekHours - accum));
+
+		try {
+			myReportList.setAdapter(new ReportCursorAdapter(
+					getApplicationContext(), R.layout.mysimple_list_item_2,
+					timeEntryCursor, new String[] {
+							TimeSheetDbAdapter.KEY_TASK,
+							TimeSheetDbAdapter.KEY_TOTAL }, new int[] {
+							android.R.id.text1, android.R.id.text2 }));
+		} catch (Exception e) {
+			Log.e(TAG, "reportList.setAdapter: " + e.toString());
+		}
 	}
 
 	void startNotification(String taskName, long timeIn) {
@@ -943,11 +961,13 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				.setContentIntent(contentIntent).setAutoCancel(false)
 				.setSmallIcon(R.drawable.icon_small).getNotification();
 
+		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
 	}
 
 	void stopNotification() {
 		try {
+			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.cancel(MY_NOTIFICATION_ID);
 		} catch (NullPointerException e) {
 			// Do nothing. The preference was probably set to false, so this was

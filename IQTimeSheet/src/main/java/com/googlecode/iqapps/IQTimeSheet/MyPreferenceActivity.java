@@ -25,90 +25,96 @@
  */
 package com.googlecode.iqapps.IQTimeSheet;
 
+import java.util.TimeZone;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-import java.util.TimeZone;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
- * @author kronenpj
- *         Borrowed heavily from ConnectBot's SettingsActivity.
+ * @author kronenpj Borrowed heavily from ConnectBot's SettingsActivity.
  */
-public class MyPreferenceActivity extends PreferenceActivity implements
-        SharedPreferences.OnSharedPreferenceChangeListener {
+public class MyPreferenceActivity extends SherlockPreferenceActivity implements
+		SharedPreferences.OnSharedPreferenceChangeListener {
+	private static final String TAG = "MyPreferenceActivity";
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+	@Override
+	protected void onResume() {
+		super.onResume();
 
-/*
-        try {
-			addPreferencesFromResource(R.xml.preferences);
-		} catch (Exception e) {
-			// Something bad happened when reading the preferences. Try to
-			// recover.
-			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(this);
+		/*
+		 * try { addPreferencesFromResource(R.xml.preferences); } catch
+		 * (Exception e) { // Something bad happened when reading the
+		 * preferences. Try to // recover. SharedPreferences prefs =
+		 * PreferenceManager .getDefaultSharedPreferences(this);
+		 * 
+		 * Editor prefEditor = prefs.edit(); // Make sure we're starting from
+		 * scratch prefEditor.clear(); prefEditor.commit();
+		 * 
+		 * // This apparently needs a new editor created...
+		 * PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
+		 * prefEditor = prefs.edit(); prefEditor.commit();
+		 * 
+		 * // Try loading the preferences again.
+		 * addPreferencesFromResource(R.xml.preferences); }
+		 */
 
-			Editor prefEditor = prefs.edit();
-			// Make sure we're starting from scratch
-			prefEditor.clear();
-			prefEditor.commit();
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getPreferenceScreen().getSharedPreferences()
+				.registerOnSharedPreferenceChangeListener(this);
+	}
 
-			// This apparently needs a new editor created...
-			PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
-			prefEditor = prefs.edit();
-			prefEditor.commit();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		addPreferencesFromResource(R.xml.preferences);
 
-			// Try loading the preferences again.
-			addPreferencesFromResource(R.xml.preferences);
+		// SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+
+		ListPreference tzAnchor = (ListPreference) findPreference("tz.anchor");
+		tzAnchor.setOrder(70);
+		String[] timeZones = TimeZone.getAvailableIDs();
+		tzAnchor.setEntries(timeZones);
+		tzAnchor.setEntryValues(timeZones);
+	}
+
+	@Override
+	protected void onPause() {
+		getPreferenceScreen().getSharedPreferences()
+				.unregisterOnSharedPreferenceChangeListener(this);
+		finish();
+		super.onPause();
+	}
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		/*
+		 * Preference pref = findPreference(key); if (pref instanceof
+		 * EditTextPreference) { EditTextPreference etp = (EditTextPreference)
+		 * pref; if (pref.getKey().equals("password")) {
+		 * pref.setSummary(etp.getText().replaceAll(".", "*")); } else {
+		 * pref.setSummary(etp.getText()); } } else if (pref instanceof
+		 * CheckBoxPreference) { if (((CheckBoxPreference) pref).isChecked())
+		 * pref.setSummary("On"); else pref.setSummary("Off"); }
+		 */
+	}
+
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home: {
+			finish();
+			return true;
 		}
-*/
-
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        addPreferencesFromResource(R.xml.preferences);
-
-        //SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-
-        ListPreference tzAnchor = (ListPreference) findPreference("tz.anchor");
-        tzAnchor.setOrder(70);
-        String[] timeZones = TimeZone.getAvailableIDs();
-        tzAnchor.setEntries(timeZones);
-        tzAnchor.setEntryValues(timeZones);
-    }
-
-    @Override
-    protected void onPause() {
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        finish();
-        super.onPause();
-    }
-
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-/*
-        Preference pref = findPreference(key);
-        if (pref instanceof EditTextPreference) {
-            EditTextPreference etp = (EditTextPreference) pref;
-            if (pref.getKey().equals("password")) {
-                pref.setSummary(etp.getText().replaceAll(".", "*"));
-            } else {
-                pref.setSummary(etp.getText());
-            }
-        } else if (pref instanceof CheckBoxPreference) {
-            if (((CheckBoxPreference) pref).isChecked())
-                pref.setSummary("On");
-            else
-                pref.setSummary("Off");
-        }
-*/
-    }
+		default:
+			return super
+					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+		}
+	}
 }

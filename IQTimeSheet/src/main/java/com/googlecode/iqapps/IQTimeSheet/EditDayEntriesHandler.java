@@ -16,7 +16,6 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -24,8 +23,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+
+import com.actionbarsherlock.view.MenuItem;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -33,7 +39,7 @@ import com.googlecode.iqapps.TimeHelpers;
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class EditDayEntriesHandler extends ListActivity {
+public class EditDayEntriesHandler extends RoboSherlockListActivity {
     private static final String TAG = "EditDayEntriesHandler";
     private ListView reportList;
     private TimeSheetDbAdapter db;
@@ -82,6 +88,7 @@ public class EditDayEntriesHandler extends ListActivity {
             Log.e(TAG, "setOnItemClickLister setup");
             Log.e(TAG, e.toString());
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -303,6 +310,18 @@ public class EditDayEntriesHandler extends ListActivity {
                 break;
         }
     }
+
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home: {
+			finish();
+			return true;
+		}
+		default:
+			return super
+					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+		}
+	}
 
     /**
      * This method is what is registered with the button to cause an action to

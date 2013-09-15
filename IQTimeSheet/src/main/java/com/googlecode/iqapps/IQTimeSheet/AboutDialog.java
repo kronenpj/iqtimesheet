@@ -25,15 +25,17 @@
  */
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.MenuItem;
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
+
 /**
  * @author kronenpj
  */
-public class AboutDialog extends Activity {
+public class AboutDialog extends RoboSherlockFragmentActivity {
     private static final String TAG = "AboutDialog";
 
     /*
@@ -49,9 +51,22 @@ public class AboutDialog extends Activity {
         setContentView(R.layout.about);
         TextView version = (TextView) findViewById(R.id.version);
         TextView aboutText = (TextView) findViewById(R.id.abouttext);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         version.setText(R.string.msg_version);
         aboutText.setText(R.string.about_summary);
         Log.d(TAG, "Falling out of onCreate.");
     }
+
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home: {
+			finish();
+			return true;
+		}
+		default:
+			return super
+					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+		}
+	}
 }
