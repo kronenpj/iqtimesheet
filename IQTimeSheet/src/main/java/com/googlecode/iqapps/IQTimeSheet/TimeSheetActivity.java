@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -106,6 +107,38 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) {
+				Log.i(TAG, "Should I handle onPageScrolled??");
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+				switch (position) {
+				case 0: {
+					Log.d(TAG, "Selected task page");
+					refreshTaskListAdapter();
+				}
+				case 1: {
+					Log.d(TAG, "Selected day report page");
+					refreshReportListAdapter();
+				}
+				case 2: {
+					Log.d(TAG, "Selected week report page");
+					refreshWeekReportListAdapter();
+				}
+				}
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				Log.i(TAG, "Should I handle onPageScrollStateChanged??");
+			}
+		});
 
 		setSelected();
 	}
@@ -203,9 +236,15 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 					}
 				}
 				try {
-					refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
-					refreshReportListAdapter((ListView) findViewById(R.id.reportList));
-					refreshWeekReportListAdapter((ListView) findViewById(R.id.weekList));
+					// refreshTaskListAdapter((ListView)
+					// findViewById(R.id.tasklistfragment));
+					// refreshReportListAdapter((ListView)
+					// findViewById(R.id.reportList));
+					// refreshWeekReportListAdapter((ListView)
+					// findViewById(R.id.weekList));
+					refreshTaskListAdapter();
+					refreshReportListAdapter();
+					refreshWeekReportListAdapter();
 				} catch (NullPointerException e) {
 					Log.d(TAG,
 							"TaskEdit refreshTaskListAdapter: " + e.toString());
@@ -282,6 +321,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			return true;
 		}
 		case R.id.menu_restore: {
+			Log.d(TAG, "in onOptionsItemSelected (restore)");
 			if (prefs.getSDCardBackup()) {
 				// showDialog(CONFIRM_RESTORE_DIALOG);
 				RoboSherlockDialogFragment newFragment = MyYesNoDialog
@@ -289,7 +329,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				newFragment.show(getSupportFragmentManager(), "restore_dialog");
 			}
 			// FIXME: Need to trigger task list view refresh here!!!
-			refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+			refreshTaskListAdapter();
 			setSelected();
 			return true;
 		}
@@ -368,6 +408,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(int dialogId) {
+		Log.d(TAG, "In onCreateDialog");
 		Dialog dialog = null;
 		AlertDialog.Builder builder;
 
@@ -407,6 +448,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			dialog = builder.create();
 			break;
 		case CONFIRM_RESTORE_DIALOG:
+			Log.d(TAG, "in onCreateDialog (restore)");
 			builder = new AlertDialog.Builder(getApplicationContext());
 			builder.setMessage(
 					"This will overwrite the database." + "  Proceed?")
@@ -415,6 +457,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
+									Log.d(TAG, "in onClick (restore dialog)");
 									if (!SDBackup.doSDRestore(
 											TimeSheetDbAdapter.DATABASE_NAME,
 											getApplicationContext()
@@ -430,6 +473,12 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 												Toast.LENGTH_SHORT).show();
 									}
 									// fillData();
+									Log.d(TAG,
+											"onCreateDialog restore dialog.  Calling refreshTaskListAdapter");
+									// refreshTaskListAdapter((ListView)
+									// findViewById(R.id.tasklistfragment));
+									refreshTaskListAdapter();
+									setSelected();
 								}
 							})
 					.setNegativeButton("No",
@@ -465,6 +514,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			Bundle args = new Bundle();
 			args.putInt(SectionFragment.ARG_SECTION_NUMBER, position + 1);
 			fragment.setArguments(args);
+
 			return fragment;
 		}
 
@@ -505,6 +555,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			Log.d(TAG, "in onCreateView (SectionFragment)");
+
 			switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
 			case 1:
 				return setupTaskListFragment(inflater, container);
@@ -523,7 +575,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		 */
 		private View setupTaskListFragment(LayoutInflater inflater,
 				ViewGroup container) {
-			Log.d(TAG, "setupTaskListFragment");
+			Log.d(TAG, "in setupTaskListFragment");
 			final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
 					getSherlockActivity().getApplicationContext());
 			db.open();
@@ -584,7 +636,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		 */
 		private View setupDayReportFragment(LayoutInflater inflater,
 				ViewGroup container) {
-			Log.d(TAG, "setupDayReportFragment");
+			Log.d(TAG, "in setupDayReportFragment");
 			final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
 					getSherlockActivity().getApplicationContext());
 			db.open();
@@ -663,7 +715,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		 */
 		private View setupWeekReportFragment(LayoutInflater inflater,
 				ViewGroup container) {
-			Log.d(TAG, "setupWeekReportFragment");
+			Log.d(TAG, "in setupWeekReportFragment");
 			final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
 					getSherlockActivity().getApplicationContext());
 			db.open();
@@ -737,7 +789,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	}
 
 	void clearSelected() {
-		Log.d(TAG, "clearSelected");
+		Log.d(TAG, "in clearSelected()");
 		ListView myTaskList = (ListView) findViewById(R.id.tasklistfragment);
 		if (myTaskList == null) {
 			Log.i(TAG, "findViewByID(tasklistfragment) returned null.");
@@ -759,7 +811,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	}
 
 	void setSelected() {
-		Log.d(TAG, "setSelected");
+		Log.d(TAG, "in setSelected()");
 		ListView myTaskList = (ListView) findViewById(R.id.tasklistfragment);
 		if (myTaskList == null) {
 			Log.i(TAG, "findViewByID(tasklistfragment) returned null.");
@@ -770,7 +822,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	}
 
 	void setSelected(ListView myTaskList) {
-		Log.d(TAG, "setSelected");
+		Log.d(TAG, "in setSelected");
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
 		db.open();
 		long timeOut = db.timeOutForLastClockEntry();
@@ -804,6 +856,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		db.close();
 	}
 
+	void refreshTaskListAdapter() {
+		Log.d(TAG, "In refreshTaskListAdapter()");
+		refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
+	}
+
 	void refreshTaskListAdapter(ListView myTaskList) {
 		Log.d(TAG, "In refreshTaskListAdapter");
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
@@ -813,13 +870,19 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, db
 						.getTasksList()));
+
+		updateTitleBar();
+	}
+
+	void refreshReportListAdapter() {
+		Log.d(TAG, "In refreshReportListAdapter()");
+		refreshReportListAdapter((ListView) findViewById(R.id.reportList));
 	}
 
 	void refreshReportListAdapter(ListView myReportList) {
 		Log.d(TAG, "In refreshReportListAdapter");
 
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-
 		float dayHours = TimeSheetActivity.prefs.getHoursPerDay();
 		String date = TimeHelpers.millisToDate(day);
 		Log.d(TAG, "refreshReportListAdapter: Updating to " + date);
@@ -882,6 +945,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 	}
 
+	void refreshWeekReportListAdapter() {
+		Log.d(TAG, "In refreshWeekReportListAdapter()");
+		refreshWeekReportListAdapter((ListView) findViewById(R.id.weekList));
+	}
+
 	void refreshWeekReportListAdapter(ListView myReportList) {
 		Log.d(TAG, "In refreshWeekReportListAdapter");
 
@@ -891,9 +959,14 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				.millisToEndOfWeek(day));
 		Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date);
 
-		TextView headerView = (TextView) myReportList.getRootView()
-				.findViewById(R.id.weekheader);
-		headerView.setText("Week Report - W/E: " + date);
+		try {
+			TextView headerView = (TextView) myReportList.getRootView()
+					.findViewById(R.id.weekheader);
+			headerView.setText("Week Report - W/E: " + date);
+		} catch (NullPointerException e) {
+			Log.d(TAG, "Caught NPE in refreshWeekReportListAdapter.");
+			return;
+		}
 
 		TextView footerView = (TextView) myReportList.getRootView()
 				.findViewById(R.id.weekfooter);
@@ -934,7 +1007,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 
 		footerView.setText("Hours worked this week: "
-				+ String.format("%.2f", accum) + "\nHours remaining this week: "
+				+ String.format("%.2f", accum)
+				+ "\nHours remaining this week: "
 				+ String.format("%.2f", weekHours - accum));
 
 		try {
@@ -975,16 +1049,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		}
 	}
 
-	/**
-	 * Return the menu object for testing.
-	 * 
-	 * @return optionMenu
-	 */
-	public Menu getOptionsMenu() {
-		return optionsMenu;
-	}
-
 	public void doRestoreClick() {
+		Log.d(TAG, "in doRestoreClick");
 		if (!SDBackup.doSDRestore(TimeSheetDbAdapter.DATABASE_NAME,
 				getApplicationContext().getPackageName())) {
 			Log.w(TAG, "doSDRestore failed.");
@@ -994,6 +1060,52 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			Log.i(TAG, "doSDRestore succeeded.");
 			Toast.makeText(getApplicationContext(),
 					"Database restore succeeded.", Toast.LENGTH_SHORT).show();
+			refreshTaskListAdapter();
+			refreshReportListAdapter();
+			// refreshWeekReportListAdapter();
+			setSelected();
 		}
+		Log.d(TAG, "leaving doRestoreClick");
+	}
+
+	void updateTitleBar() {
+		Log.d(TAG, "updateTitleBar");
+		float hoursPerDay = prefs.getHoursPerDay();
+		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+		// Display the time accumulated for today with time remaining.
+		Cursor reportCursor = db.daySummary(false);
+		if (reportCursor == null) {
+			getSupportActionBar().setSubtitle(
+					String.format("(%.2fh / %.2fh)", 0.0, hoursPerDay));
+			return;
+		}
+		reportCursor.moveToFirst();
+		if (!reportCursor.isAfterLast()) {
+			int column = reportCursor
+					.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL);
+			float accum = 0;
+			while (!reportCursor.isAfterLast()) {
+				accum = accum + reportCursor.getFloat(column);
+				reportCursor.moveToNext();
+			}
+			getSupportActionBar()
+					.setSubtitle(
+							String.format("(%.2fh / %.2fh)", accum, hoursPerDay
+									- accum));
+		}
+		try {
+			reportCursor.close();
+		} catch (IllegalStateException e) {
+			Log.d(TAG, "updateTitleBar " + e.toString());
+		}
+	}
+
+	/**
+	 * Return the menu object for testing.
+	 * 
+	 * @return optionMenu
+	 */
+	public Menu getOptionsMenu() {
+		return optionsMenu;
 	}
 }
