@@ -187,8 +187,12 @@ public class TimeSheetDbAdapter {
 
 			ContentValues initialValues = new ContentValues();
 			initialValues.put(KEY_VERSION, DATABASE_VERSION);
-
 			db.insert(DATABASE_METADATA, null, initialValues);
+
+			initialValues = new ContentValues();
+			initialValues.put(KEY_TASK, "Example task entry");
+			initialValues.put(KEY_LASTUSED, System.currentTimeMillis());
+			db.insert(TASKS_DATABASE_TABLE, null, initialValues);
 		}
 
 		@Override
@@ -247,7 +251,6 @@ public class TimeSheetDbAdapter {
 		try {
 			mDb = mDbHelper.getWritableDatabase();
 		} catch (NullPointerException e) {
-			// mDb = mCtx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 			mDb = mCtx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 		}
 		return this;
@@ -331,7 +334,8 @@ public class TimeSheetDbAdapter {
 		initialValues.put(KEY_CHARGENO, chargeno);
 		initialValues.put(KEY_TIMEIN, timeIn);
 
-		Log.d(TAG, "createEntry: " + chargeno);
+		Log.d(TAG, "createEntry: " + chargeno + " at " + timeIn + "("
+				+ TimeHelpers.millisToTimeDate(timeIn) + ")");
 		if (mDb == null)
 			open();
 		return mDb.insert(CLOCK_DATABASE_TABLE, null, initialValues);
@@ -436,13 +440,15 @@ public class TimeSheetDbAdapter {
 		// TimeSheetActivity.prefs.getTimeZone());
 		long boundary = TimeHelpers.millisToEoDBoundary(timeIn,
 				TimeSheetActivity.prefs.getTimeZone());
+		Log.d(TAG, "Boundary: " + boundary);
 		if (timeOut > boundary)
 			timeOut = boundary - 1000;
 
 		ContentValues updateValues = new ContentValues();
 		updateValues.put(KEY_TIMEOUT, timeOut);
 
-		Log.d(TAG, "closeEntry: " + chargeno);
+		Log.d(TAG, "closeEntry: " + chargeno + " at " + timeOut + "("
+				+ TimeHelpers.millisToTimeDate(timeOut) + ")");
 		if (mDb == null)
 			open();
 		return mDb.update(
@@ -974,6 +980,10 @@ public class TimeSheetDbAdapter {
 		Log.d(TAG, "getEntryCursorReport: Selection criteria: " + selection);
 		Log.d(TAG, "getEntryCursorReport: Selection arguments: " + start + ", "
 				+ end);
+		Log.d(TAG,
+				"getEntryCursorReport: Selection arguments: "
+						+ TimeHelpers.millisToTimeDate(start) + ", "
+						+ TimeHelpers.millisToTimeDate(end));
 
 		Cursor mCursor;
 		if (mDb == null)
@@ -1101,6 +1111,10 @@ public class TimeSheetDbAdapter {
 		}
 		Log.d(TAG, "getSummaryReportCursor: Selection arguments: " + start
 				+ ", " + end);
+		Log.d(TAG,
+				"getSummaryReportCursor: Selection arguments: "
+						+ TimeHelpers.millisToTimeDate(start) + ", "
+						+ TimeHelpers.millisToTimeDate(end));
 		// Cursor mCursor = mDb.query(distinct, SUMMARY_DATABASE_TABLE, columns,
 		// selection, new String[] { String.valueOf(start).toString(),
 		// String.valueOf(end).toString() }, groupBy, null,
@@ -1173,8 +1187,11 @@ public class TimeSheetDbAdapter {
 		long todayEnd = TimeHelpers.millisToEndOfDay(time);
 
 		Log.d(TAG,
-				"dayEntryReport start: " + TimeHelpers.millisToDate(todayStart));
-		Log.d(TAG, "dayEntryReport end: " + TimeHelpers.millisToDate(todayEnd));
+				"dayEntryReport start: "
+						+ TimeHelpers.millisToTimeDate(todayStart));
+		Log.d(TAG,
+				"dayEntryReport   end: "
+						+ TimeHelpers.millisToTimeDate(todayEnd));
 
 		String[] columns = new String[] { KEY_ROWID, KEY_TASK, KEY_RANGE,
 				KEY_TIMEIN, KEY_TIMEOUT };
@@ -1197,8 +1214,10 @@ public class TimeSheetDbAdapter {
 		long todayStart = TimeHelpers.millisToStartOfDay(time);
 		long todayEnd = TimeHelpers.millisToEndOfDay(time);
 
-		Log.d(TAG, "daySummary start: " + TimeHelpers.millisToDate(todayStart));
-		Log.d(TAG, "daySummary end: " + TimeHelpers.millisToDate(todayEnd));
+		Log.d(TAG,
+				"daySummary start: " + TimeHelpers.millisToTimeDate(todayStart));
+		Log.d(TAG,
+				"daySummary   end: " + TimeHelpers.millisToTimeDate(todayEnd));
 
 		String[] columns = {
 				KEY_ROWID,
@@ -1261,8 +1280,10 @@ public class TimeSheetDbAdapter {
 		long todayStart = TimeHelpers.millisToStartOfDay(time);
 		long todayEnd = TimeHelpers.millisToEndOfDay(time);
 
-		Log.d(TAG, "daySummary start: " + TimeHelpers.millisToDate(todayStart));
-		Log.d(TAG, "daySummary end: " + TimeHelpers.millisToDate(todayEnd));
+		Log.d(TAG,
+				"daySummary start: " + TimeHelpers.millisToTimeDate(todayStart));
+		Log.d(TAG,
+				"daySummary   end: " + TimeHelpers.millisToTimeDate(todayEnd));
 
 		populateSummary(todayStart, todayEnd, omitOpen);
 
@@ -1308,8 +1329,10 @@ public class TimeSheetDbAdapter {
 
 		Log.d(TAG,
 				"weekEntryReport start: "
-						+ TimeHelpers.millisToDate(todayStart));
-		Log.d(TAG, "weekEntryReport end: " + TimeHelpers.millisToDate(todayEnd));
+						+ TimeHelpers.millisToTimeDate(todayStart));
+		Log.d(TAG,
+				"weekEntryReport   end: "
+						+ TimeHelpers.millisToTimeDate(todayEnd));
 
 		String[] columns = new String[] { KEY_ROWID, KEY_TASK, KEY_RANGE,
 				KEY_TIMEIN, KEY_TIMEOUT };
@@ -1329,8 +1352,11 @@ public class TimeSheetDbAdapter {
 		long todayStart = TimeHelpers.millisToStartOfWeek(time);
 		long todayEnd = TimeHelpers.millisToEndOfWeek(time);
 
-		Log.d(TAG, "weekSummary start: " + TimeHelpers.millisToDate(todayStart));
-		Log.d(TAG, "weekSummary end: " + TimeHelpers.millisToDate(todayEnd));
+		Log.d(TAG,
+				"weekSummary start: "
+						+ TimeHelpers.millisToTimeDate(todayStart));
+		Log.d(TAG,
+				"weekSummary   end: " + TimeHelpers.millisToTimeDate(todayEnd));
 
 		// select _id, task, timein, sum((CASE WHEN timeout = 0 THEN **time**
 		// ELSE timeout END - timein)/3600000.0) as total where timein>=0 and
@@ -1364,8 +1390,10 @@ public class TimeSheetDbAdapter {
 		long weekStart = TimeHelpers.millisToStartOfWeek(time);
 		long weekEnd = TimeHelpers.millisToEndOfWeek(time);
 
-		Log.d(TAG, "weekSummary start: " + TimeHelpers.millisToDate(weekStart));
-		Log.d(TAG, "weekSummary end: " + TimeHelpers.millisToDate(weekEnd));
+		Log.d(TAG,
+				"weekSummary start: " + TimeHelpers.millisToTimeDate(weekStart));
+		Log.d(TAG,
+				"weekSummary   end: " + TimeHelpers.millisToTimeDate(weekEnd));
 
 		populateSummary(weekStart, weekEnd, omitOpen);
 
@@ -1407,13 +1435,13 @@ public class TimeSheetDbAdapter {
 		if (mDb == null)
 			open();
 		try {
-			Log.d(TAG, "populateSummary: Creating summary table.");
+			Log.v(TAG, "populateSummary: Creating summary table.");
 			mDb.execSQL(SUMMARY_TABLE_CREATE);
 		} catch (SQLException e) {
 			// This shouldn't occur, but hope for the best.
-			Log.d(TAG, "populateSummary: SUMMARY_TABLE_CREATE: " + e.toString());
+			Log.i(TAG, "populateSummary: SUMMARY_TABLE_CREATE: " + e.toString());
 		}
-		Log.d(TAG, "populateSummary: Cleaning summary table.");
+		Log.v(TAG, "populateSummary: Cleaning summary table.");
 		mDb.execSQL(SUMMARY_TABLE_CLEAN);
 
 		String omitOpenQuery = "";
@@ -1437,7 +1465,7 @@ public class TimeSheetDbAdapter {
 				+ KEY_CHARGENO + "=" + TASKS_DATABASE_TABLE + "." + KEY_ROWID
 				+ " AND " + TASKS_DATABASE_TABLE + "." + KEY_SPLIT
 				+ "=0 GROUP BY " + KEY_TASK;
-		Log.d(TAG, "populateTemp1\n" + populateTemp1);
+		Log.v(TAG, "populateTemp1\n" + populateTemp1);
 		mDb.execSQL(populateTemp1);
 
 		final String populateTemp2 = "INSERT INTO " + SUMMARY_DATABASE_TABLE
@@ -1462,7 +1490,7 @@ public class TimeSheetDbAdapter {
 				+ TASKSPLIT_DATABASE_TABLE + "." + KEY_PERCENTAGE + "="
 				+ TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE + " GROUP BY "
 				+ TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK;
-		Log.d(TAG, "populateTemp2\n" + populateTemp2);
+		Log.v(TAG, "populateTemp2\n" + populateTemp2);
 		mDb.execSQL(populateTemp2);
 	}
 

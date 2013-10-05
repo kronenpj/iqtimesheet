@@ -16,7 +16,6 @@
 
 package com.googlecode.iqapps.IQTimeSheet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -29,6 +28,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -36,7 +37,7 @@ import com.googlecode.iqapps.TimeHelpers;
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class ChangeEntryHandler extends Activity {
+public class ChangeEntryHandler extends RoboSherlockFragmentActivity {
     private static final String TAG = "ChangeEntryHandler";
     private static final int TASKCHOOSE_CODE = 0x01;
     private static final int CHANGETIMEIN_CODE = 0x02;

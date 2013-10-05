@@ -25,13 +25,13 @@
 package com.googlecode.iqapps.testtools;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import junit.framework.Assert;
 import android.app.Instrumentation;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.googlecode.iqapps.IQTimeSheet.MenuItems;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.jayway.android.robotium.solo.Solo;
 
@@ -41,7 +41,7 @@ import com.jayway.android.robotium.solo.Solo;
  */
 public class Helpers {
 	// private static Log log = LogFactory.getLog(Helpers.class);
-	// private static final String TAG = "Helpers";
+	private static final String TAG = "Helpers";
 	private static final int SLEEPTIME = 50;
 	public static final int alignments = 12;
 	public static final String DATABASE_NAME = "TimeSheetDB.db";
@@ -63,8 +63,6 @@ public class Helpers {
 	}
 
 	public static void sleep(long time) {
-		// if (time > 1000 && log.isInfoEnabled())
-		// log.info(TAG + ": sleeping for " + time + " ms.");
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException e) {
@@ -73,42 +71,42 @@ public class Helpers {
 
 	public static void backup(Solo solo, Instrumentation mInstr,
 			TimeSheetActivity mActivity) {
-		Assert.assertNotNull(solo);
-		Assert.assertNotNull(mInstr);
-		Assert.assertNotNull(mActivity);
+		org.junit.Assert.assertNotNull(solo);
+		org.junit.Assert.assertNotNull(mInstr);
+		org.junit.Assert.assertNotNull(mActivity);
 
 		while (!solo.getCurrentActivity().isTaskRoot()) {
 			solo.goBack();
 		}
-		mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		mActivity = (TimeSheetActivity) solo.getCurrentActivity();
-		int menuItemID = mActivity.getOptionsMenu()
-				.getItem(MenuItems.BACKUP.ordinal()).getItemId();
-		Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
+
+		org.junit.Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity,
+				com.googlecode.iqapps.IQTimeSheet.R.id.menu_backup, 0));
 		solo.sleep(SLEEPTIME);
 	}
 
 	public static void restore(Solo solo, Instrumentation mInstr,
 			TimeSheetActivity mActivity) {
-		Assert.assertNotNull(solo);
-		Assert.assertNotNull(mInstr);
-		Assert.assertNotNull(mActivity);
+		org.junit.Assert.assertNotNull(solo);
+		org.junit.Assert.assertNotNull(mInstr);
+		org.junit.Assert.assertNotNull(mActivity);
 
 		while (!solo.getCurrentActivity().isTaskRoot()) {
 			solo.goBack();
 		}
+		solo.sleep(SLEEPTIME);
 		try {
-			mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-			int menuItemID = mActivity.getOptionsMenu()
-					.getItem(MenuItems.RESTORE.ordinal()).getItemId();
-			Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity,
-					menuItemID, 0));
-			solo.sleep(SLEEPTIME);
+			mInstr.invokeMenuActionSync(mActivity,
+					com.googlecode.iqapps.IQTimeSheet.R.id.menu_restore, 0);
 
-			solo.sendKey(KeyEvent.KEYCODE_DPAD_LEFT);
+			solo.waitForText(
+					solo.getString(com.googlecode.iqapps.IQTimeSheet.R.string.accept),
+					0, 1500);
+			solo.clickOnText(solo
+					.getString(com.googlecode.iqapps.IQTimeSheet.R.string.accept));
+
 			solo.sleep(SLEEPTIME);
-			solo.sendKey(KeyEvent.KEYCODE_ENTER);
-			solo.sleep(SLEEPTIME);
+		} catch (junit.framework.AssertionFailedError e) {
+			Log.i(TAG, "Caught AssertionFailedError");
 		} catch (IndexOutOfBoundsException e) {
 			Toast.makeText(mActivity, "Restoration of database failed.",
 					Toast.LENGTH_LONG).show();
@@ -185,5 +183,31 @@ public class Helpers {
 
 	private static boolean isBackup(String preferences) {
 		return preferences.matches(".*_backup\\.xml$");
+	}
+
+	public static Object invokePrivateMethodWithoutParameters(Class<?> clazz,
+			String methodName, Object receiver) {
+		Method method = null;
+		try {
+			method = clazz.getDeclaredMethod(methodName, (Class<?>[]) null);
+		} catch (NoSuchMethodException e) {
+			Log.e(TAG, e.getClass().getName() + ": " + methodName);
+		}
+
+		if (method != null) {
+			method.setAccessible(true);
+
+			try {
+				return method.invoke(receiver, (Object[]) null);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return null;
 	}
 }

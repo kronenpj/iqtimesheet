@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.googlecode.iqapps.IQTimeSheet"
     android:installLocation="auto"
-    android:versionCode="14"
-    android:versionName="2013.1" >
+    android:versionCode="15"
+    android:versionName="2013.2" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -15,28 +15,24 @@
         android:icon="@drawable/icon_medium"
         android:label="@string/app_name" android:allowClearUserData="true" android:allowBackup="true">
         <activity
-            android:name="TimeSheetActivity"
+            android:name=".TimeSheetActivity"
             android:label="@string/app_name" 
             android:theme="@style/Theme.Sherlock">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="AboutDialog" />
-        <activity android:name="AddTaskHandler" />
-        <activity android:name="ChangeDate" />
-        <activity android:name="ChangeEntryHandler" />
-        <activity android:name="ChangeTaskList" />
-        <activity android:name="ChangeTime" />
-        <activity android:name="DayReport" />
-        <activity android:name="EditDayEntriesHandler" />
-        <activity android:name="EditTaskHandler" />
-        <activity android:name="MyPreferenceActivity" />
-        <activity android:name="ReviveTaskHandler" />
-        <activity android:name="WeekReport" />
-        <activity android:name="ReviveTaskFragment" />
+        <activity android:name=".AboutDialog" />
+        <activity android:name=".AddTaskHandler" />
+        <activity android:name=".ChangeDate" />
+        <activity android:name=".ChangeEntryHandler" />
+        <activity android:name=".ChangeTaskList" />
+        <activity android:name=".ChangeTime" />
+        <activity android:name=".EditDayEntriesHandler" />
+        <activity android:name=".EditTaskHandler" />
+        <activity android:name=".MyPreferenceActivity" />
+        <activity android:name=".ReviveTaskHandler" />
+        <activity android:name=".ReviveTaskFragment" />
         </application>
-
 </manifest>

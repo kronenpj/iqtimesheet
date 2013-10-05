@@ -63,12 +63,13 @@ public class DevelopingTests extends
     }
 
     private void setAlignTimePreferenceViaMenu(int downCount) {
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
         int menuItemID = mActivity.getOptionsMenu()
                 .getItem(MenuItems.SETTINGS.ordinal()).getItemId();
         assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
         assertTrue(solo.waitForActivity("MyPreferenceActivity", 500));
+
         mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
+        solo.clickOnText(solo.getString(com.googlecode.iqapps.IQTimeSheet.R.string.align_minutes_title));
         solo.sleep(SLEEPTIME);
 
         while (solo.scrollUpList(0))

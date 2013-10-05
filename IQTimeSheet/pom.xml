@@ -23,9 +23,9 @@
 			<!-- <version>${platform.version}</version> -->
 			<scope>provided</scope>
 		</dependency>
-		<!-- Actionbarsherlock library from the central repository 
-			note that this uses default scope (NOT provided) since the library 
-			will need to be added to your apk -->
+		<!-- Actionbarsherlock library from the central repository note that this 
+			uses default scope (NOT provided) since the library will need to be added 
+			to your apk -->
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
 			<artifactId>actionbarsherlock</artifactId>
@@ -33,11 +33,11 @@
 			<type>apklib</type>
 		</dependency>
 		<dependency>
-		    <groupId>com.actionbarsherlock</groupId>
-		    <artifactId>actionbarsherlock</artifactId>
-		    <version>4.4.0</version>
-		    <type>jar</type>
-		    <scope>provided</scope>
+			<groupId>com.actionbarsherlock</groupId>
+			<artifactId>actionbarsherlock</artifactId>
+			<version>4.4.0</version>
+			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -59,6 +59,17 @@
 			<artifactId>roboguice-sherlock</artifactId>
 			<version>${roboguice-sherlock.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.androidannotations</groupId>
+			<artifactId>androidannotations</artifactId>
+			<version>2.7.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.androidannotations</groupId>
+			<artifactId>androidannotations-api</artifactId>
+			<version>2.7.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -70,8 +81,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 
 	<profiles>
 		<profile>

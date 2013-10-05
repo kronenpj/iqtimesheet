@@ -35,184 +35,185 @@ import java.util.TimeZone;
 
 /**
  * Class to encapsulate preference handling for the application.
- *
+ * 
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class PreferenceHelper {
-    private static final float FONTSIZE_TOTAL_DEFAULT = 14.0f;
-    private static final float FONTSIZE_TASKLIST_DEFAULT = 12.0f;
-    private static final String TAG = "PreferenceHelper";
-    private SharedPreferences prefs;
+	private static final float FONTSIZE_TOTAL_DEFAULT = 14.0f;
+	private static final float FONTSIZE_TASKLIST_DEFAULT = 12.0f;
+	private static final String TAG = "PreferenceHelper";
+	private SharedPreferences prefs;
 
-    public static final String KEY_ALIGN_MINUTES = "align.minutes";
-    public static final String KEY_ALIGN_MINUTES_AUTO = "align.minutes.auto";
-    public static final String KEY_ALIGN_TIME_PICKER = "align.time.picker";
-    public static final String KEY_HOURS_DAY = "hours.day";
-    public static final String KEY_HOURS_WEEK = "hours.week";
-    public static final String KEY_FONTSIZE_TASKLIST = "fontSize.tasklist";
-    public static final String KEY_TOTAL_FONTSIZE = "total.fontSize";
-    public static final String KEY_PERSISTENT_NOTIFICATION = "persistent.notification";
-    public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
-    public static final String KEY_TIMEZONE_ANCHOR = "tz.anchor";
+	public static final String KEY_ALIGN_MINUTES = "align.minutes";
+	public static final String KEY_ALIGN_MINUTES_AUTO = "align.minutes.auto";
+	public static final String KEY_ALIGN_TIME_PICKER = "align.time.picker";
+	public static final String KEY_HOURS_DAY = "hours.day";
+	public static final String KEY_HOURS_WEEK = "hours.week";
+	public static final String KEY_FONTSIZE_TASKLIST = "fontSize.tasklist";
+	public static final String KEY_TOTAL_FONTSIZE = "total.fontSize";
+	public static final String KEY_PERSISTENT_NOTIFICATION = "persistent.notification";
+	public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
+	public static final String KEY_TIMEZONE_ANCHOR = "tz.anchor";
 
-    public PreferenceHelper(Context mCtx) {
+	public PreferenceHelper(Context mCtx) {
         prefs = PreferenceManager.getDefaultSharedPreferences(mCtx);
     }
 
-    public int getAlignMinutes() {
-        // Be careful here - The list used by the preferences activity is based
-        // on String, not any other primitive or class... This threw cast
-        // exceptions early on in development.
-        int alignMinutes = 1;
-        try {
-            // Throws ClassCastException
-            // alignMinutes = prefs.getInt(KEY_ALIGN_MINUTES, 1);
-            alignMinutes = Integer.valueOf(prefs.getString(KEY_ALIGN_MINUTES,
-                    "1"));
-        } catch (Exception e) {
-            Log.e(TAG, KEY_ALIGN_MINUTES + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_ALIGN_MINUTES + ": " + alignMinutes);
-        return alignMinutes;
-    }
+	public int getAlignMinutes() {
+		// Be careful here - The list used by the preferences activity is based
+		// on String, not any other primitive or class... This threw cast
+		// exceptions early on in development.
+		int alignMinutes = 1;
+		try {
+			// Throws ClassCastException
+			// alignMinutes = prefs.getInt(KEY_ALIGN_MINUTES, 1);
+			alignMinutes = Integer.valueOf(prefs.getString(KEY_ALIGN_MINUTES,
+					"1"));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_ALIGN_MINUTES + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_ALIGN_MINUTES + ": " + alignMinutes);
+		return alignMinutes;
+	}
 
-    public boolean getAlignMinutesAuto() {
-        boolean alignMinutesAuto = false;
-        try {
-            alignMinutesAuto = prefs.getBoolean(KEY_ALIGN_MINUTES_AUTO, false);
-        } catch (Exception e) {
-            Log.e(TAG,
-                    KEY_ALIGN_MINUTES_AUTO + " threw exception: "
-                            + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_ALIGN_MINUTES_AUTO + ": "
-                + alignMinutesAuto);
-        return alignMinutesAuto;
-    }
+	public boolean getAlignMinutesAuto() {
+		boolean alignMinutesAuto = false;
+		try {
+			alignMinutesAuto = prefs.getBoolean(KEY_ALIGN_MINUTES_AUTO, false);
+		} catch (Exception e) {
+			Log.e(TAG,
+					KEY_ALIGN_MINUTES_AUTO + " threw exception: "
+							+ e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_ALIGN_MINUTES_AUTO + ": "
+				+ alignMinutesAuto);
+		return alignMinutesAuto;
+	}
 
-    public boolean getAlignTimePicker() {
-        boolean alignTimePicker = true;
-        try {
-            alignTimePicker = prefs.getBoolean(KEY_ALIGN_TIME_PICKER, true);
-        } catch (Exception e) {
-            Log.e(TAG,
-                    KEY_ALIGN_TIME_PICKER + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_ALIGN_TIME_PICKER + ": "
-                + alignTimePicker);
-        return alignTimePicker;
-    }
+	public boolean getAlignTimePicker() {
+		boolean alignTimePicker = true;
+		try {
+			alignTimePicker = prefs.getBoolean(KEY_ALIGN_TIME_PICKER, true);
+		} catch (Exception e) {
+			Log.e(TAG,
+					KEY_ALIGN_TIME_PICKER + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_ALIGN_TIME_PICKER + ": "
+				+ alignTimePicker);
+		return alignTimePicker;
+	}
 
-    public float getHoursPerDay() {
-        // Be careful here - The list used by the preferences activity is based
-        // on String, not any other primitive or class... This threw cast
-        // exceptions early on in development.
-        float hoursDay = (float) 8.0;
-        try {
-            // Throws ClassCastException
-            // hoursDay = prefs.getFloat(KEY_HOURS_DAY, (float) 8.0);
-            hoursDay = Float.valueOf(prefs.getString(KEY_HOURS_DAY, "8"));
-        } catch (Exception e) {
-            Log.e(TAG, KEY_HOURS_DAY + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_HOURS_DAY + ": " + hoursDay);
-        return hoursDay;
-    }
+	public float getHoursPerDay() {
+		// Be careful here - The list used by the preferences activity is based
+		// on String, not any other primitive or class... This threw cast
+		// exceptions early on in development.
+		float hoursDay = (float) 8.0;
+		try {
+			// Throws ClassCastException
+			// hoursDay = prefs.getFloat(KEY_HOURS_DAY, (float) 8.0);
+			hoursDay = Float.valueOf(prefs.getString(KEY_HOURS_DAY, "8"));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_HOURS_DAY + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_HOURS_DAY + ": " + hoursDay);
+		return hoursDay;
+	}
 
-    public float getHoursPerWeek() {
-        // Be careful here - The list used by the preferences activity is based
-        // on String, not any other primitive or class... This threw cast
-        // exceptions early on in development.
-        float hoursWeek = (float) 40.0;
-        try {
-            // Throws ClassCastException
-            // hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
-            hoursWeek = Float.valueOf(prefs.getString(KEY_HOURS_WEEK, "40"));
-        } catch (Exception e) {
-            Log.e(TAG, KEY_HOURS_WEEK + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_HOURS_WEEK + ": " + hoursWeek);
-        return hoursWeek;
-    }
+	public float getHoursPerWeek() {
+		// Be careful here - The list used by the preferences activity is based
+		// on String, not any other primitive or class... This threw cast
+		// exceptions early on in development.
+		float hoursWeek = (float) 40.0;
+		try {
+			// Throws ClassCastException
+			// hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
+			hoursWeek = Float.valueOf(prefs.getString(KEY_HOURS_WEEK, "40"));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_HOURS_WEEK + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_HOURS_WEEK + ": " + hoursWeek);
+		return hoursWeek;
+	}
 
-    public float getTotalsFontSize() {
-        // Be careful here - The list used by the preferences activity is based
-        // on String, not any other primitive or class... This threw cast
-        // exceptions early on in development.
-        float totalsFontSize = FONTSIZE_TOTAL_DEFAULT;
-        try {
-            // Throws ClassCastException
-            // hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
-            totalsFontSize = Float.valueOf(prefs.getString(KEY_TOTAL_FONTSIZE,
-                    String.valueOf(FONTSIZE_TOTAL_DEFAULT)));
-        } catch (Exception e) {
-            Log.e(TAG, KEY_TOTAL_FONTSIZE + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_TOTAL_FONTSIZE + ": " + totalsFontSize);
-        return totalsFontSize;
-    }
+	public float getTotalsFontSize() {
+		// Be careful here - The list used by the preferences activity is based
+		// on String, not any other primitive or class... This threw cast
+		// exceptions early on in development.
+		float totalsFontSize = FONTSIZE_TOTAL_DEFAULT;
+		try {
+			// Throws ClassCastException
+			// hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
+			totalsFontSize = Float.valueOf(prefs.getString(KEY_TOTAL_FONTSIZE,
+					String.valueOf(FONTSIZE_TOTAL_DEFAULT)));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_TOTAL_FONTSIZE + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_TOTAL_FONTSIZE + ": " + totalsFontSize);
+		return totalsFontSize;
+	}
 
-    public float getFontSizeTaskList() {
-        // Be careful here - The list used by the preferences activity is based
-        // on String, not any other primitive or class... This threw cast
-        // exceptions early on in development.
-        float fontSizeTaskList = FONTSIZE_TASKLIST_DEFAULT;
-        try {
-            // Throws ClassCastException
-            // hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
-            fontSizeTaskList = Float.valueOf(prefs.getString(
-                    KEY_FONTSIZE_TASKLIST,
-                    String.valueOf(FONTSIZE_TASKLIST_DEFAULT)));
-        } catch (Exception e) {
-            Log.e(TAG,
-                    KEY_FONTSIZE_TASKLIST + " threw exception: " + e.toString());
-        }
-//		Log.d(TAG, "Preference " + KEY_FONTSIZE_TASKLIST + ": "
-//				+ fontSizeTaskList);
-        return fontSizeTaskList;
-    }
+	public float getFontSizeTaskList() {
+		// Be careful here - The list used by the preferences activity is based
+		// on String, not any other primitive or class... This threw cast
+		// exceptions early on in development.
+		float fontSizeTaskList = FONTSIZE_TASKLIST_DEFAULT;
+		try {
+			// Throws ClassCastException
+			// hoursWeek = prefs.getFloat(KEY_HOURS_WEEK, (float) 40.0);
+			fontSizeTaskList = Float.valueOf(prefs.getString(
+					KEY_FONTSIZE_TASKLIST,
+					String.valueOf(FONTSIZE_TASKLIST_DEFAULT)));
+		} catch (Exception e) {
+			Log.e(TAG,
+					KEY_FONTSIZE_TASKLIST + " threw exception: " + e.toString());
+		}
+		// Log.d(TAG, "Preference " + KEY_FONTSIZE_TASKLIST + ": "
+		// + fontSizeTaskList);
+		return fontSizeTaskList;
+	}
 
-    public TimeZone getTimeZone() {
-        // Make the default the current, where ever it might be.
-        TimeZone timeZoneAnchor = TimeZone.getDefault();
-        try {
-            // Throws ClassCastException
-            String tzpref = prefs.getString(
-                    KEY_TIMEZONE_ANCHOR,
-                    TimeZone.getDefault().getDisplayName());
-            timeZoneAnchor = TimeZone.getTimeZone(tzpref);
-        } catch (Exception e) {
-            Log.e(TAG,
-                    KEY_TIMEZONE_ANCHOR + " threw exception: " + e.toString());
-        }
-//        Log.d(TAG, "Preference " + KEY_TIMEZONE_ANCHOR + ": "
-//                + timeZoneAnchor.getDisplayName());
-        return timeZoneAnchor;
-    }
+	public TimeZone getTimeZone() {
+		// Make the default the current, where ever it might be.
+		TimeZone timeZoneAnchor = TimeZone.getDefault();
+		Log.d(TAG, "TZAnchor: " + timeZoneAnchor.getID());
+		Log.d(TAG, "TZAnchor long: " + TimeZone.getTimeZone(timeZoneAnchor.getID()).getID());
+		try {
+			// Throws ClassCastException
+			String tzpref = prefs.getString(KEY_TIMEZONE_ANCHOR,
+					timeZoneAnchor.getDisplayName());
+			timeZoneAnchor = TimeZone.getTimeZone(tzpref);
+		} catch (Exception e) {
+			Log.e(TAG,
+					KEY_TIMEZONE_ANCHOR + " threw exception: " + e.toString());
+		}
+		// Log.d(TAG, "Preference " + KEY_TIMEZONE_ANCHOR + ": "
+		// + timeZoneAnchor.getDisplayName());
+		return timeZoneAnchor;
+	}
 
-    public boolean getPersistentNotification() {
-        boolean persistentNotification = false;
-        try {
-            persistentNotification = prefs.getBoolean(KEY_PERSISTENT_NOTIFICATION, false);
-        } catch (Exception e) {
-            Log.e(TAG,
-                    KEY_PERSISTENT_NOTIFICATION + " threw exception: "
-                            + e.toString());
-        }
-//        Log.d(TAG, "Preference " + KEY_PERSISTENT_NOTIFICATION + ": "
-//                + persistentNotification);
-        return persistentNotification;
-    }
+	public boolean getPersistentNotification() {
+		boolean persistentNotification = false;
+		try {
+			persistentNotification = prefs.getBoolean(
+					KEY_PERSISTENT_NOTIFICATION, false);
+		} catch (Exception e) {
+			Log.e(TAG,
+					KEY_PERSISTENT_NOTIFICATION + " threw exception: "
+							+ e.toString());
+		}
+		// Log.d(TAG, "Preference " + KEY_PERSISTENT_NOTIFICATION + ": "
+		// + persistentNotification);
+		return persistentNotification;
+	}
 
-
-    public boolean getSDCardBackup() {
-        boolean backup = false;
-        try {
-            backup = prefs.getBoolean(KEY_SDCARD_BACKUP, true);
-        } catch (Exception e) {
-            Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString());
-        }
-        Log.d(TAG, "Preference " + KEY_SDCARD_BACKUP + ": " + backup);
-        return backup;
-    }
+	public boolean getSDCardBackup() {
+		boolean backup = false;
+		try {
+			backup = prefs.getBoolean(KEY_SDCARD_BACKUP, true);
+		} catch (Exception e) {
+			Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_SDCARD_BACKUP + ": " + backup);
+		return backup;
+	}
 }

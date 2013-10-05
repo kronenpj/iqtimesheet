@@ -24,168 +24,158 @@
  */
 package com.googlecode.iqapps.IQTimeSheet.test;
 
+import java.util.ArrayList;
+
 import android.app.Instrumentation;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.googlecode.iqapps.IQTimeSheet.MenuItems;
+
+import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity;
 import com.googlecode.iqapps.IQTimeSheet.TimeSheetDbAdapter;
-import com.googlecode.iqapps.TimeHelpers;
 import com.googlecode.iqapps.testtools.Helpers;
 import com.jayway.android.robotium.solo.Solo;
-import junit.framework.Assert;
-
-import java.util.ArrayList;
 
 /**
  * @author kronenpj
  */
-@Suppress
+@Suppress //#$##
 public class CrossDayCheck extends
-        ActivityInstrumentationTestCase2<TimeSheetActivity> {
-    // private Log log = LogFactory.getLog(CrossDayCheck.class);
-    private static final String TAG = "CrossDayCheck";
-    private static final int SLEEPTIME = 50;
-    private static long now = 0;
-    private static final String insertIntoTasks = "INSERT INTO tasks (task, active, usage) "
-            + "VALUES ('";
-    private static final String insertIntoTimeSheet = "INSERT INTO timesheet (chargeno, timein, timeout) "
-            + "VALUES (";
-    private TimeSheetActivity mActivity;
-    private Instrumentation mInstr;
-    private Solo solo;
-    private TimeSheetDbAdapter db;
+		ActivityInstrumentationTestCase2<TimeSheetActivity> {
+	// private Log log = LogFactory.getLog(CrossDayCheck.class);
+	private static final String TAG = "CrossDayCheck";
+	private static final int SLEEPTIME = 50;
+	private static long now = 0;
+	private static final String insertIntoTasks = "INSERT INTO tasks (task, active, usage) "
+			+ "VALUES ('";
+	private static final String insertIntoTimeSheet = "INSERT INTO timesheet (chargeno, timein, timeout) "
+			+ "VALUES (";
+	private TimeSheetActivity mActivity;
+	private Instrumentation mInstr;
+	private Solo solo;
+	private TimeSheetDbAdapter db;
 
-    public CrossDayCheck() {
-        super(TimeSheetActivity.class);
-    }
+	public CrossDayCheck() {
+		super(TimeSheetActivity.class);
+	}
 
-    public void setUp() throws Exception {
-        super.setUp();
-        mActivity = getActivity();
-        mInstr = getInstrumentation();
-        solo = new Solo(mInstr, mActivity);
-        // Positron mPositron = new Positron(mInstr);
+	public void setUp() throws Exception {
+		super.setUp();
+		mActivity = getActivity();
+		mInstr = getInstrumentation();
+		solo = new Solo(mInstr, mActivity);
 
-        Helpers.backup(solo, mInstr, mActivity);
-        // mPositron.backup();
-        Helpers.prefBackup(mInstr);
+		Helpers.backup(solo, mInstr, mActivity);
+		Helpers.prefBackup(mInstr);
 
-        // Reset the database
-        db = new TimeSheetDbAdapter(mActivity);
-        try {
-            db.open();
-        } catch (SQLException e) {
-            assertFalse(e.toString(), true);
-        }
+		// Reset the database
+		db = new TimeSheetDbAdapter(mActivity);
+		try {
+			db.open();
+		} catch (SQLException e) {
+			assertFalse(e.toString(), true);
+		}
 
-        db.runSQL("DELETE FROM tasks;");
-        db.runSQL("DELETE FROM timesheet;");
-        db.runSQL(insertIntoTasks + Helpers.text1 + "', 1, 40);");
-        db.runSQL(insertIntoTasks + Helpers.text2 + "', 0, 30);");
-        db.runSQL(insertIntoTasks + Helpers.text3 + "', 1, 50);");
-        db.runSQL(insertIntoTasks + Helpers.text4 + "', 1, 20);");
-        now = TimeHelpers.millisNow();
-        setupTimeSheetDB();
-        // startActivity("com.googlecode.iqapps.IQTimeSheet",
-        // "com.googlecode.iqapps.IQTimeSheet.TimeSheetActivity");
-        Helpers.sleep();
-    }
+		db.runSQL("DELETE FROM tasks;");
+		db.runSQL("DELETE FROM timesheet;");
+		db.runSQL(insertIntoTasks + Helpers.text1 + "', 1, 40);");
+		db.runSQL(insertIntoTasks + Helpers.text2 + "', 0, 30);");
+		db.runSQL(insertIntoTasks + Helpers.text3 + "', 1, 50);");
+		db.runSQL(insertIntoTasks + Helpers.text4 + "', 1, 20);");
+		now = TimeHelpers.millisNow();
+		setupTimeSheetDB();
+		Helpers.sleep();
+	}
 
-    /**
+	/**
      *
      */
-    private void setupTimeSheetDB() {
-        long yesterday = TimeHelpers.millisToStartOfDay(now) - 8 * 3600000; // 5pm
+	private void setupTimeSheetDB() {
+		long yesterday = TimeHelpers.millisToStartOfDay(now) - 8 * 3600000; // 5pm
 
-        db.runSQL(insertIntoTimeSheet + "2, " + yesterday + ", " + 0 + ");");
-    }
+		db.runSQL(insertIntoTimeSheet + "2, " + yesterday + ", " + 0 + ");");
+	}
 
-    public void tearDown() {
-        mActivity = getActivity();
-        assertNotNull(mActivity);
+	public void tearDown() {
+		mActivity = getActivity();
+		assertNotNull(mActivity);
 
-        Helpers.prefRestore(mInstr);
-        Helpers.restore(solo, mInstr, mActivity);
-        // mPositron.restore();
+		Helpers.prefRestore(mInstr);
+		Helpers.restore(solo, mInstr, mActivity);
 
-        solo.finishOpenedActivities();
-    }
+		solo.finishOpenedActivities();
+	}
 
-    public void test021crossDayClockTest1() {
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-        int menuItemID = mActivity.getOptionsMenu()
-                .getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
-        Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-        assertTrue(solo.waitForActivity("DayReport", 500));
-        try {
-            // mPositron.existsAt("#reportlist.0.text");
-            assertFalse(
-                    "There should be no entries in the list, but found one.",
-                    solo.searchText(Helpers.text1));
-            // fail("There should be no entries in the list, but found one.");
-        } catch (Exception e) {
-        }
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-        solo.sleep(SLEEPTIME);
-        // assertEquals(Helpers.text1,
-        // mPositron.stringAt("#reportlist.0.0.text"));
-        assertTrue(solo.searchText(Helpers.text1));
-        // assertEquals("8.00 hours",
-        // mPositron.stringAt("#reportlist.0.1.text"));
-        assertTrue(solo.searchText("8.00 hours"));
-    }
+	public void test021crossDayClockTest1() {
+		// Acknowledge the pop-up and select to close the prior-day task.
+		//solo.getView(android.R.id.button1); // Positive / Close
+		solo.clickOnText("Close", 1); // Positive / Close
 
-    public void test022crossDayClockTest2() {
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-        int menuItemID = mActivity.getOptionsMenu()
-                .getItem(MenuItems.DAY_REPORT.ordinal()).getItemId();
-        Assert.assertTrue(mInstr.invokeMenuActionSync(mActivity, menuItemID, 0));
-        assertTrue(solo.waitForActivity("DayReport", 500));
-        // assertEquals(Helpers.text1,
-        // mPositron.stringAt("#reportlist.0.0.text"));
-        assertTrue(solo.searchText(Helpers.text1));
-        long midnight = TimeHelpers.millisToStartOfDay(now);
-        float hours = TimeHelpers.calculateDuration(midnight, now);
-        Toast.makeText(mActivity, "About to request android:list",
-                Toast.LENGTH_LONG).show();
-        // String appHourString = mPositron.stringAt("#android:list.0.1.text");
-        // ArrayList<ListView> listViews = solo.getCurrentListViews();
-        ArrayList<ListView> listViews = solo.getCurrentViews(ListView.class);
-        String appHourString = null;
-        try {
-            appHourString = listViews.get(0).getChildAt(1).toString();
-        } catch (CursorIndexOutOfBoundsException e) {
-            Log.e(TAG, e.toString());
-        }
+		solo.scrollToSide(Solo.LEFT);
+		solo.scrollToSide(Solo.LEFT);
+		solo.scrollToSide(Solo.RIGHT);
+		// assertTrue(solo.waitForFragmentByTag("DayReport", 1500));
+		try {
+			assertFalse(
+					"There should be no entries in the list, but found one.",
+					solo.searchText(Helpers.text1));
+		} catch (Exception e) {
+		}
 
-        float appHours = Float.valueOf(appHourString.substring(0,
-                appHourString.indexOf(' ')));
-        assertTrue(solo.searchText(String.valueOf(hours)));
-        float delta = hours - appHours;
-        if (delta < 0)
-            delta = -delta;
-        assertTrue(
-                "Difference between hours and appHours is > 0.02 hours.  Was "
-                        + delta + " hours.", delta < 0.02);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT);
-        mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-        solo.sleep(SLEEPTIME);
-        // assertEquals("8.00 hours",
-        // mPositron.stringAt("#reportlist.0.1.text"));
-        assertTrue(solo.searchText("8.00 hours"));
-    }
+		// Request the prior-day report.
+		solo.clickOnText(solo
+				.getString(com.googlecode.iqapps.IQTimeSheet.R.string.day_prev_action));
+		solo.sleep(SLEEPTIME);
+		assertTrue(solo.searchText(Helpers.text1));
+		assertTrue(solo.searchText("8.00 hours"));
+	}
+
+	public void test022crossDayClockTest2() {
+		// Acknowledge the pop-up and select to close the prior-day task.
+		//solo.getView(android.R.id.button2); // Negative / Close & Re-open
+		solo.clickOnText("Close & Re-open");
+
+		solo.scrollToSide(Solo.LEFT);
+		solo.scrollToSide(Solo.LEFT);
+		solo.scrollToSide(Solo.RIGHT);
+		// assertTrue(solo.waitForFragmentByTag("DayReport", 1500));
+
+		assertTrue(solo.searchText(Helpers.text1));
+		long midnight = TimeHelpers.millisToStartOfDay(now);
+		float hours = TimeHelpers.calculateDuration(midnight, now);
+		Toast.makeText(mActivity, "About to request android:list",
+				Toast.LENGTH_LONG).show();
+		// String appHourString = mPositron.stringAt("#android:list.0.1.text");
+		// ArrayList<ListView> listViews = solo.getCurrentListViews();
+		ArrayList<ListView> listViews = solo.getCurrentViews(ListView.class);
+		String appHourString = null;
+		try {
+			appHourString = listViews.get(0).getChildAt(1).toString();
+		} catch (CursorIndexOutOfBoundsException e) {
+			Log.e(TAG, e.toString());
+		}
+
+		float appHours = Float.valueOf(appHourString.substring(0,
+				appHourString.indexOf(' ')));
+		assertTrue(solo.searchText(String.valueOf(hours)));
+		float delta = hours - appHours;
+		if (delta < 0)
+			delta = -delta;
+		assertTrue(
+				"Difference between hours and appHours is > 0.02 hours.  Was "
+						+ delta + " hours.", delta < 0.02);
+
+		// Request the prior-day report.
+		solo.clickOnText(solo.getText(
+				com.googlecode.iqapps.IQTimeSheet.R.string.day_prev_action)
+				.toString());
+		solo.sleep(SLEEPTIME);
+		assertTrue(solo.searchText(Helpers.text1));
+		assertTrue(solo.searchText("8.00 hours"));
+	}
 }
