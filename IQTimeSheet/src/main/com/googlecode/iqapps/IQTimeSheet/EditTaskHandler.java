@@ -145,7 +145,7 @@ public class EditTaskHandler extends RoboSherlockFragmentActivity {
         }
     }
 
-    protected void showTaskEdit() {
+    void showTaskEdit() {
         Log.d(TAG, "Changing to addtask layout.");
         setContentView(R.layout.addtask);
 

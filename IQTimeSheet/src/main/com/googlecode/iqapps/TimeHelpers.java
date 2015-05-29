@@ -86,7 +86,7 @@ public class TimeHelpers {
     }
 
     /*
-     * Method to trim millisecond resolution down to six-minute resolution. The
+     * Method to trim millisecond resolution down to alignTo-minute resolution. The
      * user-interface deals with minute intervals, not milliseconds.
      *
      * TODO: This is not accurate when alignTo is odd, eg: 5. Figure out what to

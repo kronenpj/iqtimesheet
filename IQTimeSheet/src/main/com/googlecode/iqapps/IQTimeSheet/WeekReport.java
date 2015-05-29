@@ -194,7 +194,7 @@ public class WeekReport extends ListActivity {
      * Change the view to the one we need and set up references to the children
      * we're interested in manipulating.
      */
-    protected void showReport() {
+    void showReport() {
         Log.d(TAG, "Changing to report layout.");
 
         try {

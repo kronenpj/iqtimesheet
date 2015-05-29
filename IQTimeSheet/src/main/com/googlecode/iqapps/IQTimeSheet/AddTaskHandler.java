@@ -97,7 +97,7 @@ public class AddTaskHandler extends Activity {
         percentLabel.setText("100");
     }
 
-    protected void showTaskAdd() {
+    void showTaskAdd() {
         Log.d(TAG, "Changing to addtask layout.");
         setContentView(R.layout.addtask);
 

@@ -172,7 +172,7 @@ public class DayReport extends ListActivity {
         }
     }
 
-    protected void showReport() {
+    void showReport() {
         Log.d(TAG, "Changing to report layout.");
 
         try {

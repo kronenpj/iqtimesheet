@@ -163,7 +163,7 @@ public class EditDayEntriesHandler extends RoboSherlockListActivity {
     /*
      * Change the view to the report.
      */
-    protected void showReport() {
+    void showReport() {
         Log.d(TAG, "Changing to report layout.");
 
         try {

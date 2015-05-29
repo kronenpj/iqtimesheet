@@ -122,7 +122,7 @@ public class ChangeEntryHandler extends RoboSherlockFragmentActivity {
         return dialog;
     }
 
-    protected void showChangeLayout() {
+    void showChangeLayout() {
         setContentView(R.layout.changeentry);
 
         // NOTE: The order of these is important, the array is referenced

@@ -27,7 +27,7 @@ import com.googlecode.iqapps.IQTimeSheet.R;
  * This class exists purely to cancel long click events, that got
  * started in NumberPicker
  */
-class NumberPickerButton extends ImageButton {
+public class NumberPickerButton extends ImageButton {
 
     private NumberPicker mNumberPicker;
 

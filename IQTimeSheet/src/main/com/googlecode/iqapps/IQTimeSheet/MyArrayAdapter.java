@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.List;
 
-public class MyArrayAdapter<T> extends ArrayAdapter<T> {
+class MyArrayAdapter<T> extends ArrayAdapter<T> {
     /**
      * The resource indicating what views to inflate to display the content of
      * this array adapter.
