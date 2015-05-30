@@ -18,6 +18,7 @@ package com.googlecode.iqapps.IQTimeSheet;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
@@ -46,7 +47,7 @@ public class ReportCursorAdapter extends SimpleCursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
 
         // TODO: Remove the extraneous tempString and temp declarations and
         // assignments.

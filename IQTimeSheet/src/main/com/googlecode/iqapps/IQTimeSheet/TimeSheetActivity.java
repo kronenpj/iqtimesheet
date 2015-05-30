@@ -47,12 +47,12 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	 * intensive, it may be best to switch to a
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	ViewPager mViewPager;
+	private ViewPager mViewPager;
 	private Menu optionsMenu;
 
 	private static final int CROSS_DIALOG = 0x40;
@@ -61,28 +61,28 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	static PreferenceHelper prefs;
 
 	// static NotificationManager notificationManager;
-	static Notification myNotification;
-	static PendingIntent contentIntent;
+	// static Notification myNotification;
+	private static PendingIntent contentIntent;
 
-	// @Override
-	protected void onCreateOff(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Log.d(TAG, "onCreate");
-		setContentView(R.layout.activity_time_sheet);
-
-		prefs = new PreferenceHelper(getApplicationContext());
-
-		// addTab("Test Frag", TestFragment.class,
-		// TestFragment.createBundle("Test Fragment"));
-		// addTab("Select Task", TaskSelectionFragment.class,
-		// TaskSelectionFragment.createBundle("Select Task"));
-		// addTab("Day Report", DayReportFragment.class,
-		// DayReportFragment.createBundle("Day Report"));
-		// addTab("Week Report", WeekReportFragment.class,
-		// WeekReportFragment.createBundle("Week Report"));
-
-		setSelected();
-	}
+	//	// @Override
+	//	protected void onCreateOff(Bundle savedInstanceState) {
+	//		super.onCreate(savedInstanceState);
+	//		Log.d(TAG, "onCreate");
+	//		setContentView(R.layout.activity_time_sheet);
+	//
+	//		prefs = new PreferenceHelper(getApplicationContext());
+	//
+	//		// addTab("Test Frag", TestFragment.class,
+	//		// TestFragment.createBundle("Test Fragment"));
+	//		// addTab("Select Task", TaskSelectionFragment.class,
+	//		// TaskSelectionFragment.createBundle("Select Task"));
+	//		// addTab("Day Report", DayReportFragment.class,
+	//		// DayReportFragment.createBundle("Day Report"));
+	//		// addTab("Week Report", WeekReportFragment.class,
+	//		// WeekReportFragment.createBundle("Week Report"));
+	//
+	//		setSelected();
+	//	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -536,7 +536,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
     /**
 	 * Notify the task list that there are no items selected.
 	 */
-	void clearSelected() {
+	private void clearSelected() {
 		Log.d(TAG, "in clearSelected()");
 		ListView myTaskList = (ListView) findViewById(R.id.tasklistfragment);
 		if (myTaskList == null) {
@@ -624,7 +624,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	/**
 	 * Refresh the task list. Looking up the list view.
 	 */
-	void refreshTaskListAdapter() {
+	private void refreshTaskListAdapter() {
 		Log.d(TAG, "In refreshTaskListAdapter()");
 		refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
 	}
@@ -652,7 +652,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	/**
 	 * Refresh the day report list. Looking up the list view.
 	 */
-	void refreshReportListAdapter() {
+	private void refreshReportListAdapter() {
 		Log.d(TAG, "In refreshReportListAdapter()");
 		refreshReportListAdapter((ListView) findViewById(R.id.reportList));
 	}
@@ -734,7 +734,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	/**
 	 * Refresh the week report list. Looking up the list view.
 	 */
-	void refreshWeekReportListAdapter() {
+	private void refreshWeekReportListAdapter() {
 		Log.d(TAG, "In refreshWeekReportListAdapter()");
 		refreshWeekReportListAdapter((ListView) findViewById(R.id.weekList));
 	}
@@ -840,7 +840,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 						getResources().getString(R.string.notification_title))
 				.setContentText(taskName).setWhen(timeIn)
 				.setContentIntent(contentIntent).setAutoCancel(false).setOngoing(true)
-				.setSmallIcon(R.drawable.icon_small).getNotification();
+				.setSmallIcon(R.drawable.icon_small).build();
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
@@ -884,7 +884,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	/**
 	 * Update the subtitle in the Action Bar.
 	 */
-	void updateTitleBar() {
+	private void updateTitleBar() {
 		Log.d(TAG, "updateTitleBar");
 		final String format = "(%.2fh / %.2fh) / (%.2fh / %.2fh)";
 		float hoursPerDay = prefs.getHoursPerDay();
@@ -948,6 +948,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	 * 
 	 * @return optionMenu
 	 */
+	@SuppressWarnings("unused")
 	public Menu getOptionsMenu() {
 		return optionsMenu;
 	}

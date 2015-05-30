@@ -28,8 +28,7 @@ public class TaskListFragment extends RoboSherlockListFragment {
 
 		// val rootView = inflater.inflate(R.layout.fragment_tasklist,
 		// container, false);
-		View rootView = inflater.inflate(R.layout.fragment_tasklist, container,
+		return inflater.inflate(R.layout.fragment_tasklist, container,
 				false);
-		return rootView;
 	}
 }

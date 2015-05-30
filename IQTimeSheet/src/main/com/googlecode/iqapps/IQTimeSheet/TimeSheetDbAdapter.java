@@ -269,7 +269,7 @@ public class TimeSheetDbAdapter {
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
 	 * 
-	 * @param chargeno
+	 * @param task
 	 *            the charge number for the entry
 	 * @return rowId or -1 if failed
 	 */
@@ -296,7 +296,7 @@ public class TimeSheetDbAdapter {
 	 * successfully created return the new rowId for that note, otherwise return
 	 * a -1 to indicate failure.
 	 * 
-	 * @param chargeno
+	 * @param task
 	 *            the charge number for the entry
 	 * @param timeIn
 	 *            the time in milliseconds of the clock-in
@@ -345,8 +345,6 @@ public class TimeSheetDbAdapter {
 	 * Close last time entry. If the entry is successfully closed, return the
 	 * rowId for that entry, otherwise return a -1 to indicate failure.
 	 * 
-	 * @param chargeno
-	 *            the charge number for the entry
 	 * @return rowId or -1 if failed
 	 */
 	public long closeEntry() {
@@ -368,7 +366,7 @@ public class TimeSheetDbAdapter {
 	 * Close supplied time entry. If the entry is successfully closed, return
 	 * the rowId for that entry, otherwise return a -1 to indicate failure.
 	 * 
-	 * @param chargeno
+	 * @param task
 	 *            the charge number for the entry
 	 * @return rowId or -1 if failed
 	 */
@@ -394,7 +392,7 @@ public class TimeSheetDbAdapter {
 	 * successfully closed, return the rowId for that entry, otherwise return a
 	 * -1 to indicate failure.
 	 * 
-	 * @param chargeno
+	 * @param task
 	 *            the charge number for the entry
 	 * @param timeOut
 	 *            the time in milliseconds of the clock-out
@@ -530,16 +528,20 @@ public class TimeSheetDbAdapter {
 
 	/**
 	 * Update the note using the details provided. The entry to be updated is
-	 * specified using the rowId, and it is altered to use the title and body
+	 * specified using the rowId, and it is altered to use the date and time
 	 * values passed in
 	 * 
 	 * @param rowId
 	 *            id of entry to update
-	 * @param title
-	 *            value to set entry title to
-	 * @param body
-	 *            value to set note body to
-	 * @return true if the note was successfully updated, false otherwise
+	 * @param chargeno
+	 *            change number to update
+	 * @param date
+	 *            the date of the entry
+     * @param timein
+     *            the time work started on the task
+     * @param timeout
+     *            the time work stopped on the task
+	 * @return true if the entry was successfully updated, false otherwise
 	 */
 	public boolean updateEntry(long rowId, long chargeno, String date,
 			long timein, long timeout) {
@@ -804,7 +806,7 @@ public class TimeSheetDbAdapter {
 		}
 
 		// Query to discover the immediately following row ID.
-		Cursor mCursor = null;
+		Cursor mCursor;
 		if (mDb == null)
 			open();
 		try {
@@ -821,7 +823,7 @@ public class TimeSheetDbAdapter {
 
 		mCursor.moveToFirst();
 
-		long nextRowID = -1;
+		long nextRowID;
 		try {
 			String response = mCursor.getString(0);
 			nextRowID = Long.parseLong(response);
@@ -898,7 +900,7 @@ public class TimeSheetDbAdapter {
 		long now = TimeHelpers.millisNow();
 		long todayStart = TimeHelpers.millisToStartOfDay(now);
 		long todayEnd = TimeHelpers.millisToEndOfDay(now);
-		long[] rows = null;
+		long[] rows;
 
 		// public Cursor query(boolean distinct, String table, String[] columns,
 		// String selection, String[] selectionArgs, String groupBy, String
@@ -1663,7 +1665,7 @@ public class TimeSheetDbAdapter {
 			return null;
 		}
 
-		String response = new String("");
+		String response = ""; // = new String("");
 		if (mCursor.getCount() < 1) {
 			Log.d(TAG, "getCount result was < 1");
 		} else {
@@ -1685,7 +1687,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return the entry that matches the given rowId
 	 * 
-	 * @param rowId
+	 * @param splitTask
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
 	 */
@@ -1718,8 +1720,7 @@ public class TimeSheetDbAdapter {
 					new String[] { String.valueOf(rowId) });
 		} catch (SQLException e) {
 			Log.i(TAG, "getSplitTaskParent: " + e.toString());
-			ret = 0;
-		}
+        }
 		try {
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -1740,7 +1741,7 @@ public class TimeSheetDbAdapter {
 	/**
 	 * Return the entry that matches the given rowId
 	 * 
-	 * @param rowId
+	 * @param splitTask
 	 *            id of task to retrieve
 	 * @return parent's task ID, if found, 0 if not
 	 */
@@ -2075,7 +2076,7 @@ public class TimeSheetDbAdapter {
 			mCursor.moveToFirst();
 		}
 		long usage = mCursor.getLong(0);
-		long oldUsage = mCursor.getLong(1);
+        // long oldUsage = mCursor.getLong(1);
 		long lastUsed = mCursor.getLong(2);
 		ContentValues updateValues = new ContentValues();
 
@@ -2087,7 +2088,7 @@ public class TimeSheetDbAdapter {
 
 		// Roll-over the old usage when transitioning into a new month.
 		if (todayCal.get(Calendar.MONTH) != dateLastUsedCal.get(Calendar.MONTH)) {
-			oldUsage = usage;
+			long oldUsage = usage;
 			usage = 0;
 			updateValues.put(KEY_OLDUSAGE, oldUsage);
 		}
@@ -2268,6 +2269,11 @@ public class TimeSheetDbAdapter {
 			}
 		} catch (Exception e) {
 			Log.d(TAG, "Cursor usage threw " + e.toString());
+		}
+		try {
+			tasksC.close();
+		} catch (Exception e) {
+			Log.d(TAG, "Cursor closing threw " + e.toString());
 		}
 	}
 }
