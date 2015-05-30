@@ -644,6 +644,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 				getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, db
 						.getTasksList()));
+		setSelected(myTaskList);
 
 		updateTitleBar();
 	}
