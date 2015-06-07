@@ -31,6 +31,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
@@ -54,6 +55,8 @@ public class PreferenceHelper {
 	public static final String KEY_PERSISTENT_NOTIFICATION = "persistent.notification";
 	public static final String KEY_SDCARD_BACKUP = "db.on.sdcard";
 	public static final String KEY_TIMEZONE_ANCHOR = "tz.anchor";
+	public static final String KEY_WEEK_START_DAY = "week.startday";
+	public static final String KEY_WEEK_START_HOUR = "week.starthour";
 
 	public PreferenceHelper(Context mCtx) {
         prefs = PreferenceManager.getDefaultSharedPreferences(mCtx);
@@ -215,5 +218,28 @@ public class PreferenceHelper {
 		}
 		Log.d(TAG, "Preference " + KEY_SDCARD_BACKUP + ": " + backup);
 		return backup;
+	}
+
+	public int getWeekStartDay() {
+		int startDay = Calendar.MONDAY;
+		try {
+			startDay = Integer.valueOf(prefs.getString(KEY_WEEK_START_DAY,
+					Integer.toString(Calendar.MONDAY)));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_WEEK_START_DAY + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_WEEK_START_DAY + ": " + startDay);
+		return startDay;
+	}
+
+	public int getWeekStartHour() {
+		int startHour = 0;
+		try {
+			startHour = Integer.valueOf(prefs.getString(KEY_WEEK_START_HOUR, "0"));
+		} catch (Exception e) {
+			Log.e(TAG, KEY_WEEK_START_HOUR + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_WEEK_START_HOUR + ": " + startHour);
+		return startHour;
 	}
 }

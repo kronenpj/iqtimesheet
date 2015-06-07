@@ -24,24 +24,37 @@
         android:order="25"
         android:summaryOff="@string/timepicker_align_summary_off"
         android:summaryOn="@string/timepicker_align_summary_on"
-        android:title="@string/align_within_time_picker" >
-    </CheckBoxPreference>
+        android:title="@string/align_within_time_picker" />
 
     <EditTextPreference
         android:defaultValue="8"
         android:key="hours.day"
         android:order="30"
         android:summary="@string/hours_day_summary"
-        android:title="@string/hours_day_title" >
-    </EditTextPreference>
+        android:title="@string/hours_day_title" />
 
     <EditTextPreference
         android:defaultValue="40"
         android:key="hours.week"
         android:order="40"
         android:summary="@string/hours_week_summary"
-        android:title="@string/hours_week_title" >
-    </EditTextPreference>
+        android:title="@string/hours_week_title" />
+
+    <ListPreference
+        android:key="week.startday"
+        android:entries="@array/daystrings"
+        android:entryValues="@array/dayints"
+        android:order="43"
+        android:summary="@string/week_start_day_summary"
+        android:title="@string/week_start_day_title" />
+
+    <ListPreference
+        android:key="week.starthour"
+        android:entries="@array/hours"
+        android:entryValues="@array/hours"
+        android:order="47"
+        android:summary="@string/week_start_hour_summary"
+        android:title="@string/week_start_hour_title" />
 
     <EditTextPreference
         android:defaultValue="14.0"
@@ -51,25 +64,25 @@
         android:title="@string/totals_font_size" />
 
     <EditTextPreference
-            android:defaultValue="12.0"
-            android:key="fontSize.tasklist"
-            android:order="60"
-            android:summary="@string/fontsize_tasklist_summary"
-            android:title="@string/fontsize_tasklist" />
+        android:defaultValue="12.0"
+        android:key="fontSize.tasklist"
+        android:order="60"
+        android:summary="@string/fontsize_tasklist_summary"
+        android:title="@string/fontsize_tasklist" />
 
     <ListPreference
-            android:key="tz.anchor"
-            android:order="70"
-            android:summary="@string/tz_anchor_summary"
-            android:title="@string/tz_anchor_title"/>
+        android:key="tz.anchor"
+        android:order="70"
+        android:summary="@string/tz_anchor_summary"
+        android:title="@string/tz_anchor_title"/>
 
     <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="persistent.notification"
-            android:order="80"
-            android:summaryOff="Enable persistent notifications"
-            android:summaryOn="Disable persistent notifications"
-            android:title="Persistent notifications" />
+        android:defaultValue="false"
+        android:key="persistent.notification"
+        android:order="80"
+        android:summaryOff="Enable persistent notifications"
+        android:summaryOn="Disable persistent notifications"
+        android:title="Persistent notifications" />
 
     <CheckBoxPreference
         android:defaultValue="true"
@@ -78,7 +91,6 @@
         android:order="100"
         android:summaryOff="@string/backup_sd_summary_off"
         android:summaryOn="@string/backup_sd_summary_on"
-        android:title="@string/backup_sd_title" >
-    </CheckBoxPreference>
+        android:title="@string/backup_sd_title" />
 
 </PreferenceScreen>

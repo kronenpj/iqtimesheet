@@ -1,5 +1,7 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
+import java.sql.Time;
+import java.util.Calendar;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -111,20 +113,30 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 
 			@Override
 			public void onPageSelected(int position) {
-				switch (position) {
-				case 0: {
-					Log.d(TAG, "Selected task page");
-					refreshTaskListAdapter();
-				}
-				case 1: {
-					Log.d(TAG, "Selected day report page");
-					refreshReportListAdapter();
-				}
-				case 2: {
-					Log.d(TAG, "Selected week report page");
-					refreshWeekReportListAdapter();
-				}
-				}
+                Log.v(TAG, "In onPageSelected");
+                Log.d(TAG, "Today         : " + TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()));
+                Log.d(TAG, "DoW Preference: " + prefs.getWeekStartDay());
+                Log.d(TAG, "HoD Preference: " + prefs.getWeekStartHour());
+                checkCrossDayClock();
+                if (TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()) ==
+                        TimeSheetActivity.prefs.getWeekStartDay()
+                        && TimeSheetActivity.prefs.getWeekStartHour() > 0)
+                    checkCrossSplitClock(TimeSheetActivity.prefs.getWeekStartHour());
+                switch (position) {
+                    case 0: {
+                        Log.d(TAG, "Selected task page");
+                        refreshTaskListAdapter();
+                    }
+                    case 1: {
+                        Log.d(TAG, "Selected day report page");
+                        refreshReportListAdapter();
+                    }
+                    case 2: {
+                        Log.d(TAG, "Selected week report page");
+                        refreshWeekReportListAdapter();
+                    }
+                }
+                updateTitleBar();
 			}
 
 			@Override
@@ -134,6 +146,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		});
 
 		setSelected();
+		updateTitleBar();
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,7 +171,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-		db.open();
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
 
 		// Check to see that what we received is what we wanted to see.
 		if (requestCode == ActivityCodes.TASKADD.ordinal()) {
@@ -238,6 +255,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 					refreshTaskListAdapter();
 					refreshReportListAdapter();
 					refreshWeekReportListAdapter();
+                    updateTitleBar();
 				} catch (NullPointerException e) {
 					Log.d(TAG,
 							"TaskEdit refreshTaskListAdapter: " + e.toString());
@@ -321,8 +339,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 						.newInstance(R.string.restore_title);
 				newFragment.show(getSupportFragmentManager(), "restore_dialog");
 			}
-			// FIXME: Need to trigger task list view refresh here!!!
 			refreshTaskListAdapter();
+            updateTitleBar();
 			setSelected();
 			return true;
 		}
@@ -387,9 +405,17 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		if (item.getItemId() == ActivityCodes.RETIRE_ID.ordinal()) {
 			TimeSheetDbAdapter db = new TimeSheetDbAdapter(
 					getApplicationContext());
-			db.open();
+            try {
+                db.open();
+            } catch(Exception e) {
+                Log.i(TAG, "Database open threw exception" + e);
+            }
 			db.deactivateTask(((TextView) info.targetView).getText().toString());
-			db.close();
+            try {
+                db.close();
+            } catch(Exception e) {
+                Log.i(TAG, "Database close threw exception" + e);
+            }
 			refreshTaskListAdapter((ListView) info.targetView.getParent());
 			return true;
 		}
@@ -472,6 +498,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 									// refreshTaskListAdapter((ListView)
 									// findViewById(R.id.tasklistfragment));
 									refreshTaskListAdapter();
+                                    updateTitleBar();
 									setSelected();
 								}
 							})
@@ -587,7 +614,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 	void setSelected(ListView myTaskList) {
 		Log.d(TAG, "in setSelected");
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-		db.open();
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
 		long timeOut = db.timeOutForLastClockEntry();
 		Log.d(TAG,
 				"Last Time Out: " + timeOut + " / "
@@ -638,16 +669,18 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
     void refreshTaskListAdapter(ListView myTaskList) {
 		Log.d(TAG, "In refreshTaskListAdapter");
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-		db.open();
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
 		// (Re-)Populate the ListView with an array adapter with the task items.
 		myTaskList.setAdapter(new MyArrayAdapter<String>(
 				getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, db
 						.getTasksList()));
 		setSelected(myTaskList);
-
-		updateTitleBar();
-	}
+    }
 
 	/**
 	 * Refresh the day report list. Looking up the list view.
@@ -751,11 +784,11 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
 		float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
 		String date = TimeHelpers.millisToDate(TimeHelpers
-				.millisToEndOfWeek(day));
+				.millisToEndOfWeek(day, prefs.getWeekStartDay()));
 		Log.d(TAG,
 				"refreshWeekReportListAdapter: Updating to "
 						+ TimeHelpers.millisToTimeDate(TimeHelpers
-								.millisToEndOfWeek(day)));
+								.millisToEndOfWeek(day, prefs.getWeekStartDay())));
 
 		try {
 			TextView headerView = (TextView) myReportList.getRootView()
@@ -876,6 +909,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 			refreshTaskListAdapter();
 			refreshReportListAdapter();
 			// refreshWeekReportListAdapter();
+            updateTitleBar();
 			setSelected();
 		}
 		Log.d(TAG, "leaving doRestoreClick");
@@ -943,7 +977,123 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 						weekAdder, hoursPerWeek - weekAdder));
 	}
 
-	/**
+    private void checkCrossSplitClock(int hour) {
+        Log.d(TAG, "In checkCrossSplitClock");
+        TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
+        long lastRowID = db.lastClockEntry();
+        long lastTaskID = db.taskIDForLastClockEntry();
+        Cursor tempClockCursor = db.fetchEntry(lastRowID);
+
+        long timeOut = tempClockCursor.getLong(tempClockCursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+
+        // If the last task is not "open" then skip.
+        if (timeOut != 0) {
+            try {
+                tempClockCursor.close();
+            } catch (IllegalStateException e) {
+                Log.d(TAG, "checkCrossDayClock " + e.toString());
+            }
+            return;
+        }
+
+        // Handle cross-boundary clockings.
+        long lastClockIn = tempClockCursor.getLong(tempClockCursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+        long boundary = TimeHelpers.millisToStartOfDay(lastClockIn) +
+                prefs.getWeekStartHour() * 3600 * 1000;
+
+        try {
+            tempClockCursor.close();
+        } catch (IllegalStateException e) {
+            Log.d(TAG, "checkCrossDayClock " + e.toString());
+        }
+
+        Log.d(TAG, "boundary time   : " + boundary);
+        Log.d(TAG, "lastClockIn time: " + lastClockIn);
+        Log.d(TAG, "timeOut         : " + timeOut);
+		if (lastClockIn != boundary && boundary != timeOut) {
+			db.closeEntry(lastTaskID, boundary - 1000);
+			db.createEntry(lastTaskID, boundary);
+		}
+    }
+
+    private void checkCrossDayClock() {
+        Log.d(TAG, "In checkCrossDayClock");
+        TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
+        long lastRowID = db.lastClockEntry();
+        long lastTaskID = db.taskIDForLastClockEntry();
+        Cursor tempClockCursor = db.fetchEntry(lastRowID);
+
+        long timeOut = tempClockCursor.getLong(tempClockCursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+
+        // If the last task is not "open" then skip.
+        if (timeOut != 0) {
+            try {
+                tempClockCursor.close();
+            } catch (IllegalStateException e) {
+                Log.d(TAG, "checkCrossDayClock " + e.toString());
+            }
+            return;
+        }
+
+        // Handle cross-day clockings.
+        // tempClockCursor.moveToFirst();
+        long now = TimeHelpers.millisNow();
+        long lastClockIn = tempClockCursor.getLong(tempClockCursor
+                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+        long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn,
+                prefs.getTimeZone());
+
+        // Calculate where we are in relation to the boundary time.
+        long delta = now - boundary;
+
+        // If the difference in days is 1, ask. If it's greater than 1, just
+        // close it.
+        Log.d(TAG,
+                "checkCrossDayClock: now=" + now + " / "
+                        + TimeHelpers.millisToTimeDate(now));
+        Log.d(TAG, "checkCrossDayClock: lastClockIn=" + lastClockIn + " / "
+                + TimeHelpers.millisToTimeDate(lastClockIn));
+        Log.d(TAG, "checkCrossDayClock: delta=" + delta);
+
+        // TODO: This should be handled better.
+        // Less than one day
+        if (delta < 1) {
+            Log.d(TAG, "Ignoring.  delta = " + delta);
+        } else if ((now - TimeHelpers.millisToStartOfDay(lastClockIn)) > 86400000) { // More
+            // than one day.
+            Log.d(TAG, "Closing entry.  delta = " + delta / 86400000.0
+                    + " days.");
+            Log.d(TAG, "With timeOut = " + boundary);
+            db.closeEntry(lastTaskID, boundary);
+            refreshTaskListAdapter();
+        } else if (delta > 0) { // Now is beyond the boundary.
+            Log.d(TAG, "Opening dialog.  delta = " + delta);
+            db.closeEntry(lastTaskID, boundary);
+            showDialog(CROSS_DIALOG);
+        }
+
+        try {
+            tempClockCursor.close();
+        } catch (IllegalStateException e) {
+            Log.d(TAG, "taskIDForLastClockEntry " + e.toString());
+        }
+    }
+
+
+    /**
 	 * Return the menu object for testing.
 	 * 
 	 * @return optionMenu

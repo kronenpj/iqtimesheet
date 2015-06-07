@@ -188,7 +188,8 @@ public class TimeHelpers {
         calendar.set(Calendar.MILLISECOND, 0);
 
         // Make sure we actually went backward in time and adjust it if not.
-        if (calendar.getTimeInMillis() > timeInMillis)
+        if (calendar.getTimeInMillis() > timeInMillis ||
+                calendar.get(Calendar.DAY_OF_WEEK) >= millisToDayOfWeek(timeInMillis))
             calendar.add(Calendar.DAY_OF_MONTH, -7);
 
         return calendar.getTimeInMillis();
@@ -229,7 +230,8 @@ public class TimeHelpers {
         calendar.add(Calendar.SECOND, 1);
 
         // Make sure we actually went forward in time and adjust it if not.
-        if (calendar.getTimeInMillis() < timeInMillis)
+        if (calendar.getTimeInMillis() < timeInMillis||
+                calendar.get(Calendar.DAY_OF_WEEK) <= millisToDayOfWeek(timeInMillis))
             calendar.add(Calendar.DAY_OF_MONTH, 7);
 
         // Then take away one millisecond so that we're still bounding it by the
@@ -298,6 +300,20 @@ public class TimeHelpers {
         calendar.setTimeInMillis(timeInMillis);
 
         return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /*
+     * Method to return the day of the week for a given time in milliseconds.
+     *
+     * @param millis Milliseconds to use for calculations.
+     *
+     * @return Day of week of supplied time.
+     */
+    public static int millisToDayOfWeek(long timeInMillis) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(timeInMillis);
+
+        return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     /*

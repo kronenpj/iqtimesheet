@@ -25,6 +25,7 @@
  */
 package com.googlecode.iqapps.IQTimeSheet;
 
+import java.util.Calendar;
 import java.util.TimeZone;
 
 import android.content.Intent;
@@ -83,7 +84,7 @@ public class MyPreferenceActivity extends SherlockPreferenceActivity implements
 		String[] timeZones = TimeZone.getAvailableIDs();
 		tzAnchor.setEntries(timeZones);
 		tzAnchor.setEntryValues(timeZones);
-	}
+    }
 
 	@Override
 	protected void onPause() {

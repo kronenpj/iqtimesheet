@@ -41,6 +41,10 @@
 	<string name="hours_day_summary">Hours normally worked per day</string>
 	<string name="hours_week_title">Hours per week</string>
 	<string name="hours_week_summary">Hours normally worked per week</string>
+    <string name="week_start_day_title">Week start day</string>
+    <string name="week_start_day_summary">Start day of the week</string>
+    <string name="week_start_hour_title">Week day split hour</string>
+    <string name="week_start_hour_summary">Hour of the day where the week splits</string>
     <string name="tz_anchor_title">Select anchor time zone</string>
     <string name="tz_anchor_summary">Anchor time zone for midnight and cross-day checks</string>
 	<string name="backup_sd_title">Enable backups?</string>

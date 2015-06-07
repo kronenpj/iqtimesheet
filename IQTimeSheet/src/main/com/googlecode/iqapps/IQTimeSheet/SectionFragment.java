@@ -130,7 +130,11 @@ public class SectionFragment extends RoboSherlockFragment {
         Log.d(TAG, "in setupDayReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getSherlockActivity().getApplicationContext());
-        db.open();
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_reportlist,
                 container, false);
@@ -166,16 +170,50 @@ public class SectionFragment extends RoboSherlockFragment {
 
                 switch (v.getId()) {
                 case R.id.previous:
-                    TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
                     Log.d(TAG, "onClickListener button: previous");
+                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                    if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
+                            TimeSheetActivity.prefs.getWeekStartDay()) {
+                        TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
+                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                    } else {
+                        if (TimeHelpers.millisToHour(TimeSheetActivity.day) <
+                                TimeSheetActivity.prefs.getWeekStartHour()) {
+                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
+                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        } else {
+                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) +
+                                    (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) - 1000;
+                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        }
+                    }
                     break;
                 case R.id.today:
-                    TimeSheetActivity.day = TimeHelpers.millisNow();
                     Log.d(TAG, "onClickListener button: today");
+                    TimeSheetActivity.day = TimeHelpers.millisNow();
                     break;
                 case R.id.next:
-                    TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
                     Log.d(TAG, "onClickListener button: next");
+                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                    if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
+                            TimeSheetActivity.prefs.getWeekStartDay()) {
+                        TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) + 1000;
+                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                    } else {
+                        if (TimeHelpers.millisToHour(TimeSheetActivity.day) >
+                                TimeSheetActivity.prefs.getWeekStartHour()) {
+                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) + 1000;
+                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        } else {
+                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) +
+                                    (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
+                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        }
+                    }
                     break;
                 }
 
@@ -215,7 +253,11 @@ public class SectionFragment extends RoboSherlockFragment {
         Log.d(TAG, "in setupWeekReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getSherlockActivity().getApplicationContext());
-        db.open();
+        try {
+            db.open();
+        } catch(Exception e) {
+            Log.i(TAG, "Database open threw exception" + e);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_weekreportlist,
                 container, false);
@@ -250,16 +292,32 @@ public class SectionFragment extends RoboSherlockFragment {
 
                 switch (v.getId()) {
                 case R.id.wprevious:
-                    TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
                     Log.d(TAG, "onClickListener button: wprevious");
+                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+
+                    // TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
+                    TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day,
+                            TimeSheetActivity.prefs.getWeekStartDay()) +
+                            (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) - 1000;
+                    Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 case R.id.wtoday:
                     TimeSheetActivity.day = TimeHelpers.millisNow();
                     Log.d(TAG, "onClickListener button: wtoday");
                     break;
                 case R.id.wnext:
-                    TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
                     Log.d(TAG, "onClickListener button: wnext");
+                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+
+                    // TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
+                    TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day,
+                            TimeSheetActivity.prefs.getWeekStartDay()) +
+                            (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
+                    Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 }
 
