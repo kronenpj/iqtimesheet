@@ -1,25 +1,41 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
+
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-        // classpath 'org.codehaus.groovy:groovy-backports-compat23:2.4.0'
-        // classpath 'org.codehaus.groovy:groovy:2.4.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
     }
 }
 
 apply plugin: 'com.android.application'
 
-
 android {
     signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
     }
     compileSdkVersion 18
-    buildToolsVersion '21.1.2'
+    buildToolsVersion '22.0.1'
+
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 18
+//        versionCode 2015.2
+//        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
     dependencies {
     }
@@ -30,22 +46,7 @@ android {
             res.srcDirs = ['res']
         }
     }
-    lintOptions {
-        // checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-    buildTypes {
-        release {
-            zipAlignEnabled true
-            minifyEnabled true
-            // proguardFile getDefaultProguardFile('proguard-android.txt')
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-        }
-    }
 }
-
 
 repositories {
     mavenCentral()
@@ -53,8 +54,9 @@ repositories {
 
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:22.2.0'
     compile 'com.github.rtyley:roboguice-sherlock:1.5'
     compile 'org.roboguice:roboguice:2.0'
 }
+
 
