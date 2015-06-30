@@ -125,7 +125,8 @@ public class WeekReport extends ListActivity {
         // option. This may include changing the usage of 'date' further down so
         // that it's interpreted as a beginning rather than an end date.
         String date = TimeHelpers.millisToDate(TimeHelpers
-                .millisToEndOfWeek(day));
+                .millisToEndOfWeek(day, TimeSheetActivity.prefs.getWeekStartDay(),
+                        TimeSheetActivity.prefs.getWeekStartHour()));
         setTitle("Week Report - W/E: " + date);
 
         footerView
@@ -147,7 +148,8 @@ public class WeekReport extends ListActivity {
         // the current open task exists, then include it, otherwise omit.
         if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow())
                 && day <= TimeHelpers
-                .millisToEndOfWeek(TimeHelpers.millisNow())) {
+                .millisToEndOfWeek(TimeHelpers.millisNow(), TimeSheetActivity.prefs.getWeekStartDay(),
+                        TimeSheetActivity.prefs.getWeekStartHour())) {
             timeEntryCursor = db.weekSummary(day, false);
         } else {
             timeEntryCursor = db.weekSummary(day, true);
@@ -233,13 +235,17 @@ public class WeekReport extends ListActivity {
 
             switch (v.getId()) {
                 case R.id.previous:
-                    day = TimeHelpers.millisToStartOfWeek(day) - 1000;
+                    day = TimeHelpers.millisToStartOfWeek(day,
+                            TimeSheetActivity.prefs.getWeekStartDay(),
+                            TimeSheetActivity.prefs.getWeekStartHour()) - 1000;
                     break;
                 case R.id.today:
                     day = TimeHelpers.millisNow();
                     break;
                 case R.id.next:
-                    day = TimeHelpers.millisToEndOfWeek(day) + 1000;
+                    day = TimeHelpers.millisToEndOfWeek(day,
+                            TimeSheetActivity.prefs.getWeekStartDay(),
+                            TimeSheetActivity.prefs.getWeekStartHour()) + 1000;
                     break;
             }
             fillData();

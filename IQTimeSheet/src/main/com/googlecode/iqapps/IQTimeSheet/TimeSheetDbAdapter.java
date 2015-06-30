@@ -947,7 +947,8 @@ public class TimeSheetDbAdapter {
         final long now = TimeHelpers.millisNow();
         if (TimeHelpers.millisToDayOfMonth(now - 1000) == endDay
                 || TimeHelpers.millisToDayOfMonth(TimeHelpers
-                .millisToEndOfWeek(now - 1000)) == endDay) {
+                .millisToEndOfWeek(now - 1000, TimeSheetActivity.prefs.getWeekStartDay(),
+                        TimeSheetActivity.prefs.getWeekStartHour())) == endDay) {
             Log.d(TAG, "getEntryReportCursor: Allowing selection of zero-end-hour entries.");
             selection = KEY_TIMEIN + " >=? and " + KEY_TIMEOUT + " <= ? and ("
                     + KEY_TIMEOUT + " >= " + KEY_TIMEIN + " or " + KEY_TIMEOUT
@@ -1311,11 +1312,11 @@ public class TimeSheetDbAdapter {
         //	long todayStart = TimeHelpers.millisToStartOfWeek(time);
         //	long todayEnd = TimeHelpers.millisToEndOfWeek(time);
         long todayStart = TimeHelpers.millisToStartOfWeek(time,
-                TimeSheetActivity.prefs.getWeekStartDay()) +
-                TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000;
+                TimeSheetActivity.prefs.getWeekStartDay(),
+                TimeSheetActivity.prefs.getWeekStartHour());
         long todayEnd = TimeHelpers.millisToEndOfWeek(time,
-                TimeSheetActivity.prefs.getWeekStartDay()) +
-                TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000;
+                TimeSheetActivity.prefs.getWeekStartDay(),
+                TimeSheetActivity.prefs.getWeekStartHour());
 
         // public Cursor query(boolean distinct, String table, String[] columns,
         // String selection, String[] selectionArgs, String groupBy, String
@@ -1384,11 +1385,11 @@ public class TimeSheetDbAdapter {
         //	long weekStart = TimeHelpers.millisToStartOfWeek(time);
         //	long weekEnd = TimeHelpers.millisToEndOfWeek(time);
         long weekStart = TimeHelpers.millisToStartOfWeek(time,
-                TimeSheetActivity.prefs.getWeekStartDay()) +
-                TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000;
+                TimeSheetActivity.prefs.getWeekStartDay(),
+                TimeSheetActivity.prefs.getWeekStartHour());
         long weekEnd = TimeHelpers.millisToEndOfWeek(weekStart,
-                TimeSheetActivity.prefs.getWeekStartDay() -1) +
-                TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000;
+                TimeSheetActivity.prefs.getWeekStartDay(),
+                TimeSheetActivity.prefs.getWeekStartHour());
 
         Log.d(TAG,
                 "weekSummary start: " + TimeHelpers.millisToTimeDate(weekStart));

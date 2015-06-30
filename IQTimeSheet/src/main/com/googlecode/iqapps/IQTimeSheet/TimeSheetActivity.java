@@ -784,11 +784,14 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
 		float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
 		String date = TimeHelpers.millisToDate(TimeHelpers
-				.millisToEndOfWeek(day, prefs.getWeekStartDay()));
+				.
+						millisToEndOfWeek(day, prefs.getWeekStartDay(),
+						prefs.getWeekStartHour()));
 		Log.d(TAG,
 				"refreshWeekReportListAdapter: Updating to "
 						+ TimeHelpers.millisToTimeDate(TimeHelpers
-								.millisToEndOfWeek(day, prefs.getWeekStartDay())));
+								.millisToEndOfWeek(day, prefs.getWeekStartDay(),
+										prefs.getWeekStartHour())));
 
 		try {
 			TextView headerView = (TextView) myReportList.getRootView()
@@ -813,7 +816,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 		// omit.
 		if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow())
 				&& day <= TimeHelpers
-						.millisToEndOfWeek(TimeHelpers.millisNow())) {
+						.millisToEndOfWeek(TimeHelpers.millisNow(), prefs.getWeekStartDay(),
+								prefs.getWeekStartHour())) {
 			timeEntryCursor = db.weekSummary(day, false);
 		} else {
 			timeEntryCursor = db.weekSummary(day, true);

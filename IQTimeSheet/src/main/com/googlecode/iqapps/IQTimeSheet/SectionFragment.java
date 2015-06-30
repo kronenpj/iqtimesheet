@@ -299,8 +299,8 @@ public class SectionFragment extends RoboSherlockFragment {
 
                     // TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
                     TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day,
-                            TimeSheetActivity.prefs.getWeekStartDay()) +
-                            (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) - 1000;
+                            TimeSheetActivity.prefs.getWeekStartDay(),
+                            TimeSheetActivity.prefs.getWeekStartHour());
                     Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 case R.id.wtoday:
@@ -315,8 +315,8 @@ public class SectionFragment extends RoboSherlockFragment {
 
                     // TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
                     TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day,
-                            TimeSheetActivity.prefs.getWeekStartDay()) +
-                            (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
+                            TimeSheetActivity.prefs.getWeekStartDay(),
+                            TimeSheetActivity.prefs.getWeekStartHour());
                     Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 }
