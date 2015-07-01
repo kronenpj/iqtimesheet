@@ -56,7 +56,7 @@
 	<string name="fontsize_tasklist">Tasklist Font Size</string>
 	<string name="select_parent_task">Select parent task</string>
     <string name="scrub_database">Scrub the database</string>
-    <string name="notification_title">Clocked in...</string>
+    <string name="notification_title">Clocked in…</string>
     <string name="title_section1">Select Task</string>
     <string name="title_section2">Day Report</string>
     <string name="title_section3">Week Report</string>

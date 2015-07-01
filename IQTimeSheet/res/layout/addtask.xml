@@ -27,24 +27,24 @@
         android:text="@string/split_task_desc" />
 
     <Button
-        android:id="@+id/ChangeTask"
+        android:id="@+id/CancelEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/SplitTask"
         android:layout_gravity="left"
         android:layout_marginLeft="7dip"
-        android:text="@string/accept"
+        android:text="@string/cancel"
         android:width="150dip" />
 
     <Button
-        android:id="@+id/CancelEdit"
+        android:id="@+id/ChangeTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/SplitTask"
         android:layout_gravity="right"
         android:layout_marginRight="7dip"
-        android:layout_toRightOf="@+id/ChangeTask"
-        android:text="@string/cancel"
+        android:layout_toRightOf="@+id/CancelEdit"
+        android:text="@string/accept"
         android:width="150dip" />
 
     <TextView
