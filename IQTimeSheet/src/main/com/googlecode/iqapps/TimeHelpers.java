@@ -178,7 +178,7 @@ public class TimeHelpers {
      * @return The supplied value trimmed back to the start of the week.
      */
     public static long millisToStartOfWeek(long timeInMillis, int startDay) {
-        return millisToStartOfWeek(timeInMillis, Calendar.MONDAY, 0);
+        return millisToStartOfWeek(timeInMillis, startDay, 0);
     }
 
     /*
@@ -194,12 +194,30 @@ public class TimeHelpers {
      * @return The supplied value trimmed back to the start of the week.
      */
     public static long millisToStartOfWeek(long timeInMillis, int startDay, int borderHour) {
+        return millisToStartOfWeek(timeInMillis, startDay, borderHour, 0);
+    }
+
+    /*
+     * Method to calculate the millisecond time for the start of the week.
+     *
+     * @param millis Milliseconds to trim to the start of the week.
+     *
+     * @param startDay Day of week (from Calendar class) to start the week. Eg:
+     * Calendar.MONDAY
+     *
+     * @param borderHour Hour of the day to start the week. Eg: 0 or 12 or 8
+     *
+     * @param borderMin Minute of the hour of the day to start the week. Eg: 0 or 12 or 8
+     *
+     * @return The supplied value trimmed back to the start of the week.
+     */
+    public static long millisToStartOfWeek(long timeInMillis, int startDay, int borderHour, int borderMin) {
         GregorianCalendar calendar = new GregorianCalendar();
         // calendar.setTimeZone(TimeZone.getDefault());
         calendar.setTimeInMillis(timeInMillis);
         calendar.set(Calendar.DAY_OF_WEEK, startDay);
         calendar.set(Calendar.HOUR_OF_DAY, borderHour);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MINUTE, borderMin);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
@@ -233,7 +251,7 @@ public class TimeHelpers {
      * @return The supplied value extended to the end of the week.
      */
     public static long millisToEndOfWeek(long timeInMillis, int endDay) {
-        return millisToEndOfWeek(timeInMillis, Calendar.SUNDAY, 24);
+        return millisToEndOfWeek(timeInMillis, endDay, 24);
     }
 
     /*
@@ -249,12 +267,30 @@ public class TimeHelpers {
      * @return The supplied value extended to the end of the week.
      */
     public static long millisToEndOfWeek(long timeInMillis, int endDay, int borderHour) {
+        return millisToEndOfWeek(timeInMillis, endDay, borderHour, 60);
+    }
+
+    /*
+     * Method to calculate the millisecond time for the end of the week.
+     *
+     * @param millis Milliseconds to extend to the end of the week.
+     *
+     * @param endDay Day of week (from Calendar class) to end the week. Eg:
+     * Calendar.SUNDAY
+     *
+     * @param borderHour Hour of the day to end the week. Eg: 24 or 12 or 8
+     *
+     * @param borderMin Minute of the hour of the day to end the week. Eg: 60 or 30 or 15
+     *
+     * @return The supplied value extended to the end of the week.
+     */
+    public static long millisToEndOfWeek(long timeInMillis, int endDay, int borderHour, int borderMin) {
         GregorianCalendar calendar = new GregorianCalendar();
         // calendar.setTimeZone(TimeZone.getDefault());
         calendar.setTimeInMillis(timeInMillis);
         calendar.set(Calendar.DAY_OF_WEEK, endDay);
         calendar.set(Calendar.HOUR_OF_DAY, borderHour - 1);
-        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.MINUTE, borderMin - 1);
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 0);
         // Flip to the next day by adding a second. This forces the calendar to
