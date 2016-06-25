@@ -1260,13 +1260,14 @@ public class TimeSheetDbAdapter {
         // TODO: This is a first attempt and is likely to be convoluted.
         // If today is the split day for a 9/80-style week, adjust the start/end times appropriately.
         if (TimeHelpers.millisToDayOfWeek(todayStart) == TimeSheetActivity.prefs.getWeekStartDay()
-                && TimeSheetActivity.prefs.getWeekStartHour() > 0){
+                && TimeSheetActivity.prefs.getWeekStartHour() > 0) {
             long splitMillis = TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000;
             // This is the partial day where the week splits, only for schedules like a 9/80.
             if (time < todayStart + splitMillis)
                 // Move the end of the day to the split time.
                 todayEnd = todayStart + splitMillis;
-            else todayStart = todayStart + splitMillis; // Move the start of the day to the split time.
+            else
+                todayStart = todayStart + splitMillis; // Move the start of the day to the split time.
         }
 
         Log.d(TAG,
@@ -1471,7 +1472,8 @@ public class TimeSheetDbAdapter {
                 + TimeHelpers.millisNow() + " ELSE " + CLOCK_DATABASE_TABLE
                 + "." + KEY_TIMEOUT + " END - " + CLOCK_DATABASE_TABLE + "."
                 + KEY_TIMEIN + ")/3600000.0) * (" + TASKSPLIT_DATABASE_TABLE
-                + "." + KEY_PERCENTAGE + "/100.0)) AS " + KEY_TOTAL + " FROM "
+                + "." + KEY_PERCENTAGE + "/100.0)) AS " + KEY_TOTAL 
+                + " FROM "
                 + CLOCK_DATABASE_TABLE + ", " + TASKSPLIT_DATABASE_TABLE + ", "
                 + TASKS_DATABASE_TABLE + ", " + TASKSPLITREPORT_VIEW
                 + " WHERE " + CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT + " <= "
@@ -1483,8 +1485,12 @@ public class TimeSheetDbAdapter {
                 + TASKSPLIT_DATABASE_TABLE + "." + KEY_CHARGENO + " AND "
                 + TASKS_DATABASE_TABLE + "." + KEY_ROWID + "="
                 + TASKSPLITREPORT_VIEW + "." + KEY_PARENTTASK + " AND "
-                + TASKSPLIT_DATABASE_TABLE + "." + KEY_PERCENTAGE + "="
-                + TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE + " GROUP BY "
+//                + TASKSPLIT_DATABASE_TABLE + "." + KEY_PERCENTAGE + "="
+//                + TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE + " AND "
+                + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK + " || " + TASKSPLIT_DATABASE_TABLE
+                + "." + KEY_PERCENTAGE + "=" + TASKSPLITREPORT_VIEW + "." + KEY_ROWID + " || " + TASKSPLITREPORT_VIEW
+                + "." + KEY_PERCENTAGE
+                + " GROUP BY "
                 + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK;
         Log.v(TAG, "populateTemp2\n" + populateTemp2);
         mDb.execSQL(populateTemp2);

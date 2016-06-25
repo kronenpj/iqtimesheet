@@ -4,5 +4,5 @@
 		DO NOT MANUALLY UPDATE VERSION!!! Updating is performed by the ant
 		task "update-version" in build.xml
 	-->
-	<string name="msg_version">IQTimeSheet 2015.beta1 (a1a7f3b 2015.01.28)</string>
+	<string name="msg_version">IQTimeSheet 2016.beta1 (407b935 2016.06.24)</string>
 </resources>
