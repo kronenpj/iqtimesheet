@@ -23,7 +23,7 @@ android {
         }
     }
     compileSdkVersion 18
-    buildToolsVersion '22.0.1'
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         minSdkVersion 8
