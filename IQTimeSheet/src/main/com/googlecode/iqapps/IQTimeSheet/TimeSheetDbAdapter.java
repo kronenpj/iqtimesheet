@@ -144,6 +144,7 @@ public class TimeSheetDbAdapter {
             + " TEXT NOT NULL, " + KEY_TOTAL + " REAL DEFAULT 0);";
     private static final String SUMMARY_TABLE_CLEAN = "DELETE FROM "
             + SUMMARY_DATABASE_TABLE + ";";
+    private static final String VACUUM = "VACUUM;";
 
     private static final String TASKS_INDEX = "CREATE UNIQUE INDEX "
             + TASKS_DATABASE_TABLE + "_index ON " + TASKS_DATABASE_TABLE + " ("
@@ -1440,6 +1441,7 @@ public class TimeSheetDbAdapter {
         }
         Log.v(TAG, "populateSummary: Cleaning summary table.");
         mDb.execSQL(SUMMARY_TABLE_CLEAN);
+        mDb.execSQL(VACUUM);
 
         String omitOpenQuery = "";
         if (omitOpen) {
@@ -1472,7 +1474,7 @@ public class TimeSheetDbAdapter {
                 + TimeHelpers.millisNow() + " ELSE " + CLOCK_DATABASE_TABLE
                 + "." + KEY_TIMEOUT + " END - " + CLOCK_DATABASE_TABLE + "."
                 + KEY_TIMEIN + ")/3600000.0) * (" + TASKSPLIT_DATABASE_TABLE
-                + "." + KEY_PERCENTAGE + "/100.0)) AS " + KEY_TOTAL 
+                + "." + KEY_PERCENTAGE + "/100.0)) AS " + KEY_TOTAL
                 + " FROM "
                 + CLOCK_DATABASE_TABLE + ", " + TASKSPLIT_DATABASE_TABLE + ", "
                 + TASKS_DATABASE_TABLE + ", " + TASKSPLITREPORT_VIEW
@@ -1485,13 +1487,10 @@ public class TimeSheetDbAdapter {
                 + TASKSPLIT_DATABASE_TABLE + "." + KEY_CHARGENO + " AND "
                 + TASKS_DATABASE_TABLE + "." + KEY_ROWID + "="
                 + TASKSPLITREPORT_VIEW + "." + KEY_PARENTTASK + " AND "
-//                + TASKSPLIT_DATABASE_TABLE + "." + KEY_PERCENTAGE + "="
-//                + TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE + " AND "
                 + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK + " || " + TASKSPLIT_DATABASE_TABLE
-                + "." + KEY_PERCENTAGE + "=" + TASKSPLITREPORT_VIEW + "." + KEY_ROWID + " || " + TASKSPLITREPORT_VIEW
-                + "." + KEY_PERCENTAGE
-                + " GROUP BY "
-                + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK;
+                + "." + KEY_PERCENTAGE + "=" + TASKSPLITREPORT_VIEW + "."
+                + KEY_ROWID + " || " + TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE
+                + " GROUP BY " + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK;
         Log.v(TAG, "populateTemp2\n" + populateTemp2);
         mDb.execSQL(populateTemp2);
     }
