@@ -150,6 +150,33 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         updateTitleBar();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        try {
+            refreshTaskListAdapter();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "onResume refreshTaskListAdapter: " + e.toString());
+        }
+        setSelected();
+        try {
+            refreshReportListAdapter();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "onResume refreshReportListAdapter: " + e.toString());
+        }
+        try {
+            refreshWeekReportListAdapter();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "onResume refreshWeekReportListAdapter: " + e.toString());
+        }
+        try {
+            updateTitleBar();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "onResume updateTitleBar: " + e.toString());
+        }
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getSupportMenuInflater().inflate(R.menu.time_sheet, menu);
