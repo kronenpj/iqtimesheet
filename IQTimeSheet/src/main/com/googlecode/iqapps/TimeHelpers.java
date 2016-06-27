@@ -16,6 +16,8 @@
 
 package com.googlecode.iqapps;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -222,9 +224,16 @@ public class TimeHelpers {
         calendar.set(Calendar.MILLISECOND, 0);
 
         // Make sure we actually went backward in time and adjust it if not.
-        if (calendar.getTimeInMillis() > timeInMillis ||
-                calendar.get(Calendar.DAY_OF_WEEK) >= millisToDayOfWeek(timeInMillis))
+        if (calendar.getTimeInMillis() > timeInMillis) {
+            Log.d(TAG, "millisToStartOfWeek, Millis, Subtracting 7 days");
             calendar.add(Calendar.DAY_OF_MONTH, -7);
+        }
+        // I don't know why this was put in and I think it wasn't adapted to the week start
+        // day preference. So this wasn't working properly.
+        // if (calendar.get(Calendar.DAY_OF_WEEK) >= millisToDayOfWeek(timeInMillis)) {
+        //     Log.d(TAG, "millisToStartOfWeek, DoW, Subtracting 7 days");
+        //     calendar.add(Calendar.DAY_OF_MONTH, -7);
+        // }
 
         return calendar.getTimeInMillis();
     }
@@ -298,12 +307,26 @@ public class TimeHelpers {
         calendar.add(Calendar.SECOND, 1);
 
         // Make sure we actually went forward in time and adjust it if not.
-        if (calendar.getTimeInMillis() < timeInMillis||
-                calendar.get(Calendar.DAY_OF_WEEK) <= millisToDayOfWeek(timeInMillis))
+        if (calendar.getTimeInMillis() < timeInMillis) {
+            Log.d(TAG, "millisToEndOfWeek, Millis, Adding 7 days");
+            Log.d(TAG, "millisToEndOfWeek: calendar: " +
+                    TimeHelpers.millisToTimeDate(calendar.getTimeInMillis()));
+            Log.d(TAG, "millisToEndOfWeek: args: " +
+                    TimeHelpers.millisToTimeDate(timeInMillis));
             calendar.add(Calendar.DAY_OF_MONTH, 7);
+        }
+        // I don't know why this was put in and I think it wasn't adapted to the week start
+        // day preference. So this wasn't working properly.
+        // if (calendar.get(Calendar.DAY_OF_WEEK) <= millisToDayOfWeek(timeInMillis)) {
+        //     Log.d(TAG, "millisToEndOfWeek, DoW, Adding 7 days");
+        //     Log.d(TAG, "millisToEndOfWeek: calendar: " +
+        //             calendar.get(Calendar.DAY_OF_WEEK));
+        //     Log.d(TAG, "millisToEndOfWeek: args: " +
+        //             TimeHelpers.millisToDayOfWeek(timeInMillis));
+        //     calendar.add(Calendar.DAY_OF_MONTH, 7);
+        // }
 
-        // Then take away one millisecond so that we're still bounding it by the
-        // day.
+        // Then take away one millisecond so that we're still bounding it by the day.
         return calendar.getTimeInMillis() - 1;
     }
 

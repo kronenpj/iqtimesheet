@@ -201,15 +201,15 @@ public class SectionFragment extends RoboSherlockFragment {
                     Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
                             TimeSheetActivity.prefs.getWeekStartDay()) {
-                        TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) + 1000;
+                        TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
                         Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     } else {
                         if (TimeHelpers.millisToHour(TimeSheetActivity.day) >
                                 TimeSheetActivity.prefs.getWeekStartHour()) {
-                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) + 1000;
+                            TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
                             Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                         } else {
-                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) +
+                            TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) +
                                     (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
                             Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                         }
@@ -220,7 +220,7 @@ public class SectionFragment extends RoboSherlockFragment {
                 TextView headerView = (TextView) v.getRootView()
                         .findViewById(R.id.reportheader);
                 String date = TimeHelpers.millisToDate(TimeSheetActivity.day);
-                headerView.setText("Week Report - " + date);
+                headerView.setText("Day Report - " + date);
                 Log.d(TAG, "New day is: " + date);
 
                 ((TimeSheetActivity) getActivity()).refreshReportListAdapter((ListView) v.getRootView()
@@ -300,7 +300,7 @@ public class SectionFragment extends RoboSherlockFragment {
                     // TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
                     TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day,
                             TimeSheetActivity.prefs.getWeekStartDay(),
-                            TimeSheetActivity.prefs.getWeekStartHour());
+                            TimeSheetActivity.prefs.getWeekStartHour()) - 1000;
                     Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 case R.id.wtoday:
@@ -316,7 +316,7 @@ public class SectionFragment extends RoboSherlockFragment {
                     // TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
                     TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day,
                             TimeSheetActivity.prefs.getWeekStartDay(),
-                            TimeSheetActivity.prefs.getWeekStartHour());
+                            TimeSheetActivity.prefs.getWeekStartHour()) + 1000;
                     Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                     break;
                 }

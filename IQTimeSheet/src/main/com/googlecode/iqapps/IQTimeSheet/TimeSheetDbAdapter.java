@@ -1383,13 +1383,14 @@ public class TimeSheetDbAdapter {
         Log.d(TAG, "In weekSummary.");
         if (time <= 0)
             time = TimeHelpers.millisNow();
+        Log.d(TAG, "weekSummary time arg: " + TimeHelpers.millisToTimeDate(time));
 
         //	long weekStart = TimeHelpers.millisToStartOfWeek(time);
         //	long weekEnd = TimeHelpers.millisToEndOfWeek(time);
         long weekStart = TimeHelpers.millisToStartOfWeek(time,
                 TimeSheetActivity.prefs.getWeekStartDay(),
                 TimeSheetActivity.prefs.getWeekStartHour());
-        long weekEnd = TimeHelpers.millisToEndOfWeek(weekStart,
+        long weekEnd = TimeHelpers.millisToEndOfWeek(weekStart + 86400000,
                 TimeSheetActivity.prefs.getWeekStartDay(),
                 TimeSheetActivity.prefs.getWeekStartHour());
 

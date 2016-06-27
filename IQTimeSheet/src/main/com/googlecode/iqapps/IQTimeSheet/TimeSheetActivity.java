@@ -672,8 +672,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         // (Re-)Populate the ListView with an array adapter with the task items.
         myTaskList.setAdapter(new MyArrayAdapter<String>(
                 getApplicationContext(),
-                android.R.layout.simple_list_item_single_choice, db
-                .getTasksList()));
+                android.R.layout.simple_list_item_single_choice, db.getTasksList()));
         setSelected(myTaskList);
     }
 
@@ -776,31 +775,23 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
         float weekHours = TimeSheetActivity.prefs.getHoursPerWeek();
-        String date = TimeHelpers.millisToDate(TimeHelpers
-                .
-                        millisToEndOfWeek(day, prefs.getWeekStartDay(),
-                                prefs.getWeekStartHour()));
-        Log.d(TAG,
-                "refreshWeekReportListAdapter: Updating to "
-                        + TimeHelpers.millisToTimeDate(TimeHelpers
-                        .millisToEndOfWeek(day, prefs.getWeekStartDay(),
-                                prefs.getWeekStartHour())));
+        String date = TimeHelpers.millisToDate(TimeHelpers.millisToEndOfWeek(day,
+                prefs.getWeekStartDay(), prefs.getWeekStartHour()));
+        Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date);
 
         try {
             TextView headerView = (TextView) myReportList.getRootView()
                     .findViewById(R.id.weekheader);
             headerView.setText("Week Report - W/E: " + date);
         } catch (NullPointerException e) {
-            Log.d(TAG,
-                    "Caught NullPointerException in refreshWeekReportListAdapter.");
+            Log.d(TAG, "Caught NullPointerException in refreshWeekReportListAdapter.");
             return;
         }
 
         TextView footerView = (TextView) myReportList.getRootView()
                 .findViewById(R.id.weekfooter);
-        footerView
-                .setText("Hours worked this week: 0\nHours remaining this week: "
-                        + String.format("%.2f", weekHours));
+        footerView.setText("Hours worked this week: 0\nHours remaining this week: "
+                + String.format("%.2f", weekHours));
 
         Cursor timeEntryCursor;// = db.weekEntryReport();
 
@@ -808,9 +799,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         // where the current open task exists, then include it, otherwise
         // omit.
         if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow())
-                && day <= TimeHelpers
-                .millisToEndOfWeek(TimeHelpers.millisNow(), prefs.getWeekStartDay(),
-                        prefs.getWeekStartHour())) {
+                && day <= TimeHelpers.millisToEndOfWeek(TimeHelpers.millisNow(),
+                prefs.getWeekStartDay(), prefs.getWeekStartHour())) {
             timeEntryCursor = db.weekSummary(day, false);
         } else {
             timeEntryCursor = db.weekSummary(day, true);
@@ -966,7 +956,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
             Log.d(TAG, "updateTitleBar " + e.toString());
         }
 
-        reportCursor = db.weekSummary(TimeHelpers.millisNow(), false);
+        // reportCursor = db.weekSummary(TimeHelpers.millisNow(), false);
+        reportCursor = db.weekSummary(day, false);
         if (reportCursor == null) {
             getSupportActionBar().setSubtitle(
                     String.format(format, dayAdder, hoursPerDay - dayAdder,
