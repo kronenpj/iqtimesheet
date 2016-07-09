@@ -34,7 +34,6 @@
         <activity android:name=".EditDayEntriesHandler" />
         <activity android:name=".EditTaskHandler" />
         <activity android:name=".MyPreferenceActivity" />
-        <activity android:name=".ReviveTaskHandler" />
         <activity android:name=".ReviveTaskFragment" />
         </application>
 </manifest>

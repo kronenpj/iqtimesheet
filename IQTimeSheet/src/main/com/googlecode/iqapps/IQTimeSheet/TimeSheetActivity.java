@@ -63,29 +63,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
     private static final int MY_NOTIFICATION_ID = 0x73;
     static PreferenceHelper prefs;
 
-    // static NotificationManager notificationManager;
-    // static Notification myNotification;
     private static PendingIntent contentIntent;
-
-    //	// @Override
-    //	protected void onCreateOff(Bundle savedInstanceState) {
-    //		super.onCreate(savedInstanceState);
-    //		Log.d(TAG, "onCreate");
-    //		setContentView(R.layout.activity_time_sheet);
-    //
-    //		prefs = new PreferenceHelper(getApplicationContext());
-    //
-    //		// addTab("Test Frag", TestFragment.class,
-    //		// TestFragment.createBundle("Test Fragment"));
-    //		// addTab("Select Task", TaskSelectionFragment.class,
-    //		// TaskSelectionFragment.createBundle("Select Task"));
-    //		// addTab("Day Report", DayReportFragment.class,
-    //		// DayReportFragment.createBundle("Day Report"));
-    //		// addTab("Week Report", WeekReportFragment.class,
-    //		// WeekReportFragment.createBundle("Week Report"));
-    //
-    //		setSelected();
-    //	}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -271,19 +249,12 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
                     }
                 }
                 try {
-                    // refreshTaskListAdapter((ListView)
-                    // findViewById(R.id.tasklistfragment));
-                    // refreshReportListAdapter((ListView)
-                    // findViewById(R.id.reportList));
-                    // refreshWeekReportListAdapter((ListView)
-                    // findViewById(R.id.weekList));
                     refreshTaskListAdapter();
                     refreshReportListAdapter();
                     refreshWeekReportListAdapter();
                     updateTitleBar();
                 } catch (NullPointerException e) {
-                    Log.d(TAG,
-                            "TaskEdit refreshTaskListAdapter: " + e.toString());
+                    Log.d(TAG, "TaskEdit refreshTaskListAdapter: " + e.toString());
                 }
             }
         }
@@ -359,7 +330,6 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
             case R.id.menu_restore: {
                 Log.d(TAG, "in onOptionsItemSelected (restore)");
                 if (prefs.getSDCardBackup()) {
-                    // showDialog(CONFIRM_RESTORE_DIALOG);
                     RoboSherlockDialogFragment newFragment = MyYesNoDialog
                             .newInstance(R.string.restore_title);
                     newFragment.show(getSupportFragmentManager(), "restore_dialog");
@@ -520,8 +490,6 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
                                         // fillData();
                                         Log.d(TAG,
                                                 "onCreateDialog restore dialog.  Calling refreshTaskListAdapter");
-                                        // refreshTaskListAdapter((ListView)
-                                        // findViewById(R.id.tasklistfragment));
                                         refreshTaskListAdapter();
                                         updateTitleBar();
                                         setSelected();
@@ -643,9 +611,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
             Log.i(TAG, "Database open threw exception" + e);
         }
         long timeOut = db.timeOutForLastClockEntry();
-        Log.d(TAG,
-                "Last Time Out: " + timeOut + " / "
-                        + TimeHelpers.millisToTimeDate(timeOut));
+        Log.d(TAG, "Last Time Out: " + timeOut + " / " + TimeHelpers.millisToTimeDate(timeOut));
 
         if (timeOut != 0) {
             Log.d(TAG, "Returning.");
@@ -722,21 +688,17 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
         float dayHours = TimeSheetActivity.prefs.getHoursPerDay();
         String date = TimeHelpers.millisToDate(day);
-        Log.d(TAG,
-                "refreshReportListAdapter: Updating to "
-                        + TimeHelpers.millisToTimeDate(day));
+        Log.d(TAG, "refreshReportListAdapter: Updating to " + TimeHelpers.millisToTimeDate(day));
 
         TextView headerView = (TextView) myReportList.getRootView()
                 .findViewById(R.id.reportheader);
         headerView.setText("Day Report - " + date);
 
-        TextView footerView = (TextView) myReportList.getRootView()
-                .findViewById(R.id.reportfooter);
-        footerView
-                .setText("Hours worked this day: 0\nHours remaining this day: "
-                        + String.format("%.2f", dayHours));
+        TextView footerView = (TextView) myReportList.getRootView().findViewById(R.id.reportfooter);
+        footerView.setText("Hours worked this day: 0\nHours remaining this day: "
+                + String.format("%.2f", dayHours));
 
-        Cursor timeEntryCursor; // = db.dayEntryReport();
+        Cursor timeEntryCursor;
 
         // If the day being reported is the current week, most probably
         // where the current open task exists, then include it, otherwise
@@ -820,7 +782,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         footerView.setText("Hours worked this week: 0\nHours remaining this week: "
                 + String.format("%.2f", weekHours));
 
-        Cursor timeEntryCursor;// = db.weekEntryReport();
+        Cursor timeEntryCursor;
 
         // If the day being reported is the current week, most probably
         // where the current open task exists, then include it, otherwise
@@ -881,8 +843,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         }
         NotificationCompat.Builder myNotification = new NotificationCompat.Builder(
                 getApplicationContext())
-                .setContentTitle(
-                        getResources().getString(R.string.notification_title))
+                .setContentTitle(getResources().getString(R.string.notification_title))
                 .setContentText(taskName).setWhen(timeIn)
                 .setContentIntent(contentIntent).setAutoCancel(false).setOngoing(true)
                 .setSmallIcon(R.drawable.icon_small);
@@ -901,14 +862,12 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         myNotification.setContentIntent(resultPendingIntent);
 
         // mId allows you to update the notification later on.
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(MY_NOTIFICATION_ID, myNotification.build());
     }
 
@@ -917,7 +876,8 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
      */
     void stopNotification() {
         try {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(MY_NOTIFICATION_ID);
         } catch (NullPointerException e) {
             // Do nothing. The preference was probably set to false, so this was
@@ -941,7 +901,6 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
                     "Database restore succeeded.", Toast.LENGTH_SHORT).show();
             refreshTaskListAdapter();
             refreshReportListAdapter();
-            // refreshWeekReportListAdapter();
             updateTitleBar();
             setSelected();
         }
@@ -970,8 +929,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         }
         reportCursor.moveToFirst();
         if (!reportCursor.isAfterLast()) {
-            int column = reportCursor
-                    .getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL);
+            int column = reportCursor.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL);
             while (!reportCursor.isAfterLast()) {
                 dayAdder = dayAdder + reportCursor.getFloat(column);
                 reportCursor.moveToNext();
@@ -983,7 +941,6 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
             Log.d(TAG, "updateTitleBar " + e.toString());
         }
 
-        // reportCursor = db.weekSummary(TimeHelpers.millisNow(), false);
         reportCursor = db.weekSummary(day, false);
         if (reportCursor == null) {
             getSupportActionBar().setSubtitle(
@@ -993,8 +950,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         }
         reportCursor.moveToFirst();
         if (!reportCursor.isAfterLast()) {
-            int column = reportCursor
-                    .getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL);
+            int column = reportCursor.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL);
             while (!reportCursor.isAfterLast()) {
                 weekAdder = weekAdder + reportCursor.getFloat(column);
                 reportCursor.moveToNext();
@@ -1083,21 +1039,17 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
         }
 
         // Handle cross-day clockings.
-        // tempClockCursor.moveToFirst();
         long now = TimeHelpers.millisNow();
         long lastClockIn = tempClockCursor.getLong(tempClockCursor
                 .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
-        long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn,
-                prefs.getTimeZone());
+        long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn, prefs.getTimeZone());
 
         // Calculate where we are in relation to the boundary time.
         long delta = now - boundary;
 
         // If the difference in days is 1, ask. If it's greater than 1, just
         // close it.
-        Log.d(TAG,
-                "checkCrossDayClock: now=" + now + " / "
-                        + TimeHelpers.millisToTimeDate(now));
+        Log.d(TAG, "checkCrossDayClock: now=" + now + " / " + TimeHelpers.millisToTimeDate(now));
         Log.d(TAG, "checkCrossDayClock: lastClockIn=" + lastClockIn + " / "
                 + TimeHelpers.millisToTimeDate(lastClockIn));
         Log.d(TAG, "checkCrossDayClock: delta=" + delta);
