@@ -4,10 +4,10 @@ task wrapper(type: Wrapper) {
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
@@ -22,12 +22,11 @@ android {
             keyPassword RELEASE_KEY_PASSWORD
         }
     }
-    compileSdkVersion 18
-    buildToolsVersion '23.0.2'
-
+    compileSdkVersion 23
+    buildToolsVersion '24.0.0'
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 18
+        minSdkVersion 14
+        targetSdkVersion 23
 //        versionCode 2015.2
 //        versionName "1.0"
     }
@@ -46,17 +45,22 @@ android {
             res.srcDirs = ['res']
         }
     }
+    productFlavors {
+    }
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.github.rtyley:roboguice-sherlock:1.5'
-    compile 'org.roboguice:roboguice:2.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
 }
 
 
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}

@@ -1,6 +1,7 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
  * A fragment representing a section of the application.
  */
-public class SectionFragment extends RoboSherlockFragment {
+public class SectionFragment extends Fragment {
     private static final String TAG = "SectionFragment";
 
     /**
@@ -32,7 +32,7 @@ public class SectionFragment extends RoboSherlockFragment {
      * (non-Javadoc)
      * 
      * @see com.github.rtyley.android.sherlock.roboguice.activity.
-     * RoboSherlockFragmentActivity#onCreateView(LayoutInflater, ViewGroup,
+     * RoboFragmentActivity#onCreateView(LayoutInflater, ViewGroup,
      * Bundle)
      */
     @Override
@@ -64,7 +64,7 @@ public class SectionFragment extends RoboSherlockFragment {
             ViewGroup container) {
         Log.d(TAG, "in setupTaskListFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
-                getSherlockActivity().getApplicationContext());
+                getActivity().getApplicationContext());
         db.open();
 
         View rootView = inflater.inflate(R.layout.fragment_tasklist,
@@ -129,7 +129,7 @@ public class SectionFragment extends RoboSherlockFragment {
             ViewGroup container) {
         Log.d(TAG, "in setupDayReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
-                getSherlockActivity().getApplicationContext());
+                getActivity().getApplicationContext());
         try {
             db.open();
         } catch(Exception e) {
@@ -252,7 +252,7 @@ public class SectionFragment extends RoboSherlockFragment {
             ViewGroup container) {
         Log.d(TAG, "in setupWeekReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
-                getSherlockActivity().getApplicationContext());
+                getActivity().getApplicationContext());
         try {
             db.open();
         } catch(Exception e) {

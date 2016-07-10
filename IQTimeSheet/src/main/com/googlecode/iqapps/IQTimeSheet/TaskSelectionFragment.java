@@ -1,6 +1,7 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Checkable;
 import android.widget.ListView;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 
-public class TaskSelectionFragment extends RoboSherlockFragment {
+public class TaskSelectionFragment extends Fragment {
 
 	public static final String EXTRA_TITLE = "title";
 	protected static final String TAG = "TaskSelectionFragment";
@@ -83,17 +83,17 @@ public class TaskSelectionFragment extends RoboSherlockFragment {
 
 	void refreshTaskListAdapter(ListView myTaskList) {
 		Log.d(TAG, "refreshTaskListAdapter");
-		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getSherlockActivity());
+		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getActivity());
 		db.open();
 		// (Re-)Populate the ListView with an array adapter with the task items.
-		myTaskList.setAdapter(new MyArrayAdapter<String>(getSherlockActivity(),
+		myTaskList.setAdapter(new MyArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_single_choice, db
 						.getTasksList()));
 	}
 
 	void clearSelected() {
 		Log.d(TAG, "clearSelected");
-		ListView myTaskList = (ListView) getSherlockActivity().findViewById(
+		ListView myTaskList = (ListView) getActivity().findViewById(
 				R.id.tasklistfragment);
 		if (myTaskList == null) {
 			Log.i(TAG, "findViewByID(tasklistfragment) returned null.");
@@ -112,7 +112,7 @@ public class TaskSelectionFragment extends RoboSherlockFragment {
 
 	void setSelected() {
 		Log.d(TAG, "setSelected");
-		ListView myTaskList = (ListView) getSherlockActivity().findViewById(
+		ListView myTaskList = (ListView) getActivity().findViewById(
 				R.id.tasklistfragment);
 		if (myTaskList == null) {
 			Log.i(TAG, "findViewByID(tasklistfragment) returned null.");
@@ -124,7 +124,7 @@ public class TaskSelectionFragment extends RoboSherlockFragment {
 
 	void setSelected(ListView myTaskList) {
 		Log.d(TAG, "setSelected");
-		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getSherlockActivity());
+		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getActivity());
 		db.open();
 		long timeOut = db.timeOutForLastClockEntry();
 		Log.d(TAG, "Last Time Out: " + timeOut);

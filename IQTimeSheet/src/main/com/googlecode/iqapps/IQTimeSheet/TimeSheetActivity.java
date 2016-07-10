@@ -1,12 +1,7 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
-import java.sql.Time;
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -14,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,9 +17,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
@@ -31,13 +30,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockDialogFragment;
 import com.googlecode.iqapps.TimeHelpers;
 
-public class TimeSheetActivity extends RoboSherlockFragmentActivity {
+import java.util.Locale;
+
+public class TimeSheetActivity extends AppCompatActivity {
     // TabSwipeActivity
     private static final String TAG = "TimeSheetActivity";
     protected static long day = TimeHelpers.millisNow();
@@ -157,7 +154,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getSupportMenuInflater().inflate(R.menu.time_sheet, menu);
+        getMenuInflater().inflate(R.menu.time_sheet, menu);
         // Hanging on to this so it can be used for testing.
         optionsMenu = menu;
         return true;
@@ -330,7 +327,7 @@ public class TimeSheetActivity extends RoboSherlockFragmentActivity {
             case R.id.menu_restore: {
                 Log.d(TAG, "in onOptionsItemSelected (restore)");
                 if (prefs.getSDCardBackup()) {
-                    RoboSherlockDialogFragment newFragment = MyYesNoDialog
+                    DialogFragment newFragment = MyYesNoDialog
                             .newInstance(R.string.restore_title);
                     newFragment.show(getSupportFragmentManager(), "restore_dialog");
                 }

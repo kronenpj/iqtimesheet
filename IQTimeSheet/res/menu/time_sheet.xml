@@ -1,44 +1,38 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!-- Each item below had an attribute like below after the orderInCategory attribute. -->
+    <!-- app:showAsAction="never" -->
     <item
         android:id="@+id/menu_edit_day_entries"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/menu_edit_day_entries"/>
     <item
         android:id="@+id/menu_new_task"
         android:orderInCategory="200"
-        android:showAsAction="never"
         android:title="@string/menu_new_task"/>
     <item
         android:id="@+id/menu_settings"
         android:orderInCategory="300"
-        android:showAsAction="never"
         android:title="@string/menu_prefs"/>
     <item
         android:id="@+id/menu_backup"
         android:orderInCategory="400"
-        android:showAsAction="never"
         android:title="@string/menu_backup"/>
     <item
         android:id="@+id/menu_restore"
         android:orderInCategory="500"
-        android:showAsAction="never"
         android:title="@string/menu_restore"/>
     <item
         android:id="@+id/menu_revive_task"
         android:orderInCategory="600"
-        android:showAsAction="never"
         android:title="@string/menu_revive_task"/>
     <item
         android:id="@+id/menu_about"
         android:orderInCategory="700"
-        android:showAsAction="never"
         android:title="@string/menu_about"/>
     <item
         android:id="@+id/menu_scrubdb"
         android:orderInCategory="800"
-        android:showAsAction="never"
         android:title="@string/menu_scrubdb"/>
     
 </menu>

@@ -21,6 +21,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -30,8 +31,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -39,7 +38,7 @@ import com.googlecode.iqapps.TimeHelpers;
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class EditDayEntriesHandler extends RoboSherlockListActivity {
+public class EditDayEntriesHandler extends ActionBarListActivity {
     private static final String TAG = "EditDayEntriesHandler";
     private ListView reportList;
     private TimeSheetDbAdapter db;

@@ -1,14 +1,13 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
-
-public class TaskListFragment extends RoboSherlockListFragment {
+public class TaskListFragment extends ListFragment {
 	/**
 	 * The fragment argument representing the section number for this fragment.
 	 */

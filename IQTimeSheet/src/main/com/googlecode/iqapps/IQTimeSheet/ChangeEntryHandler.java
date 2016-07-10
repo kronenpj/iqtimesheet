@@ -23,13 +23,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.googlecode.iqapps.TimeHelpers;
 
 /**
@@ -37,7 +37,7 @@ import com.googlecode.iqapps.TimeHelpers;
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class ChangeEntryHandler extends RoboSherlockFragmentActivity {
+public class ChangeEntryHandler extends AppCompatActivity {
     private static final String TAG = "ChangeEntryHandler";
     private static final int TASKCHOOSE_CODE = 0x01;
     private static final int CHANGETIMEIN_CODE = 0x02;

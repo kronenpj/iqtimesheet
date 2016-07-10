@@ -26,16 +26,15 @@
 package com.googlecode.iqapps.IQTimeSheet;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
-
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 
 /**
  * @author kronenpj
  */
-public class AboutDialog extends RoboSherlockFragmentActivity {
+public class AboutDialog extends AppCompatActivity {
     private static final String TAG = "AboutDialog";
 
     /*

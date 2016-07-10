@@ -21,8 +21,10 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -36,16 +38,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-
 /**
  * Activity to provide an interface to change a task name and, potentially,
  * other attributes of a task.
  *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class EditTaskHandler extends RoboSherlockFragmentActivity {
+public class EditTaskHandler extends AppCompatActivity {
     private static final String TAG = "EditTaskHandler";
     private EditText textField;
     private String oldData;

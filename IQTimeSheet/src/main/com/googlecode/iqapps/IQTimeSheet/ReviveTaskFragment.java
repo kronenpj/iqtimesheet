@@ -20,14 +20,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListActivity;
 
 /**
  * Activity to allow the user to select a task to revive after being "deleted."
@@ -36,7 +34,7 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockListAct
  * 
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
-public class ReviveTaskFragment extends RoboSherlockListActivity {
+public class ReviveTaskFragment extends ActionBarListActivity {
 	private static final String TAG = "ReviveTaskHandler";
 	private ListView tasksList;
 
