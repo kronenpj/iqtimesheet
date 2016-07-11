@@ -66,8 +66,8 @@ public class MyPreferenceActivity extends PreferenceActivity implements
 		 * addPreferencesFromResource(R.xml.preferences); }
 		 */
 
-		// getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);
 	}
