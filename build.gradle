@@ -1,0 +1,69 @@
+//noinspection GradleCompatible
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // classpath 'com.android.tools.build:gradle:1.0.1'
+        classpath 'com.android.tools.build:gradle:2.1.2'
+        // classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        // classpath 'org.codehaus.groovy:groovy-backports-compat23:2.4.0'
+        // classpath 'org.codehaus.groovy:groovy:2.4.0'
+    }
+}
+apply plugin: 'com.android.application'
+android {
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion '24.0.0'
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+    }
+    dependencies {
+        compile 'com.android.support:appcompat-v7:23.0.0'
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'IQTimeSheet/AndroidManifest.xml'
+            java.srcDirs = ['IQTimeSheet/src/main']
+            res.srcDirs = ['IQTimeSheet/res']
+        }
+    }
+    lintOptions {
+        // checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            zipAlignEnabled true
+            minifyEnabled true
+            // proguardFile getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'IQTimeSheet/proguard-project.txt'
+            signingConfig signingConfigs.release
+        }
+    }
+    productFlavors {
+    }
+}
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+dependencies {
+    compile 'com.android.support:appcompat-v7:23.0.0'
+}
+repositories {
+    jcenter()
+}
+
