@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<preference-headers
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="com.googlecode.iqapps.IQTimeSheet.MyPreferenceFragment"
+        android:title="IQTimeSheet Preferences"
+        android:summary="IQTimeSheet preferences." />
+
+</preference-headers>
