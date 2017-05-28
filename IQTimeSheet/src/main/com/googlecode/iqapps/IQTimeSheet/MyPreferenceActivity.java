@@ -54,13 +54,22 @@ public class MyPreferenceActivity extends PreferenceActivity {
     //    }
 
     @Override
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.headers_preference, target);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Display the fragment as the main content.
+        getFragmentManager().beginTransaction().replace(android.R.id.content,
+                new MyPreferenceFragment()).commit();
     }
 
-    @Override
-    protected boolean isValidFragment(String fragmentName) {
-        return MyPreferenceActivity.class.getName().equals(fragmentName) ||
-                MyPreferenceFragment.class.getName().equals(fragmentName);
-    }
+    //    @Override
+    //    public void onBuildHeaders(List<Header> target) {
+    //        loadHeadersFromResource(R.xml.headers_preference, target);
+    //    }
+
+    //    @Override
+    //    protected boolean isValidFragment(String fragmentName) {
+    //        return MyPreferenceActivity.class.getName().equals(fragmentName) ||
+    //                MyPreferenceFragment.class.getName().equals(fragmentName);
+    //    }
 }
