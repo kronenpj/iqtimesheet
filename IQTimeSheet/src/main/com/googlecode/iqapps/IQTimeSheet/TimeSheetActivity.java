@@ -35,7 +35,6 @@ import com.googlecode.iqapps.TimeHelpers;
 import java.util.Locale;
 
 public class TimeSheetActivity extends AppCompatActivity {
-    // TabSwipeActivity
     private static final String TAG = "TimeSheetActivity";
     protected static long day = TimeHelpers.millisNow();
 

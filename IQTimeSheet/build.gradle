@@ -15,7 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
-        applicationId "com.github.kronenpj.iqtimesheet"
+        // applicationId "com.github.kronenpj.iqtimesheet"
+        applicationId "com.googlecode.iqapps.IQTimeSheet"
     }
     buildTypes {
         release {
@@ -45,7 +46,7 @@ dependencies {
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    // // Gradle 3.0.0-beta and beyond...
+    // // Gr
     // implementation fileTree(dir: 'libs', include: ['*.jar'])
     // androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
     //     exclude group: 'com.android.support', module: 'support-annotations'

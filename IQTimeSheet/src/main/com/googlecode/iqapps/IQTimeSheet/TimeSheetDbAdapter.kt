@@ -2121,7 +2121,7 @@ class TimeSheetDbAdapter
         $KEY_ROWID), $KEY_TASK INTEGER NOT NULL REFERENCES 
         $TASKS_DATABASE_TABLE ( $KEY_ROWID ), $KEY_PERCENTAGE
          REAL NOT NULL DEFAULT 100 CHECK ($KEY_PERCENTAGE >=0 AND 
-        $KEY_PERCENTAGE + <=100) );"""
+        $KEY_PERCENTAGE <= 100) );"""
         private val TASK_TABLE_ALTER3 = """ALTER TABLE 
         $TASKS_DATABASE_TABLE ADD COLUMN $KEY_SPLIT
         INTEGER DEFAULT 0;"""
@@ -2141,7 +2141,7 @@ class TimeSheetDbAdapter
         strftime("%H:%M",$KEY_TIMEIN/1000,"unixepoch","localtime") || to || CASE WHEN
         $KEY_TIMEOUT = 0 THEN 'now' ELSE strftime("%H:%M",
         KEY_TIMEOUT/1000,"unixepoch","localtime") END as
-        $KEY_RANGE FROM  + $CLOCK_DATABASE_TABLE,
+        $KEY_RANGE FROM $CLOCK_DATABASE_TABLE,
         $TASKS_DATABASE_TABLE WHERE $CLOCK_DATABASE_TABLE.$KEY_CHARGENO = $TASKS_DATABASE_TABLE.$KEY_ROWID;"""
         private val TASKSPLITREPORT_VIEW_CREATE = """CREATE VIEW TaskSplitReport AS
         SELECT Tasks._id as _id,
