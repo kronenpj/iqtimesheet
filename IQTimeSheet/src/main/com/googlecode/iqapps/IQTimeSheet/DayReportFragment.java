@@ -103,7 +103,7 @@ public class DayReportFragment extends Fragment {
 		while (!timeEntryCursor.isAfterLast()) {
 			accum = accum
 					+ timeEntryCursor.getFloat(timeEntryCursor
-							.getColumnIndex(TimeSheetDbAdapter.KEY_TOTAL));
+							.getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL()));
 			timeEntryCursor.moveToNext();
 		}
 
@@ -114,8 +114,8 @@ public class DayReportFragment extends Fragment {
 		try {
 			reportList.setAdapter(new ReportCursorAdapter(getActivity(),
 					R.layout.mysimple_list_item_2, timeEntryCursor,
-					new String[] { TimeSheetDbAdapter.KEY_TASK,
-							TimeSheetDbAdapter.KEY_TOTAL }, new int[] {
+					new String[] {TimeSheetDbAdapter.Companion.getKEY_TASK(),
+                            TimeSheetDbAdapter.Companion.getKEY_TOTAL()}, new int[] {
 							android.R.id.text1, android.R.id.text2 }));
 		} catch (Exception e) {
 			Log.e(TAG, "reportList.setAdapter: " + e.toString());

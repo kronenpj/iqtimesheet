@@ -151,8 +151,8 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
         try {
             reportList.setAdapter(new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2, timeEntryCursor,
-                    new String[]{TimeSheetDbAdapter.KEY_TASK,
-                            TimeSheetDbAdapter.KEY_RANGE}, new int[]{
+                    new String[]{TimeSheetDbAdapter.Companion.getKEY_TASK(),
+                            TimeSheetDbAdapter.Companion.getKEY_RANGE()}, new int[]{
                     android.R.id.text1, android.R.id.text2}));
         } catch (Exception e) {
             Log.d(TAG, "reportList.setAdapter: " + e.toString());
@@ -207,15 +207,15 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
 
         try {
             intent.putExtra(ENTRY_ID, itemID);
-            intent.putExtra(TimeSheetDbAdapter.KEY_CHARGENO, entryCursor
+            intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_CHARGENO(), entryCursor
                     .getString(entryCursor
-                            .getColumnIndex(TimeSheetDbAdapter.KEY_CHARGENO)));
-            intent.putExtra(TimeSheetDbAdapter.KEY_TIMEIN, entryCursor
+                            .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_CHARGENO())));
+            intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEIN(), entryCursor
                     .getLong(entryCursor
-                            .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN)));
-            intent.putExtra(TimeSheetDbAdapter.KEY_TIMEOUT, entryCursor
+                            .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEIN())));
+            intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT(), entryCursor
                     .getLong(entryCursor
-                            .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT)));
+                            .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT())));
         } catch (Exception e) {
             Log.d(TAG, e.toString() + " populating intent.");
         }
@@ -251,11 +251,11 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
                                 Log.d(TAG, "Processing returned data.");
                                 long entryID = extras.getLong(ENTRY_ID);
                                 String newTask = extras
-                                        .getString(TimeSheetDbAdapter.KEY_TASK);
+                                        .getString(TimeSheetDbAdapter.Companion.getKEY_TASK());
                                 long newTimeIn = extras
-                                        .getLong(TimeSheetDbAdapter.KEY_TIMEIN);
+                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEIN());
                                 long newTimeOut = extras
-                                        .getLong(TimeSheetDbAdapter.KEY_TIMEOUT);
+                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT());
                                 long chargeNo = db.getTaskIDByName(newTask);
                                 db.updateEntry(entryID, chargeNo, null, newTimeIn,
                                         newTimeOut);
@@ -268,11 +268,11 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
                                 Log.d(TAG, "Processing returned data.");
                                 long entryID = extras.getLong(ENTRY_ID);
                                 String newTask = extras
-                                        .getString(TimeSheetDbAdapter.KEY_TASK);
+                                        .getString(TimeSheetDbAdapter.Companion.getKEY_TASK());
                                 long newTimeIn = extras
-                                        .getLong(TimeSheetDbAdapter.KEY_TIMEIN);
+                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEIN());
                                 long newTimeOut = extras
-                                        .getLong(TimeSheetDbAdapter.KEY_TIMEOUT);
+                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT());
                                 long chargeNo = db.getTaskIDByName(newTask);
                                 try {
                                     long prev = db.getPreviousClocking(entryID);

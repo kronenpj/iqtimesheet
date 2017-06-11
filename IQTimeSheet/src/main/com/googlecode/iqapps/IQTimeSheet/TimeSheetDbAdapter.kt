@@ -28,6 +28,8 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import android.text.format.DateUtils
+import android.text.method.DateTimeKeyListener
 import android.util.Log
 import android.widget.Toast
 
@@ -84,34 +86,33 @@ class TimeSheetDbAdapter
             when (oldVersion) {
                 1 -> {
                     Log.d(TAG, "Old DB version <= 1")
-                    Log.d(TAG, "Running: " + CHARGENO_INDEX)
+                    Log.d(TAG, "Running: $CHARGENO_INDEX")
                     db.execSQL(CHARGENO_INDEX)
-                    Log.d(TAG, "Running: " + TIMEIN_INDEX)
+                    Log.d(TAG, "Running: $TIMEIN_INDEX")
                     db.execSQL(TIMEIN_INDEX)
-                    Log.d(TAG, "Running: " + TIMEOUT_INDEX)
+                    Log.d(TAG, "Running: $TIMEOUT_INDEX")
                     db.execSQL(TIMEOUT_INDEX)
                     Log.d(TAG, "Old DB version <= 2")
-                    Log.d(TAG, "Running: " + TASK_TABLE_ALTER3)
+                    Log.d(TAG, "Running: $TASK_TABLE_ALTER3")
                     db.execSQL(TASK_TABLE_ALTER3)
-                    Log.d(TAG, "Running: " + TASKSPLIT_TABLE_CREATE)
+                    Log.d(TAG, "Running: $TASKSPLIT_TABLE_CREATE")
                     db.execSQL(TASKSPLIT_TABLE_CREATE)
-                    Log.d(TAG, "Running: " + TASKSPLITREPORT_VIEW_CREATE)
+                    Log.d(TAG, "Running: $TASKSPLITREPORT_VIEW_CREATE")
                     db.execSQL(TASKSPLITREPORT_VIEW_CREATE)
-                    Log.d(TAG, "Running: " + SPLIT_INDEX)
+                    Log.d(TAG, "Running: $SPLIT_INDEX")
                     db.execSQL(SPLIT_INDEX)
                     if (newVersion != oldVersion)
-                        db.execSQL("UPDATE " + DATABASE_METADATA + " SET "
-                                + KEY_VERSION + "=" + newVersion)
+                        db.execSQL("UPDATE $DATABASE_METADATA SET $KEY_VERSION = newVersion")
                 }
                 2 -> {
                     Log.d(TAG, "Old DB version <= 2")
-                    Log.d(TAG, "Running: " + TASK_TABLE_ALTER3)
+                    Log.d(TAG, "Running: $TASK_TABLE_ALTER3")
                     db.execSQL(TASK_TABLE_ALTER3)
-                    Log.d(TAG, "Running: " + TASKSPLIT_TABLE_CREATE)
+                    Log.d(TAG, "Running: $TASKSPLIT_TABLE_CREATE")
                     db.execSQL(TASKSPLIT_TABLE_CREATE)
-                    Log.d(TAG, "Running: " + TASKSPLITREPORT_VIEW_CREATE)
+                    Log.d(TAG, "Running: $TASKSPLITREPORT_VIEW_CREATE")
                     db.execSQL(TASKSPLITREPORT_VIEW_CREATE)
-                    Log.d(TAG, "Running: " + SPLIT_INDEX)
+                    Log.d(TAG, "Running: $SPLIT_INDEX")
                     db.execSQL(SPLIT_INDEX)
                     if (newVersion != oldVersion)
                         db.execSQL("UPDATE $DATABASE_METADATA SET $KEY_VERSION=$newVersion")
@@ -196,8 +197,8 @@ class TimeSheetDbAdapter
      * *
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun createEntry(chargeno: Long, timeIn: Long = System.currentTimeMillis()): Long {
-        var timeIn = timeIn
+    @JvmOverloads fun createEntry(chargeno: Long, timeInP: Long = System.currentTimeMillis()): Long {
+        var timeIn = timeInP
         // if (TimeSheetActivity.prefs.getAlignMinutesAuto()) {
         // timeIn = TimeHelpers.millisToAlignMinutes(timeIn,
         // TimeSheetActivity.prefs.getAlignMinutes());
@@ -213,8 +214,7 @@ class TimeSheetDbAdapter
         initialValues.put(KEY_CHARGENO, chargeno)
         initialValues.put(KEY_TIMEIN, timeIn)
 
-        Log.d(TAG, "createEntry: " + chargeno + " at " + timeIn + "("
-                + TimeHelpers.millisToTimeDate(timeIn) + ")")
+        Log.d(TAG, "createEntry: $chargeno at $timeIn (${TimeHelpers.millisToTimeDate(timeIn)})")
         if (mDb == null)
             open()
         return mDb!!.insert(CLOCK_DATABASE_TABLE, null, initialValues)
@@ -236,7 +236,7 @@ class TimeSheetDbAdapter
         try {
             c.close()
         } catch (e: IllegalStateException) {
-            Log.d(TAG, "closeEntry " + e.toString())
+            Log.d(TAG, "closeEntry $e")
         }
 
         return closeEntry(chargeno)
@@ -282,8 +282,8 @@ class TimeSheetDbAdapter
      * *
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun closeEntry(chargeno: Long, timeOut: Long = System.currentTimeMillis()): Long {
-        var timeOut = timeOut
+    @JvmOverloads fun closeEntry(chargeno: Long, timeOutP: Long = System.currentTimeMillis()): Long {
+        var timeOut = timeOutP
         // final long origTimeOut = timeOut;
         // if (TimeSheetActivity.prefs.getAlignMinutesAuto()) {
         // timeOut = TimeHelpers.millisToAlignMinutes(timeOut,
@@ -307,15 +307,14 @@ class TimeSheetDbAdapter
         // TimeSheetActivity.prefs.getTimeZone());
         val boundary = TimeHelpers.millisToEoDBoundary(timeIn,
                 TimeSheetActivity.prefs.timeZone)
-        Log.d(TAG, "Boundary: " + boundary)
+        Log.d(TAG, "Boundary: $boundary")
         if (timeOut > boundary)
             timeOut = boundary - 1000
 
         val updateValues = ContentValues()
         updateValues.put(KEY_TIMEOUT, timeOut)
 
-        Log.d(TAG, "closeEntry: " + chargeno + " at " + timeOut + "("
-                + TimeHelpers.millisToTimeDate(timeOut) + ")")
+        Log.d(TAG, "closeEntry: $chargeno at $timeOut (${TimeHelpers.millisToTimeDate(timeOut)})")
         if (mDb == null)
             open()
         return mDb!!.update(
@@ -333,10 +332,10 @@ class TimeSheetDbAdapter
      * @return true if deleted, false otherwise
      */
     fun deleteEntry(rowId: Long): Boolean {
-        Log.i("Delete called", "value__" + rowId)
+        Log.i("Delete called", "value__ $rowId")
         if (mDb == null)
             open()
-        return mDb!!.delete(CLOCK_DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0
+        return mDb!!.delete(CLOCK_DATABASE_TABLE, "$KEY_ROWID=$rowId", null) > 0
     }
 
     /**
@@ -363,8 +362,8 @@ class TimeSheetDbAdapter
     fun fetchEntry(rowId: Long): Cursor {
         if (mDb == null)
             open()
-        val mCursor = mDb!!.query(true, CLOCK_DATABASE_TABLE, arrayOf(KEY_ROWID, KEY_CHARGENO, KEY_TIMEIN, KEY_TIMEOUT), KEY_ROWID
-                + "=" + rowId, null, null, null, null, null)
+        val mCursor = mDb!!.query(true, CLOCK_DATABASE_TABLE, arrayOf(KEY_ROWID, KEY_CHARGENO, KEY_TIMEIN, KEY_TIMEOUT),
+                "$KEY_ROWID=$rowId", null, null, null, null, null)
         mCursor?.moveToFirst()
         return mCursor
     }
@@ -383,7 +382,7 @@ class TimeSheetDbAdapter
         if (mDb == null)
             open()
         val mCursor = mDb!!.query(true, CLOCK_DATABASE_TABLE,
-                arrayOf(column), KEY_ROWID + "=" + rowId, null, null, null, null, null)
+                arrayOf(column), "$KEY_ROWID=$rowId", null, null, null, null, null)
         mCursor?.moveToFirst()
         return mCursor
     }
@@ -405,19 +404,19 @@ class TimeSheetDbAdapter
      * *
      * @return true if the entry was successfully updated, false otherwise
      */
-    fun updateEntry(rowId: Long, chargeno: Long, date: String,
+    fun updateEntry(rowIdP: Long, chargeno: Long, date: String,
                     timein: Long, timeout: Long): Boolean {
-        var rowId = rowId
+        var rowId = rowIdP
         val args = ContentValues()
         // Only change items that aren't null or -1.
-        if (chargeno != -1)
-            args.put(KEY_CHARGENO, chargeno)
-        if (timein != -1)
+        if (timein != -1L)
             args.put(KEY_TIMEIN, timein)
-        if (timeout != -1)
+        if (chargeno != -1L)
+            args.put(KEY_CHARGENO, chargeno)
+        if (timeout != -1L)
             args.put(KEY_TIMEOUT, timeout)
 
-        if (rowId == -1)
+        if (rowId == -1L)
             rowId = lastClockEntry()
 
         if (mDb == null)
@@ -799,7 +798,7 @@ class TimeSheetDbAdapter
      * @return rowId or -1 if failed
      */
     fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                             start: Long, end: Long): Cursor {
+                             start: Long, end: Long): Cursor? {
         return getEntryReportCursor(distinct, columns, null, null, start, end)
     }
 
@@ -821,12 +820,9 @@ class TimeSheetDbAdapter
                 .millisToEndOfWeek(now - 1000, TimeSheetActivity.prefs.weekStartDay,
                         TimeSheetActivity.prefs.weekStartHour)) == endDay) {
             Log.d(TAG, "getEntryReportCursor: Allowing selection of zero-end-hour entries.")
-            selection = "$KEY_TIMEIN >=? and $KEY_TIMEOUT <= ? and ("
-            +KEY_TIMEOUT + " >= " + KEY_TIMEIN + " or " + KEY_TIMEOUT
-            +" = 0)"
+            selection = "$KEY_TIMEIN >=? and $KEY_TIMEOUT <= ? and ($KEY_TIMEOUT >= $KEY_TIMEIN or $KEY_TIMEOUT = 0)"
         } else {
-            selection = "$KEY_TIMEIN >=? and $KEY_TIMEOUT <= ? and "
-            +KEY_TIMEOUT + " >= " + KEY_TIMEIN
+            selection = "$KEY_TIMEIN >=? and $KEY_TIMEOUT <= ? and $KEY_TIMEOUT >= $KEY_TIMEIN"
         }
 
         Log.d(TAG, "getEntryReportCursor: Selection criteria: " + selection)
@@ -872,7 +868,7 @@ class TimeSheetDbAdapter
      * @return rowId or -1 if failed
      */
     fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                         start: Long, end: Long): Cursor {
+                         start: Long, end: Long): Cursor? {
         return getSummaryCursor(distinct, columns, null, null, start, end)
     }
 
@@ -883,7 +879,7 @@ class TimeSheetDbAdapter
      * @return true if a new task was started, false if the old task was
      * stopped.
      */
-    internal fun processChange(taskID: Long): Boolean {
+    protected fun processChange(taskID: Long): Boolean {
         Log.d(TAG, "processChange for task ID: " + taskID)
 
         var lastRowID = lastClockEntry()
@@ -914,12 +910,12 @@ class TimeSheetDbAdapter
 
         // Determine if the task has already been chosen and is now being
         // closed.
-        if (timeOut == 0 && lastTaskID == taskID) {
+        if (timeOut == 0L && lastTaskID == taskID) {
             closeEntry(taskID)
             Log.d(TAG, "Closed task ID: " + taskID)
             return false
         } else {
-            if (timeOut == 0)
+            if (timeOut == 0L)
                 closeEntry()
             createEntry(taskID)
 
@@ -1016,8 +1012,8 @@ class TimeSheetDbAdapter
 
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun dayEntryReport(time: Long = TimeHelpers.millisNow()): Cursor {
-        var time = time
+    @JvmOverloads fun dayEntryReport(timeP: Long = TimeHelpers.millisNow()): Cursor? {
+        var time = timeP
         if (time <= 0)
             time = TimeHelpers.millisNow()
 
@@ -1042,8 +1038,8 @@ class TimeSheetDbAdapter
      * *
      * @return Cursor over the results.
      */
-    fun daySummaryOld(time: Long): Cursor {
-        var time = time
+    fun daySummaryOld(timeP: Long): Cursor? {
+        var time = timeP
         if (time <= 0)
             time = TimeHelpers.millisNow()
 
@@ -1071,7 +1067,7 @@ class TimeSheetDbAdapter
      * *
      * @return Cursor over the results.
      */
-    fun daySummary(omitOpen: Boolean): Cursor {
+    fun daySummary(omitOpen: Boolean): Cursor? {
         return daySummary(TimeHelpers.millisNow(), omitOpen)
     }
 
@@ -1086,8 +1082,8 @@ class TimeSheetDbAdapter
      * @return Cursor over the results.
      */
     // TODO: Finish and replace the other routines with it.
-    @JvmOverloads fun daySummary(time: Long = TimeHelpers.millisNow(), omitOpen: Boolean = true): Cursor? {
-        var time = time
+    @JvmOverloads fun daySummary(timeP: Long = TimeHelpers.millisNow(), omitOpen: Boolean = true): Cursor? {
+        var time = timeP
         Log.d(TAG, "In daySummary.")
         if (time <= 0)
             time = TimeHelpers.millisNow()
@@ -1135,8 +1131,8 @@ class TimeSheetDbAdapter
 
      * @return Cursor over the entries
      */
-    @JvmOverloads fun weekEntryReport(time: Long = TimeHelpers.millisNow()): Cursor {
-        var time = time
+    @JvmOverloads fun weekEntryReport(timeP: Long = TimeHelpers.millisNow()): Cursor? {
+        var time = timeP
         if (time <= 0)
             time = TimeHelpers.millisNow()
 
@@ -1168,8 +1164,8 @@ class TimeSheetDbAdapter
 
      * @return Cursor over the results.
      */
-    fun weekSummaryOld(time: Long): Cursor {
-        var time = time
+    fun weekSummaryOld(timeP: Long): Cursor? {
+        var time = timeP
         if (time <= 0)
             time = TimeHelpers.millisNow()
 
@@ -1201,8 +1197,8 @@ class TimeSheetDbAdapter
      * @return Cursor over the results.
      */
     // TODO: Finish and replace the other routines with it.
-    fun weekSummary(time: Long, omitOpen: Boolean): Cursor? {
-        var time = time
+    fun weekSummary(timeP: Long, omitOpen: Boolean): Cursor? {
+        var time = timeP
         Log.d(TAG, "In weekSummary.")
         if (time <= 0)
             time = TimeHelpers.millisNow()
@@ -1274,52 +1270,45 @@ class TimeSheetDbAdapter
 
         var omitOpenQuery = ""
         if (omitOpen) {
-            omitOpenQuery = "$CLOCK_DATABASE_TABLE.$KEY_TIMEOUT > 0 "
-            +" AND "
+            omitOpenQuery = "$CLOCK_DATABASE_TABLE.$KEY_TIMEOUT > 0 AND "
         }
         // TODO: Figure out autoalign
-        val populateTemp1 = "INSERT INTO " + SUMMARY_DATABASE_TABLE
-        +" (" + KEY_TASK + "," + KEY_TOTAL + ") SELECT "
-        +TASKS_DATABASE_TABLE + "." + KEY_TASK + ", "
-        +"SUM((CASE WHEN " + CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT
-        +" = 0 THEN " + TimeHelpers.millisNow() + " ELSE "
-        +CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT + " END - "
-        +CLOCK_DATABASE_TABLE + "." + KEY_TIMEIN + ")/3600000.0) AS "
-        +KEY_TOTAL + " FROM " + CLOCK_DATABASE_TABLE + ","
-        +TASKS_DATABASE_TABLE + " WHERE " + CLOCK_DATABASE_TABLE + "."
-        +KEY_TIMEOUT + " <= " + summaryEnd + " AND " + omitOpenQuery
-        +CLOCK_DATABASE_TABLE + "." + KEY_TIMEIN + " >= "
-        (+summaryStart).toString() + " AND " + CLOCK_DATABASE_TABLE + "."
-        +KEY_CHARGENO + "=" + TASKS_DATABASE_TABLE + "." + KEY_ROWID
-        +" AND " + TASKS_DATABASE_TABLE + "." + KEY_SPLIT
-        +"=0 GROUP BY " + KEY_TASK
+        val populateTemp1 = """INSERT INTO $SUMMARY_DATABASE_TABLE
+        ( $KEY_TASK,$KEY_TOTAL ) SELECT
+        $TASKS_DATABASE_TABLE.$KEY_TASK,
+        SUM((CASE WHEN $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT = 0 THEN ${TimeHelpers.millisNow()} ELSE
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT END -
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN )/3600000.0) AS
+        $KEY_TOTAL FROM $CLOCK_DATABASE_TABLE,
+        $TASKS_DATABASE_TABLE WHERE $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT <= $summaryEnd AND $omitOpenQuery
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN >=
+        $summaryStart AND $CLOCK_DATABASE_TABLE.$KEY_CHARGENO = $TASKS_DATABASE_TABLE.$KEY_ROWID
+        AND $TASKS_DATABASE_TABLE.$KEY_SPLIT=0 GROUP BY $KEY_TASK"""
         Log.v(TAG, "populateTemp1\n" + populateTemp1)
         mDb!!.execSQL(populateTemp1)
 
-        val populateTemp2 = "INSERT INTO " + SUMMARY_DATABASE_TABLE
-        +" (" + KEY_TASK + "," + KEY_TOTAL + ") SELECT "
-        +TASKSPLITREPORT_VIEW + ".taskdesc, " + "(sum((CASE WHEN "
-        +CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT + " = 0 THEN "
-        (+TimeHelpers.millisNow()).toString() + " ELSE " + CLOCK_DATABASE_TABLE
-        +"." + KEY_TIMEOUT + " END - " + CLOCK_DATABASE_TABLE + "."
-        +KEY_TIMEIN + ")/3600000.0) * (" + TASKSPLIT_DATABASE_TABLE
-        +"." + KEY_PERCENTAGE + "/100.0)) AS " + KEY_TOTAL
-        +" FROM "
-        +CLOCK_DATABASE_TABLE + ", " + TASKSPLIT_DATABASE_TABLE + ", "
-        +TASKS_DATABASE_TABLE + ", " + TASKSPLITREPORT_VIEW
-        +" WHERE " + CLOCK_DATABASE_TABLE + "." + KEY_TIMEOUT + " <= "
-        (+summaryEnd).toString() + " AND " + omitOpenQuery + CLOCK_DATABASE_TABLE
-        +"." + KEY_TIMEIN + " >= " + summaryStart + " AND "
-        +CLOCK_DATABASE_TABLE + "." + KEY_CHARGENO + "="
-        +TASKS_DATABASE_TABLE + "." + KEY_ROWID + " AND "
-        +TASKS_DATABASE_TABLE + "." + KEY_ROWID + "="
-        +TASKSPLIT_DATABASE_TABLE + "." + KEY_CHARGENO + " AND "
-        +TASKS_DATABASE_TABLE + "." + KEY_ROWID + "="
-        +TASKSPLITREPORT_VIEW + "." + KEY_PARENTTASK + " AND "
-        +TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK + " || " + TASKSPLIT_DATABASE_TABLE
-        +"." + KEY_PERCENTAGE + "=" + TASKSPLITREPORT_VIEW + "."
-        +KEY_ROWID + " || " + TASKSPLITREPORT_VIEW + "." + KEY_PERCENTAGE
-        +" GROUP BY " + TASKSPLIT_DATABASE_TABLE + "." + KEY_TASK
+        val populateTemp2 = """INSERT INTO  + $SUMMARY_DATABASE_TABLE
+        ($KEY_TASK,$KEY_TOTAL) SELECT 
+        $TASKSPLITREPORT_VIEW.taskdesc, (sum((CASE WHEN 
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT = 0 THEN 
+        ${TimeHelpers.millisNow()} ELSE $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT END - 
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN + )/3600000.0) * 
+        ($TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE + /100.0)) AS $KEY_TOTAL
+        FROM 
+        $CLOCK_DATABASE_TABLE.$TASKSPLIT_DATABASE_TABLE, 
+        $TASKS_DATABASE_TABLE,$TASKSPLITREPORT_VIEW
+        WHERE $CLOCK_DATABASE_TABLE$.$KEY_TIMEOUT <= 
+        $summaryEnd AND $omitOpenQuery $CLOCK_DATABASE_TABLE.$KEY_TIMEIN >= $summaryStart AND 
+        $CLOCK_DATABASE_TABLE.$KEY_CHARGENO =
+        $TASKS_DATABASE_TABLE.$KEY_ROWID AND 
+        $TASKS_DATABASE_TABLE.$KEY_ROWID =
+        $TASKSPLIT_DATABASE_TABLE.$KEY_CHARGENO AND 
+        $TASKS_DATABASE_TABLE.$KEY_ROWID =
+        $TASKSPLITREPORT_VIEW.$KEY_PARENTTASK AND 
+        $TASKSPLIT_DATABASE_TABLE.$KEY_TASK || 
+        $TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE = $TASKSPLITREPORT_VIEW.$KEY_ROWID || 
+        $TASKSPLITREPORT_VIEW.$KEY_PERCENTAGE
+        GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
         Log.v(TAG, "populateTemp2\n" + populateTemp2)
         mDb!!.execSQL(populateTemp2)
     }
@@ -1520,8 +1509,7 @@ class TimeSheetDbAdapter
         Log.d(TAG, "getSplitTaskParent: Issuing DB query.")
         var ret: Long
         var mCursor: Cursor? = null
-        val query = "SELECT $KEY_CHARGENO FROM "
-        +TASKSPLIT_DATABASE_TABLE + " WHERE " + KEY_TASK + " = ?"
+        val query = "SELECT $KEY_CHARGENO FROM $TASKSPLIT_DATABASE_TABLE WHERE $KEY_TASK = ?"
         Log.d(TAG, "getSplitTaskParent: query: $query, $rowId")
         if (mDb == null)
             open()
@@ -1529,8 +1517,7 @@ class TimeSheetDbAdapter
             // mCursor = mDb.query(true, TASKSPLIT_DATABASE_TABLE,
             // new String[] { KEY_CHARGENO }, KEY_TASK + "=" + rowId,
             // null, null, null, null, null);
-            mCursor = mDb!!.rawQuery(query,
-                    arrayOf(rowId.toString()))
+            mCursor = mDb!!.rawQuery(query, arrayOf(rowId.toString()))
         } catch (e: SQLException) {
             Log.i(TAG, "getSplitTaskParent: " + e.toString())
         }
@@ -1707,9 +1694,9 @@ class TimeSheetDbAdapter
      * *
      * @param split      New split flag state
      */
-    fun alterSplitTask(rowID: Long, parentID: Long, percentage: Int,
+    fun alterSplitTask(rowID: Long, parentIDP: Long, percentage: Int,
                        split: Int) {
-        var parentID = parentID
+        var parentID = parentIDP
         Log.d(TAG, "alterSplitTask: Issuing DB query.")
         val currentParent = getSplitTaskParent(rowID)
         val currentSplit = getSplitTaskFlag(rowID)
@@ -1724,9 +1711,8 @@ class TimeSheetDbAdapter
         if (getQuantityOfSplits(currentParent) < 2 && currentParent != parentID) {
             val initialValues = ContentValues(1)
             initialValues.put(KEY_SPLIT, 0)
-            val i = mDb!!.update(TASKS_DATABASE_TABLE, initialValues, KEY_ROWID + "=?", arrayOf(currentParent.toString()))
-            Log.d(TAG, "Reverting task " + currentParent
-                    + " to standard task returned " + i)
+            val i = mDb!!.update(TASKS_DATABASE_TABLE, initialValues, "$KEY_ROWID=?", arrayOf(currentParent.toString()))
+            Log.d(TAG, "Reverting task $currentParent to standard task returned $i")
         }
 
         // Set the flag on the new parent
@@ -1734,8 +1720,7 @@ class TimeSheetDbAdapter
             val initialValues = ContentValues(1)
             initialValues.put(KEY_SPLIT, 2)
             val i = mDb!!.update(TASKS_DATABASE_TABLE, initialValues, KEY_ROWID + "=?", arrayOf(parentID.toString()))
-            Log.d(TAG, "Converting task " + parentID
-                    + " to parent task returned: " + i)
+            Log.d(TAG, "Converting task $parentID to parent task returned: $i")
         }
 
         // If the new split state is 1, a child, set the appropriate values
@@ -1748,15 +1733,12 @@ class TimeSheetDbAdapter
                 // update(String table, ContentValues values, String
                 // whereClause,
                 // String[] whereArgs)
-                val i = mDb!!.update(TASKSPLIT_DATABASE_TABLE, newData, KEY_TASK + "=?", arrayOf(rowID.toString()))
-                Log.d(TAG, "Setting child task " + rowID
-                        + " details returned: " + i)
+                val i = mDb!!.update(TASKSPLIT_DATABASE_TABLE, newData, "$KEY_TASK=?", arrayOf(rowID.toString()))
+                Log.d(TAG, "Setting child task $rowID details returned: $i")
                 if (i == 0) {
                     newData.put(KEY_TASK, rowID)
-                    val j = mDb!!
-                            .insert(TASKSPLIT_DATABASE_TABLE, null, newData)
-                    Log.d(TAG, "Inserting child task " + rowID
-                            + " details returned: " + j)
+                    val j = mDb!!.insert(TASKSPLIT_DATABASE_TABLE, null, newData)
+                    Log.d(TAG, "Inserting child task $rowID details returned: $j")
                 }
             } catch (e: RuntimeException) {
                 Log.e(TAG, e.localizedMessage)
@@ -1765,9 +1747,8 @@ class TimeSheetDbAdapter
             newData = ContentValues(1)
             newData.put(KEY_SPLIT, 1)
             try {
-                val i = mDb!!.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?", arrayOf(rowID.toString()))
-                Log.d(TAG, "Converting task " + rowID
-                        + " to child task returned: " + i)
+                val i = mDb!!.update(TASKS_DATABASE_TABLE, newData, "$KEY_ROWID=?", arrayOf(rowID.toString()))
+                Log.d(TAG, "Converting task $rowID to child task returned: $i")
             } catch (e: RuntimeException) {
                 Log.e(TAG, e.localizedMessage)
             }
@@ -1781,7 +1762,7 @@ class TimeSheetDbAdapter
                 // update(String table, ContentValues values, String
                 // whereClause,
                 // String[] whereArgs)
-                val i = mDb!!.delete(TASKSPLIT_DATABASE_TABLE, KEY_TASK + "=?",
+                val i = mDb!!.delete(TASKSPLIT_DATABASE_TABLE, "$KEY_TASK=?",
                         arrayOf(rowID.toString()))
                 Log.d(TAG, "Setting child task " + rowID
                         + " details returned: " + i)
@@ -1792,9 +1773,8 @@ class TimeSheetDbAdapter
             val newData = ContentValues(1)
             newData.put(KEY_SPLIT, 0)
             try {
-                val i = mDb!!.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?", arrayOf(rowID.toString()))
-                Log.d(TAG, "Converting child task " + rowID
-                        + " to standard task returned: " + i)
+                val i = mDb!!.update(TASKS_DATABASE_TABLE, newData, "$KEY_ROWID=?", arrayOf(rowID.toString()))
+                Log.d(TAG, "Converting child task $rowID to standard task returned: $i")
             } catch (e: RuntimeException) {
                 Log.e(TAG, e.localizedMessage)
             }
@@ -1825,8 +1805,7 @@ class TimeSheetDbAdapter
         if (mDb == null)
             open()
         try {
-            mDb!!.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?",
-                    arrayOf(taskID.toString()))
+            mDb!!.update(TASKS_DATABASE_TABLE, newData, "$KEY_ROWID=?", arrayOf(taskID.toString()))
         } catch (e: RuntimeException) {
             Log.e(TAG, e.localizedMessage)
         }
@@ -1856,8 +1835,7 @@ class TimeSheetDbAdapter
         if (mDb == null)
             open()
         try {
-            mDb!!.update(TASKS_DATABASE_TABLE, newData, KEY_ROWID + "=?",
-                    arrayOf(taskID.toString()))
+            mDb!!.update(TASKS_DATABASE_TABLE, newData, "$KEY_ROWID=?", arrayOf(taskID.toString()))
         } catch (e: RuntimeException) {
             Log.e(TAG, e.localizedMessage)
         }
@@ -1907,9 +1885,9 @@ class TimeSheetDbAdapter
 
     }
 
-    internal // TODO: Please tell me there's a better way of doing this.
-            // This is just stupid...
-    val tasksList: Array<String>
+    // TODO: Please tell me there's a better way of doing this.
+    // This is just stupid...
+    protected val tasksList: Array<String?>
         get() {
             Log.d(TAG, "getTasksList")
             val taskCursor = fetchAllTaskEntries()
@@ -1930,17 +1908,17 @@ class TimeSheetDbAdapter
             return items
         }
 
-    internal // TODO: Please tell me there's a better way of doing this.
-            // This is just stupid...
-    val dayReportList: Array<String>
+    // TODO: Please tell me there's a better way of doing this.
+    // This is just stupid...
+    protected val dayReportList: Array<String?>
         get() {
             Log.d(TAG, "getTasksList")
             val reportCursor = daySummary()
             try {
-                val items = arrayOfNulls<String>(reportCursor.getCount())
+                val items = arrayOfNulls<String?>(reportCursor!!.getCount())
                 reportCursor.moveToFirst()
                 var i = 0
-                while (!reportCursor.isAfterLast()) {
+                while (reportCursor.isAfterLast()) {
                     items[i] = reportCursor.getString(1)
                     reportCursor.moveToNext()
                     i++
@@ -1948,13 +1926,12 @@ class TimeSheetDbAdapter
                 try {
                     reportCursor.close()
                 } catch (e: Exception) {
-                    Log.i(TAG,
-                            "reportCursor close getDayReportList: " + e.toString())
+                    Log.i(TAG,"reportCursor close getDayReportList: $e")
                 }
 
                 return items
             } catch (e: NullPointerException) {
-                Log.i(TAG, "getDayReportList: " + e.toString())
+                Log.i(TAG, "getDayReportList: $e")
             }
 
             return arrayOfNulls(1)
@@ -1973,14 +1950,13 @@ class TimeSheetDbAdapter
 
         if (mDb == null)
             open()
-        val mCursor = mDb!!.query(true, DATABASE_METADATA,
-                arrayOf(MAX_COUNT), null, null, null, null, null, null)
+        val mCursor = mDb!!.query(true, DATABASE_METADATA, arrayOf(MAX_COUNT), null, null, null, null, null, null)
         mCursor?.moveToFirst()
         val response = mCursor!!.getInt(0)
         try {
             mCursor.close()
         } catch (e: IllegalStateException) {
-            Log.d(TAG, "fetchVersion " + e.toString())
+            Log.d(TAG, "fetchVersion $e")
         }
 
         return response
@@ -2040,7 +2016,7 @@ class TimeSheetDbAdapter
      */
     fun dumpTasks() {
         Log.d(TAG, "Dumping tasks table")
-        val myQuery = "select * from " + TASKS_DATABASE_TABLE // +
+        val myQuery = "select * from $TASKS_DATABASE_TABLE" // +
         // " order by KEY_ROWID";
         if (mDb == null)
             open()
@@ -2048,12 +2024,12 @@ class TimeSheetDbAdapter
         try {
             tasksC.moveToFirst()
             while (!tasksC.isAfterLast) {
-                Log.d(TAG, tasksC.getLong(0).toString() + " / " + tasksC.getString(1))
+                Log.d(TAG, "${tasksC.getLong(0)} / ${tasksC.getString(1)}")
                 tasksC.moveToNext()
             }
             tasksC.close()
         } catch (e: Exception) {
-            Log.d(TAG, "Cursor usage threw " + e.toString())
+            Log.d(TAG, "Cursor usage threw e")
         }
 
     }
@@ -2065,8 +2041,7 @@ class TimeSheetDbAdapter
         Log.d(TAG, "Dumping clock table")
         if (mDb == null)
             open()
-        val tasksC = mDb!!.rawQuery("select * from " + CLOCK_DATABASE_TABLE
-                + " order by " + KEY_ROWID, null)
+        val tasksC = mDb!!.rawQuery("select * from $CLOCK_DATABASE_TABLE order by $KEY_ROWID", null)
         try {
             tasksC.moveToFirst()
             while (!tasksC.isAfterLast) {
@@ -2074,13 +2049,13 @@ class TimeSheetDbAdapter
                 tasksC.moveToNext()
             }
         } catch (e: Exception) {
-            Log.d(TAG, "Cursor usage threw " + e.toString())
+            Log.d(TAG, "Cursor usage threw $e")
         }
 
         try {
             tasksC.close()
         } catch (e: Exception) {
-            Log.d(TAG, "Cursor closing threw " + e.toString())
+            Log.d(TAG, "Cursor closing threw $e")
         }
 
     }
@@ -2125,86 +2100,80 @@ class TimeSheetDbAdapter
         /**
          * Database creation SQL statements
          */
-        private val CLOCK_TABLE_CREATE = "CREATE TABLE "
-        + CLOCK_DATABASE_TABLE + "(" + KEY_ROWID
-        + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_CHARGENO
-        + " INTEGER NOT NULL REFERENCES " + TASKS_DATABASE_TABLE + "("
-        + KEY_ROWID + "), " + KEY_TIMEIN + " INTEGER NOT NULL, "
-        + KEY_TIMEOUT + " INTEGER NOT NULL DEFAULT 0" + ");"
-        private val TASK_TABLE_CREATE = "CREATE TABLE "
-        + TASKS_DATABASE_TABLE + "(" + KEY_ROWID
-        + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_TASK
-        + " TEXT NOT NULL, " + KEY_ACTIVE + " BOOLEAN NOT NULL DEFAULT '"
-        + DB_TRUE + "', " + KEY_USAGE + " INTEGER NOT NULL DEFAULT 0, "
-        + KEY_OLDUSAGE + " INTEGER NOT NULL DEFAULT 0, " + KEY_LASTUSED
-        + " INTEGER NOT NULL DEFAULT 0, " + KEY_SPLIT
-        + " INTEGER DEFAULT 0);"
-        private val TASKSPLIT_TABLE_CREATE = "CREATE TABLE "
-        + TASKSPLIT_DATABASE_TABLE + "(" + KEY_ROWID
-        + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_CHARGENO
-        + " INTEGER NOT NULL REFERENCES " + TASKS_DATABASE_TABLE + "("
-        + KEY_ROWID + "), " + KEY_TASK + " INTEGER NOT NULL REFERENCES "
-        + TASKS_DATABASE_TABLE + "(" + KEY_ROWID + "), " + KEY_PERCENTAGE
-        + " REAL NOT NULL DEFAULT 100 CHECK(" + KEY_PERCENTAGE + ">=0 AND "
-        + KEY_PERCENTAGE + "<=100)" + ");"
-        private val TASK_TABLE_ALTER3 = "ALTER TABLE "
-        + TASKS_DATABASE_TABLE + " ADD COLUMN " + KEY_SPLIT
-        + " INTEGER DEFAULT 0;"
-        private val ENTRYITEMS_VIEW_CREATE = "CREATE VIEW "
-        + ENTRYITEMS_VIEW + " AS SELECT " + CLOCK_DATABASE_TABLE + "."
-        + KEY_ROWID + " as " + KEY_ROWID + "," + TASKS_DATABASE_TABLE + "."
-        + KEY_TASK + " as " + KEY_TASK + "," + CLOCK_DATABASE_TABLE + "."
-        + KEY_TIMEIN + " as " + KEY_TIMEIN + "," + CLOCK_DATABASE_TABLE
-        + "." + KEY_TIMEOUT + " as " + KEY_TIMEOUT + " FROM "
-        + CLOCK_DATABASE_TABLE + "," + TASKS_DATABASE_TABLE + " WHERE "
-        + CLOCK_DATABASE_TABLE + "." + KEY_CHARGENO + "="
-        + TASKS_DATABASE_TABLE + "." + KEY_ROWID + ";"
-        private val ENTRYREPORT_VIEW_CREATE = "CREATE VIEW "
-        + ENTRYREPORT_VIEW + " AS SELECT " + CLOCK_DATABASE_TABLE + "."
-        + KEY_ROWID + " as " + KEY_ROWID + "," + TASKS_DATABASE_TABLE + "."
-        + KEY_TASK + " as " + KEY_TASK + "," + CLOCK_DATABASE_TABLE + "."
-        + KEY_TIMEIN + " as " + KEY_TIMEIN + "," + CLOCK_DATABASE_TABLE
-        + "." + KEY_TIMEOUT + " as " + KEY_TIMEOUT + ", strftime('%H:%M',"
-        + KEY_TIMEIN
-        + "/1000,'unixepoch','localtime') || ' to ' || CASE WHEN "
-        + KEY_TIMEOUT + " = 0 THEN 'now' ELSE strftime('%H:%M',"
-        + KEY_TIMEOUT + "/1000,'unixepoch','localtime') END as "
-        + KEY_RANGE + " FROM " + CLOCK_DATABASE_TABLE + ","
-        + TASKS_DATABASE_TABLE + " WHERE " + CLOCK_DATABASE_TABLE + "."
-        + KEY_CHARGENO + "=" + TASKS_DATABASE_TABLE + "." + KEY_ROWID + ";"
-        private val TASKSPLITREPORT_VIEW_CREATE = "CREATE VIEW TaskSplitReport AS "
-        + "SELECT Tasks._id as _id, "
-        + "TaskSplit.chargeno as parenttask, "
-        + "Tasks.task as taskdesc, "
-        // + "TaskSplit.task as task, "
-        + "TaskSplit.percentage as percentage "
-        + "FROM Tasks, TaskSplit WHERE Tasks._id = TaskSplit.task"
+        private val CLOCK_TABLE_CREATE = """CREATE TABLE 
+        $CLOCK_DATABASE_TABLE ( $KEY_ROWID
+        INTEGER PRIMARY KEY AUTOINCREMENT, $KEY_CHARGENO
+        INTEGER NOT NULL REFERENCES $TASKS_DATABASE_TABLE (
+        $KEY_ROWID), $KEY_TIMEIN INTEGER NOT NULL, 
+        $KEY_TIMEOUT INTEGER NOT NULL DEFAULT 0);"""
+        private val TASK_TABLE_CREATE = """CREATE TABLE 
+        $TASKS_DATABASE_TABLE ( $KEY_ROWID
+        INTEGER PRIMARY KEY AUTOINCREMENT, $KEY_TASK
+        TEXT NOT NULL, $KEY_ACTIVE BOOLEAN NOT NULL DEFAULT 
+        $DB_TRUE, $KEY_USAGE INTEGER NOT NULL DEFAULT 0, 
+        $KEY_OLDUSAGE INTEGER NOT NULL DEFAULT 0, $KEY_LASTUSED
+        INTEGER NOT NULL DEFAULT 0, $KEY_SPLIT
+        INTEGER DEFAULT 0);"""
+        private val TASKSPLIT_TABLE_CREATE = """CREATE TABLE 
+        $TASKSPLIT_DATABASE_TABLE ( $KEY_ROWID
+        INTEGER PRIMARY KEY AUTOINCREMENT, $KEY_CHARGENO
+        INTEGER NOT NULL REFERENCES $TASKS_DATABASE_TABLE (
+        $KEY_ROWID), $KEY_TASK INTEGER NOT NULL REFERENCES 
+        $TASKS_DATABASE_TABLE ( $KEY_ROWID ), $KEY_PERCENTAGE
+         REAL NOT NULL DEFAULT 100 CHECK ($KEY_PERCENTAGE >=0 AND 
+        $KEY_PERCENTAGE + <=100) );"""
+        private val TASK_TABLE_ALTER3 = """ALTER TABLE 
+        $TASKS_DATABASE_TABLE ADD COLUMN $KEY_SPLIT
+        INTEGER DEFAULT 0;"""
+        private val ENTRYITEMS_VIEW_CREATE = """CREATE VIEW 
+        $ENTRYITEMS_VIEW AS SELECT $CLOCK_DATABASE_TABLE.$KEY_ROWID as $KEY_ROWID,
+        $TASKS_DATABASE_TABLE.$KEY_TASK as $KEY_TASK,
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN as $KEY_TIMEIN,
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT as $KEY_TIMEOUT FROM 
+        $CLOCK_DATABASE_TABLE,$TASKS_DATABASE_TABLE WHERE
+        $CLOCK_DATABASE_TABLE.$KEY_CHARGENO =
+        $TASKS_DATABASE_TABLE.$KEY_ROWID;"""
+        private val ENTRYREPORT_VIEW_CREATE = """CREATE VIEW
+        $ENTRYREPORT_VIEW AS SELECT $CLOCK_DATABASE_TABLE.$KEY_ROWID as $KEY_ROWID,
+        $TASKS_DATABASE_TABLE.$KEY_TASK as $KEY_TASK,
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN as $KEY_TIMEIN,
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT as $KEY_TIMEOUT,
+        strftime("%H:%M",$KEY_TIMEIN/1000,"unixepoch","localtime") || to || CASE WHEN
+        $KEY_TIMEOUT = 0 THEN 'now' ELSE strftime("%H:%M",
+        KEY_TIMEOUT/1000,"unixepoch","localtime") END as
+        $KEY_RANGE FROM  + $CLOCK_DATABASE_TABLE,
+        $TASKS_DATABASE_TABLE WHERE $CLOCK_DATABASE_TABLE.$KEY_CHARGENO = $TASKS_DATABASE_TABLE.$KEY_ROWID;"""
+        private val TASKSPLITREPORT_VIEW_CREATE = """CREATE VIEW TaskSplitReport AS
+        SELECT Tasks._id as _id,
+        TaskSplit.chargeno as parenttask,
+        Tasks.task as taskdesc,
+        TaskSplit.percentage as percentage
+        FROM Tasks, TaskSplit WHERE Tasks._id = TaskSplit.task"""
 
-        private val SUMMARY_TABLE_CREATE = "CREATE TEMP TABLE"
-        + " IF NOT EXISTS " + SUMMARY_DATABASE_TABLE + " (" + KEY_ROWID
-        + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_TASK
-        + " TEXT NOT NULL, " + KEY_TOTAL + " REAL DEFAULT 0);"
-        private val SUMMARY_TABLE_CLEAN = "DELETE FROM "
-        + SUMMARY_DATABASE_TABLE + ";"
+        private val SUMMARY_TABLE_CREATE = """CREATE TEMP TABLE
+        IF NOT EXISTS $SUMMARY_DATABASE_TABLE ($KEY_ROWID
+        INTEGER PRIMARY KEY AUTOINCREMENT, $KEY_TASK
+        TEXT NOT NULL, $KEY_TOTAL REAL DEFAULT 0);"""
+        private val SUMMARY_TABLE_CLEAN = """DELETE FROM $SUMMARY_DATABASE_TABLE;"""
         private val VACUUM = "VACUUM;"
 
-        private val TASKS_INDEX = "CREATE UNIQUE INDEX "
-        + TASKS_DATABASE_TABLE + "_index ON " + TASKS_DATABASE_TABLE + " ("
-        + KEY_TASK + ");"
-        private val CHARGENO_INDEX = "CREATE INDEX "
-        + CLOCK_DATABASE_TABLE + "_chargeno_index ON "
-        + CLOCK_DATABASE_TABLE + " (" + KEY_CHARGENO + ");"
-        private val SPLIT_INDEX = "CREATE INDEX "
-        + TASKSPLIT_DATABASE_TABLE + "_chargeno_index ON "
-        + TASKSPLIT_DATABASE_TABLE + " (" + KEY_CHARGENO + ");"
-        private val TIMEIN_INDEX = "CREATE INDEX "
-        + CLOCK_DATABASE_TABLE + "_timein_index ON " + CLOCK_DATABASE_TABLE
-        + " (" + KEY_TIMEIN + ");"
-        private val TIMEOUT_INDEX = "CREATE INDEX "
-        + CLOCK_DATABASE_TABLE + "_timeout_index ON "
-        + CLOCK_DATABASE_TABLE + " (" + KEY_TIMEOUT + ");"
+        private val TASKS_INDEX = """CREATE UNIQUE INDEX
+        $TASKS_DATABASE_TABLE _index ON $TASKS_DATABASE_TABLE (
+        $KEY_TASK);"""
+        private val CHARGENO_INDEX = """CREATE INDEX
+        $CLOCK_DATABASE_TABLE _chargeno_index ON
+        $CLOCK_DATABASE_TABLE ($KEY_CHARGENO);"""
+        private val SPLIT_INDEX = """CREATE INDEX
+        $TASKSPLIT_DATABASE_TABLE _chargeno_index ON
+        $TASKSPLIT_DATABASE_TABLE ($KEY_CHARGENO");"""
+        private val TIMEIN_INDEX = """CREATE INDEX
+        $CLOCK_DATABASE_TABLE _timein_index ON $CLOCK_DATABASE_TABLE
+        ($KEY_TIMEIN);"""
+        private val TIMEOUT_INDEX = """CREATE INDEX
+        $CLOCK_DATABASE_TABLE _timeout_index ON
+        $CLOCK_DATABASE_TABLE ($KEY_TIMEOUT);"""
 
-        private val METADATA_CREATE = "create table " + "TimeSheetMeta(version integer primary key);"
+        private val METADATA_CREATE = "create table TimeSheetMeta(version integer primary key);"
     }
 }
 /**

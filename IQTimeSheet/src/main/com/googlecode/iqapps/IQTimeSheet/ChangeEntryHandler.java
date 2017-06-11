@@ -157,14 +157,14 @@ public class ChangeEntryHandler extends AppCompatActivity {
         entryCursor = db.fetchEntry(entryID);
 
         long chargeNo = entryCursor.getLong(entryCursor
-                .getColumnIndex(TimeSheetDbAdapter.KEY_CHARGENO));
+                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_CHARGENO()));
         newTask = db.getTaskNameByID(chargeNo);
 
         newTimeIn = entryCursor.getLong(entryCursor
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN));
+                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEIN()));
 
         newTimeOut = entryCursor.getLong(entryCursor
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT));
+                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT()));
 
         newDate = TimeHelpers.millisToStartOfDay(newTimeIn);
     }
@@ -280,11 +280,11 @@ public class ChangeEntryHandler extends AppCompatActivity {
                     intent = new Intent();
                     intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID);
                     // Push task title into response.
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TASK, newTask);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TASK(), newTask);
                     // Push start and end time milliseconds into response
                     // bundle.
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TIMEIN, newTimeIn);
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TIMEOUT, newTimeOut);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEIN(), newTimeIn);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT(), newTimeOut);
                     intent.setAction("accept");
                     setResult(RESULT_OK, intent);
                     finish();
@@ -293,11 +293,11 @@ public class ChangeEntryHandler extends AppCompatActivity {
                     intent = new Intent();
                     intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID);
                     // Push task title into response.
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TASK, newTask);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TASK(), newTask);
                     // Push start and end time milliseconds into response
                     // bundle.
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TIMEIN, newTimeIn);
-                    intent.putExtra(TimeSheetDbAdapter.KEY_TIMEOUT, newTimeOut);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEIN(), newTimeIn);
+                    intent.putExtra(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT(), newTimeOut);
                     intent.setAction("acceptadjacent");
                     setResult(RESULT_OK, intent);
                     finish();

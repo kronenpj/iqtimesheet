@@ -74,7 +74,7 @@ public class ChangeTaskList extends ListActivity {
                     Cursor listCursor = (Cursor) parent
                             .getItemAtPosition(position);
                     String taskName = listCursor.getString(listCursor
-                            .getColumnIndex(TimeSheetDbAdapter.KEY_TASK));
+                            .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TASK()));
                     long taskID = db.getTaskIDByName(taskName);
                     setResult(RESULT_OK, (new Intent()).setAction(Long.valueOf(
                             taskID).toString()));
@@ -129,7 +129,7 @@ public class ChangeTaskList extends ListActivity {
         // Populate list
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_1, taskCursor,
-                new String[]{TimeSheetDbAdapter.KEY_TASK},
+                new String[]{TimeSheetDbAdapter.Companion.getKEY_TASK()},
                 new int[]{android.R.id.text1});
 
         taskList.setAdapter(adapter);
