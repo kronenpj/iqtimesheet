@@ -55,6 +55,7 @@ class TimeSheetDbAdapter
     private class DatabaseHelper internal constructor(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
+            Log.w(TAG, "In TimeSheetDbAdapter.onCreate.")
             db.execSQL(TASK_TABLE_CREATE)
             db.execSQL(CLOCK_TABLE_CREATE)
             db.execSQL(METADATA_CREATE)
@@ -1287,29 +1288,29 @@ class TimeSheetDbAdapter
         Log.v(TAG, "populateTemp1\n" + populateTemp1)
         mDb!!.execSQL(populateTemp1)
 
-        val populateTemp2 = """INSERT INTO  + $SUMMARY_DATABASE_TABLE
-        ($KEY_TASK,$KEY_TOTAL) SELECT 
-        $TASKSPLITREPORT_VIEW.taskdesc, (sum((CASE WHEN 
-        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT = 0 THEN 
-        ${TimeHelpers.millisNow()} ELSE $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT END - 
-        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN + )/3600000.0) * 
-        ($TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE + /100.0)) AS $KEY_TOTAL
-        FROM 
-        $CLOCK_DATABASE_TABLE.$TASKSPLIT_DATABASE_TABLE, 
+        val populateTemp2 = """INSERT INTO $SUMMARY_DATABASE_TABLE
+        ($KEY_TASK,$KEY_TOTAL) SELECT
+        $TASKSPLITREPORT_VIEW.taskdesc, (sum((CASE WHEN
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT = 0 THEN
+        ${TimeHelpers.millisNow()} ELSE $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT END -
+        $CLOCK_DATABASE_TABLE.$KEY_TIMEIN )/3600000.0) *
+        ($TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE /100.0)) AS $KEY_TOTAL
+        FROM
+        $CLOCK_DATABASE_TABLE.$TASKSPLIT_DATABASE_TABLE,
         $TASKS_DATABASE_TABLE,$TASKSPLITREPORT_VIEW
-        WHERE $CLOCK_DATABASE_TABLE$.$KEY_TIMEOUT <= 
-        $summaryEnd AND $omitOpenQuery $CLOCK_DATABASE_TABLE.$KEY_TIMEIN >= $summaryStart AND 
+        WHERE $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT <=
+        $summaryEnd AND $omitOpenQuery $CLOCK_DATABASE_TABLE.$KEY_TIMEIN >= $summaryStart AND
         $CLOCK_DATABASE_TABLE.$KEY_CHARGENO =
-        $TASKS_DATABASE_TABLE.$KEY_ROWID AND 
+        $TASKS_DATABASE_TABLE.$KEY_ROWID AND
         $TASKS_DATABASE_TABLE.$KEY_ROWID =
-        $TASKSPLIT_DATABASE_TABLE.$KEY_CHARGENO AND 
+        $TASKSPLIT_DATABASE_TABLE.$KEY_CHARGENO AND
         $TASKS_DATABASE_TABLE.$KEY_ROWID =
-        $TASKSPLITREPORT_VIEW.$KEY_PARENTTASK AND 
-        $TASKSPLIT_DATABASE_TABLE.$KEY_TASK || 
-        $TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE = $TASKSPLITREPORT_VIEW.$KEY_ROWID || 
+        $TASKSPLITREPORT_VIEW.$KEY_PARENTTASK AND
+        $TASKSPLIT_DATABASE_TABLE.$KEY_TASK ||
+        $TASKSPLIT_DATABASE_TABLE.$KEY_PERCENTAGE = $TASKSPLITREPORT_VIEW.$KEY_ROWID ||
         $TASKSPLITREPORT_VIEW.$KEY_PERCENTAGE
         GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
-        Log.v(TAG, "populateTemp2\n" + populateTemp2)
+        Log.v(TAG, "populateTemp2\n$populateTemp2")
         mDb!!.execSQL(populateTemp2)
     }
 
@@ -2120,7 +2121,7 @@ class TimeSheetDbAdapter
         INTEGER NOT NULL REFERENCES $TASKS_DATABASE_TABLE (
         $KEY_ROWID), $KEY_TASK INTEGER NOT NULL REFERENCES 
         $TASKS_DATABASE_TABLE ( $KEY_ROWID ), $KEY_PERCENTAGE
-         REAL NOT NULL DEFAULT 100 CHECK ($KEY_PERCENTAGE >=0 AND 
+        REAL NOT NULL DEFAULT 100 CHECK ($KEY_PERCENTAGE >=0 AND
         $KEY_PERCENTAGE <= 100) );"""
         private val TASK_TABLE_ALTER3 = """ALTER TABLE 
         $TASKS_DATABASE_TABLE ADD COLUMN $KEY_SPLIT
@@ -2138,7 +2139,7 @@ class TimeSheetDbAdapter
         $TASKS_DATABASE_TABLE.$KEY_TASK as $KEY_TASK,
         $CLOCK_DATABASE_TABLE.$KEY_TIMEIN as $KEY_TIMEIN,
         $CLOCK_DATABASE_TABLE.$KEY_TIMEOUT as $KEY_TIMEOUT,
-        strftime("%H:%M",$KEY_TIMEIN/1000,"unixepoch","localtime") || to || CASE WHEN
+        strftime("%H:%M",$KEY_TIMEIN/1000,"unixepoch","localtime") || ' to ' || CASE WHEN
         $KEY_TIMEOUT = 0 THEN 'now' ELSE strftime("%H:%M",
         KEY_TIMEOUT/1000,"unixepoch","localtime") END as
         $KEY_RANGE FROM $CLOCK_DATABASE_TABLE,
@@ -2158,19 +2159,19 @@ class TimeSheetDbAdapter
         private val VACUUM = "VACUUM;"
 
         private val TASKS_INDEX = """CREATE UNIQUE INDEX
-        $TASKS_DATABASE_TABLE _index ON $TASKS_DATABASE_TABLE (
+        ${TASKS_DATABASE_TABLE}_index ON $TASKS_DATABASE_TABLE (
         $KEY_TASK);"""
         private val CHARGENO_INDEX = """CREATE INDEX
-        $CLOCK_DATABASE_TABLE _chargeno_index ON
+        ${CLOCK_DATABASE_TABLE}_chargeno_index ON
         $CLOCK_DATABASE_TABLE ($KEY_CHARGENO);"""
         private val SPLIT_INDEX = """CREATE INDEX
-        $TASKSPLIT_DATABASE_TABLE _chargeno_index ON
-        $TASKSPLIT_DATABASE_TABLE ($KEY_CHARGENO");"""
+        ${TASKSPLIT_DATABASE_TABLE}_chargeno_index ON
+        $TASKSPLIT_DATABASE_TABLE ($KEY_CHARGENO);"""
         private val TIMEIN_INDEX = """CREATE INDEX
-        $CLOCK_DATABASE_TABLE _timein_index ON $CLOCK_DATABASE_TABLE
+        ${CLOCK_DATABASE_TABLE}_timein_index ON $CLOCK_DATABASE_TABLE
         ($KEY_TIMEIN);"""
         private val TIMEOUT_INDEX = """CREATE INDEX
-        $CLOCK_DATABASE_TABLE _timeout_index ON
+        ${CLOCK_DATABASE_TABLE}_timeout_index ON
         $CLOCK_DATABASE_TABLE ($KEY_TIMEOUT);"""
 
         private val METADATA_CREATE = "create table TimeSheetMeta(version integer primary key);"
