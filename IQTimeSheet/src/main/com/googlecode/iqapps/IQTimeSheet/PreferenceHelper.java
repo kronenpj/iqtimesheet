@@ -220,6 +220,19 @@ public class PreferenceHelper {
 		return backup;
 	}
 
+	public void setSDCardBackup(boolean backup) {
+		SharedPreferences.Editor editor = prefs.edit();
+		try {
+			// backup = prefs.setBoolean(KEY_SDCARD_BACKUP, backup);
+			editor.putBoolean(KEY_SDCARD_BACKUP, backup);
+			editor.commit();
+		} catch (Exception e) {
+			Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString());
+		}
+		Log.d(TAG, "Preference " + KEY_SDCARD_BACKUP + ": " + backup);
+		return;
+	}
+
 	public int getWeekStartDay() {
 		int startDay = Calendar.MONDAY;
 		try {

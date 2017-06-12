@@ -24,6 +24,7 @@ public class SDBackup {
     public static boolean doSDBackup(String databaseName, String packageName) {
         try {
             File sd = Environment.getExternalStorageDirectory();
+            // File extFilesDir =
             File data = Environment.getDataDirectory();
             Log.d(TAG, "SDBackup: databaseName: " + databaseName);
             Log.d(TAG, "SDBackup: packageName: " + packageName);
@@ -41,11 +42,15 @@ public class SDBackup {
                         + packageName + "_preferences.xml";
                 File currentPref = new File(data, currentPrefPath);
                 File backupPref = new File(sd, backupDBPath + "/" + "preferences.xml");
+                Log.d(TAG, "Current pref: " + currentPrefPath);
+                Log.d(TAG, "Backup pref : " + backupDBPath + "/" + "preferences.xml");
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
                 Date currentTime_1 = new Date();
                 String dateString = formatter.format(currentTime_1);
                 File backupDBDate = new File(sd, backupDBPath + "/"
+                        + databaseName + "-" + dateString);
+                Log.d(TAG, "Backup DB Date: " + backupDBPath + "/"
                         + databaseName + "-" + dateString);
 
                 Log.d(TAG, "SDBackup: currentDBPath: " + currentDBPath);
@@ -91,10 +96,10 @@ public class SDBackup {
 
                     return true;
                 } else {
-                    Log
-                            .d(TAG, "SDBackup: " + currentDBPath
-                                    + " doesn't exist.");
+                    Log.d(TAG, "SDBackup: " + currentDBPath + " doesn't exist.");
                 }
+            } else {
+                Log.d(TAG, "Backups aren't allowed by the OS. Permission must be granted.");
             }
         } catch (Exception e) {
             Log.e(TAG, "SDBackup threw exception: " + e.toString());
