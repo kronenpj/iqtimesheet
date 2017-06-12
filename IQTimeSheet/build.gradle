@@ -16,7 +16,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         // applicationId "com.github.kronenpj.iqtimesheet"
-        applicationId "com.googlecode.iqapps.IQTimeSheet"
+        applicationId 'com.github.kronenpj.iqtimesheet.IQTimeSheet'
     }
     buildTypes {
         release {

@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:fragment="com.googlecode.iqapps.IQTimeSheet.MyPreferenceFragment"
+        android:fragment="com.github.kronenpj.iqtimesheet.IQTimeSheet.MyPreferenceFragment"
         android:title="IQTimeSheet Preferences"
         android:summary="IQTimeSheet preferences." />
 
