@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.googlecode.iqapps.IQTimeSheet"
     android:installLocation="auto"
-    android:versionCode="18"
-    android:versionName="2016.beta2">
+    android:versionCode="19"
+    android:versionName="2017.beta1">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--<uses-sdk-->
     <!--android:minSdkVersion="8"-->
