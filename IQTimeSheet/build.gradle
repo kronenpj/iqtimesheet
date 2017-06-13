@@ -1,6 +1,24 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getDateNow = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'date', '+%Y.%m.%d'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
     signingConfigs {
         release {
@@ -15,8 +33,11 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
-        // applicationId "com.github.kronenpj.iqtimesheet"
+        versionCode 19
+        versionName "2017-beta2"
         applicationId 'com.github.kronenpj.iqtimesheet.IQTimeSheet'
+        buildConfigField "String", "GitHash", "\"${getGitHash()}\""
+        buildConfigField "String", "BuildDate", "\"${getDateNow()}\""
     }
     buildTypes {
         release {
@@ -46,7 +67,7 @@ dependencies {
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    // // Gr
+    // // Gradle >= 3
     // implementation fileTree(dir: 'libs', include: ['*.jar'])
     // androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
     //     exclude group: 'com.android.support', module: 'support-annotations'

@@ -225,12 +225,11 @@ public class PreferenceHelper {
 		try {
 			// backup = prefs.setBoolean(KEY_SDCARD_BACKUP, backup);
 			editor.putBoolean(KEY_SDCARD_BACKUP, backup);
-			editor.commit();
+			editor.apply();
 		} catch (Exception e) {
 			Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString());
 		}
 		Log.d(TAG, "Preference " + KEY_SDCARD_BACKUP + ": " + backup);
-		return;
 	}
 
 	public int getWeekStartDay() {

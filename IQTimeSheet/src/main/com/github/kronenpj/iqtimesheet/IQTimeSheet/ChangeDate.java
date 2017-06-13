@@ -31,6 +31,7 @@ import com.github.kronenpj.iqtimesheet.TimeHelpers;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Activity that provides an interface to change the date of an entry.
@@ -114,7 +115,7 @@ public class ChangeDate extends Activity {
     private void updateDateText(int year, int monthOfYear, int dayOfMonth) {
         GregorianCalendar date = new GregorianCalendar(year, monthOfYear,
                 dayOfMonth);
-        SimpleDateFormat simpleDate = new SimpleDateFormat("E, MMM d, yyyy");
+        SimpleDateFormat simpleDate = new SimpleDateFormat("E, MMM d, yyyy", Locale.US);
         dateText.setText(simpleDate.format(date.getTime()));
     }
 }

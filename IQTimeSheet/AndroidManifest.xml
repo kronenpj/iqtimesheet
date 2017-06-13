@@ -2,15 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.github.kronenpj.iqtimesheet.IQTimeSheet"
-    android:installLocation="auto"
-    android:versionCode="19"
-    android:versionName="2017.beta1">
+    android:installLocation="auto">
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!--<uses-sdk-->
-    <!--android:minSdkVersion="8"-->
-    <!--android:targetSdkVersion="18" />-->
 
     <application
         android:allowBackup="true"

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class SDBackup {
     private static final String TAG = "SDBackup";
@@ -45,7 +46,7 @@ public class SDBackup {
                 Log.d(TAG, "Current pref: " + currentPrefPath);
                 Log.d(TAG, "Backup pref : " + backupDBPath + "/" + "preferences.xml");
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
                 Date currentTime_1 = new Date();
                 String dateString = formatter.format(currentTime_1);
                 File backupDBDate = new File(sd, backupDBPath + "/"
