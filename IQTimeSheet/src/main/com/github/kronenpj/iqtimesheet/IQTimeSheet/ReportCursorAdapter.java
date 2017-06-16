@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 /**
  * An extension of the SimpleCursorAdapter to allow a list item to properly
  * display the desired data on the second line. In this case it's the number of
@@ -60,7 +62,7 @@ public class ReportCursorAdapter extends SimpleCursorAdapter {
         Float temp = cursor.getFloat(cursor
                 .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL()));
         Log.d(TAG, "bindView: task: " + tempString + ", total: "
-                + String.format("%1.2f hours", temp));
-        t.setText(String.format("%1.2f hours", temp));
+                + String.format(Locale.US, "%1.2f hours", temp));
+        t.setText(String.format(Locale.US, "%1.2f hours", temp));
     }
 }

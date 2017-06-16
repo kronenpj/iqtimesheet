@@ -109,7 +109,7 @@ public class EditTaskHandler extends AppCompatActivity {
 
         percentSlider.setMax(100);
         percentSlider.setProgress(100);
-        percentLabel.setText("100");
+        percentLabel.setText(R.string.DefaultPercentage);
 
         try {
             oldParent = db.getSplitTaskParent(oldData);
@@ -345,10 +345,8 @@ public class EditTaskHandler extends AppCompatActivity {
                 try {
                     int temp = Integer.valueOf(((TextView) v).getText()
                             .toString());
-                    if (temp > 100)
-                        temp = 100;
-                    if (temp < 0)
-                        temp = 0;
+                    if (temp > 100) temp = 100;
+                    if (temp < 0) temp = 0;
                     percentSlider.setProgress(temp);
                 } catch (NumberFormatException e) {
                     percentLabel.setText(String.valueOf(percentSlider
@@ -358,19 +356,19 @@ public class EditTaskHandler extends AppCompatActivity {
         }
     };
 
-	public boolean onOptionsItemSelected(MenuItem menuItem) {
-		switch (menuItem.getItemId()) {
-		case android.R.id.home: {
-			finish();
-			return true;
-		}
-		default:
-			return super
-					.onOptionsItemSelected(menuItem);
-		}
-	}
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+            default:
+                return super
+                        .onOptionsItemSelected(menuItem);
+        }
+    }
 
-	/**
+    /**
      * This method is registered with the percent label to cause an action to
      * occur when it is changed.
      */
@@ -378,14 +376,11 @@ public class EditTaskHandler extends AppCompatActivity {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             try {
                 int temp = Integer.valueOf(v.getText().toString());
-                if (temp > 100)
-                    temp = 100;
-                if (temp < 0)
-                    temp = 0;
+                if (temp > 100) temp = 100;
+                if (temp < 0) temp = 0;
                 percentSlider.setProgress(temp);
             } catch (NumberFormatException e) {
-                percentLabel
-                        .setText(String.valueOf(percentSlider.getProgress()));
+                percentLabel.setText(String.valueOf(percentSlider.getProgress()));
             }
             v.clearFocus();
             return true;
