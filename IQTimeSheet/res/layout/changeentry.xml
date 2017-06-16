@@ -8,12 +8,14 @@
 
     <Button
         android:id="@+id/defaulttask"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top" />
 
     <Button
         android:id="@+id/date"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/defaulttask"
@@ -96,6 +98,7 @@
 
             <Button
                 android:id="@+id/changeadjacent"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_span="2"

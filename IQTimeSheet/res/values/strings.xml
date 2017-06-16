@@ -61,4 +61,6 @@
     <string name="title_section2">Day Report</string>
     <string name="title_section3">Week Report</string>
     <string name="restore_title">"This will overwrite the database.  Proceed?"</string>
+    <string name="DefaultPercentage">100</string>
+    <string name="PrecentSign">%</string>
 </resources>

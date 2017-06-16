@@ -4,9 +4,9 @@
     android:id="@android:id/list"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout="@layout/addtask"
     android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true">
+    android:layout_alignParentStart="true"
+    android:layout="@layout/addtask">
 
     <TextView
         android:id="@+id/TextLabel"
@@ -35,10 +35,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/SplitTask"
         android:layout_gravity="start"
-        android:layout_marginStart="7dip"
         android:layout_marginLeft="7dip"
-        android:text="@string/cancel"
-        android:width="150dip" />
+        android:layout_marginStart="7dip"
+        android:width="150dip"
+        android:text="@string/cancel" />
 
     <Button
         android:id="@+id/ChangeTask"
@@ -48,29 +48,29 @@
         android:layout_gravity="end"
         android:layout_marginEnd="7dip"
         android:layout_marginRight="7dip"
-        android:layout_toRightOf="@+id/CancelEdit"
         android:layout_toEndOf="@+id/CancelEdit"
-        android:text="@string/accept"
-        android:width="150dip" />
+        android:layout_toRightOf="@+id/CancelEdit"
+        android:width="150dip"
+        android:text="@string/accept" />
 
     <TextView
         android:id="@+id/ParentLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="2dip"
-        android:layout_below="@+id/CancelEdit"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="gone"
-        android:text="@string/select_parent_task" />
-    
+        android:layout_below="@+id/CancelEdit"
+        android:paddingTop="2dip"
+        android:text="@string/select_parent_task"
+        android:visibility="gone" />
+
     <Spinner
         android:id="@+id/TaskSpinner"
         style="@android:style/TextAppearance"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ParentLabel"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <!-- android:textColor="@android:color/primary_text_dark" -->
         <!-- Preview: listitem=@android:layout/simple_spinner_item -->
@@ -84,7 +84,7 @@
         android:layout_centerHorizontal="true"
         android:inputType="number"
         android:selectAllOnFocus="true"
-        android:text="100"
+        android:text="@string/DefaultPercentage"
         android:visibility="gone" />
 
     <TextView
@@ -95,7 +95,7 @@
         android:layout_below="@+id/TaskSpinner"
         android:layout_toEndOf="@+id/PercentLabel"
         android:layout_toRightOf="@+id/PercentLabel"
-        android:text="%"
+        android:text="@string/PrecentSign"
         android:visibility="gone" />
 
     <SeekBar

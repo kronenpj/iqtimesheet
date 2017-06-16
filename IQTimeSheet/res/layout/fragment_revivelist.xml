@@ -7,10 +7,11 @@
     android:paddingLeft="0dip"
     android:paddingRight="0dip"
     android:paddingTop="0dip"
-    tools:context=".TaskListFragment" >
+    tools:context=".TaskListFragment">
 
-    <ListView android:name="com.googlecode.iqapps.IQTimeSheet.TaskListFragment"
-        android:id="@+android:id/list"
+    <ListView
+        android:id="@+id/tasklist"
+        android:name=".TaskListFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

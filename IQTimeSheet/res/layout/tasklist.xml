@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge 
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout="@layout/tasklist"
-	>
-	
-<ListView android:id="@+id/tasklist"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content" 
-	/>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout="@layout/tasklist">
 
-	<!--<include layout="@layout/tasklistrow"/>-->
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tasklist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <!--<include layout="@layout/tasklistrow"/>-->
 
 </merge>
