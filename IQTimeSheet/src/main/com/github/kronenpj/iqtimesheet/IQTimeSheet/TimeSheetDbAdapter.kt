@@ -403,7 +403,7 @@ class TimeSheetDbAdapter
      * *
      * @return true if the entry was successfully updated, false otherwise
      */
-    fun updateEntry(rowIdP: Long, chargeno: Long, date: String,
+    fun updateEntry(rowIdP: Long, chargeno: Long, date: String?,
                     timein: Long, timeout: Long): Boolean {
         var rowId = rowIdP
         val args = ContentValues()
