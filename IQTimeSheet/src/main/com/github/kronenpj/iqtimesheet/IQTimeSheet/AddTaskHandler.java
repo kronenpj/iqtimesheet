@@ -88,7 +88,7 @@ public class AddTaskHandler extends Activity {
             i++;
         }
 
-        taskSpinner.setAdapter(new ArrayAdapter<String>(this,
+        taskSpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items));
 
         percentSlider.setMax(100);

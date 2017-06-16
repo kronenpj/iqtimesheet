@@ -20,7 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.widget.ImageButton;
+
 import com.github.kronenpj.iqtimesheet.IQTimeSheet.R;
 
 /**
@@ -52,6 +52,11 @@ public class NumberPickerButton extends android.support.v7.widget.AppCompatImage
     public boolean onTouchEvent(MotionEvent event) {
         cancelLongpressIfRequired(event);
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     @Override

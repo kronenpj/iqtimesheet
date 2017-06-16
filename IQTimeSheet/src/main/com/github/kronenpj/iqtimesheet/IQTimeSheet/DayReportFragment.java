@@ -37,8 +37,8 @@ public class DayReportFragment extends Fragment {
 				container, false);
 
 		reportList = (ListView) getActivity().findViewById(R.id.reportList);
-		reportList.setAdapter(new MyArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_2, db.getDayReportList()));
+		reportList.setAdapter(new MyArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_2, db.getDayReportList()));
 
 		footerView = (TextView) getActivity().findViewById(R.id.reportfooter);
 		footerView.setTextSize(TimeSheetActivity.prefs.getTotalsFontSize());

@@ -86,9 +86,9 @@ public class TaskSelectionFragment extends Fragment {
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getActivity());
 		db.open();
 		// (Re-)Populate the ListView with an array adapter with the task items.
-		myTaskList.setAdapter(new MyArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_single_choice, db
-						.getTasksList()));
+		myTaskList.setAdapter(new MyArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_single_choice, db
+                .getTasksList()));
 	}
 
 	void clearSelected() {

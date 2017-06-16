@@ -1,7 +1,6 @@
 package com.github.kronenpj.iqtimesheet.IQTimeSheet;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,42 +91,19 @@ class MyArrayAdapter<T> extends ArrayAdapter<T> {
         return createViewFromResource(position, convertView, parent, mResource);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     private View createViewFromResource(int position, View convertView,
                                         ViewGroup parent, int resource) {
         View view;
         TextView text;
 
-        if (convertView == null) {
-            view = mInflater.inflate(resource, parent, false);
-        } else {
-            view = convertView;
-        }
-
-        try {
-            if (mFieldId == 0) {
-                // If no custom field is assigned, assume the whole resource is
-                // a TextView
-                text = (TextView) view;
-            } else {
-                // Otherwise, find the TextView field within the layout
-                text = (TextView) view.findViewById(mFieldId);
-            }
-        } catch (ClassCastException e) {
-            Log.e("ArrayAdapter",
-                    "You must supply a resource ID for a TextView");
-            throw new IllegalStateException(
-                    "ArrayAdapter requires the resource ID to be a TextView", e);
-        }
-
-        T item = getItem(position);
-        if (item instanceof CharSequence) {
-            text.setText((CharSequence) item);
-        } else {
-            text.setText(item.toString());
-        }
-
+        mResource = resource;
+        view = super.getView(position, convertView, parent);
+        text = (TextView) view;
         text.setTextSize(TimeSheetActivity.prefs.getFontSizeTaskList());
 
-        return view;
+        return text;
     }
 }

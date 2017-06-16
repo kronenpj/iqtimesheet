@@ -318,7 +318,7 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
 		}
 		default:
 			return super
-					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+					.onOptionsItemSelected(menuItem);
 		}
 	}
 

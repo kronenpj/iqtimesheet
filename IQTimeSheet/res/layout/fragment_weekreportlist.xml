@@ -37,15 +37,15 @@
         android:layout_gravity="bottom"
         android:orientation="horizontal" >
 
-        <Button
+        <Button style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/wprevious"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
+            android:layout_gravity="start|bottom"
             android:layout_weight="1"
             android:text="@string/day_prev_action" />
 
-        <Button
+        <Button style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/wtoday"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -53,11 +53,11 @@
             android:layout_weight="1"
             android:text="@string/day_today_action" />
 
-        <Button
+        <Button style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/wnext"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
+            android:layout_gravity="end|bottom"
             android:layout_weight="1"
             android:text="@string/day_next_action" />
     </LinearLayout>

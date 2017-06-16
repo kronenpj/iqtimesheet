@@ -1388,6 +1388,47 @@ GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
     }
 
     /**
+     * Return a Cursor over the list of all tasks in the database that are children
+     * of the supplied split task parent.
+     * @return Cursor over all database entries
+     */
+    /*
+    CREATE TABLE TaskSplit (
+        _id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chargeno INTEGER NOT NULL REFERENCES Tasks(_id),
+        task INTEGER NOT NULL REFERENCES Tasks(_id),
+        percentage INTEGER NOT NULL DEFAULT 100 CHECK(percentage>=0 AND percentage<=100)
+     );
+     */
+    fun fetchChildTaskCursor(parentID: Long): Cursor? {
+        Log.d(TAG, "fetchChildTasks($parentID): Issuing DB query.")
+        return mDb!!.query(TASKSPLIT_DATABASE_TABLE, arrayOf(KEY_ROWID, KEY_CHARGENO, KEY_TASK), KEY_CHARGENO + "='" + parentID
+                + "'", null, null, null, KEY_TASK)
+    }
+
+    /**
+     * Return an array over the list of all tasks in the database that are children
+     * of the supplied split task parent.
+     * @return Array over all matching database entries
+     */
+    fun fetchChildTasks(parentID: Long): Array<Long> {
+        val entryids = MutableList<Long>(size = 5) {-1}
+        val mCursor = fetchChildTaskCursor(parentID)
+        mCursor!!.moveToFirst()
+        while( ! mCursor.isAfterLast) {
+            // Index #2 is the task identifier, which is what's needed here.
+            val value = mCursor.getLong(2)
+            if (value > 0) entryids.add(value)
+            mCursor.moveToNext()
+        }
+        while (entryids.contains(-1))
+            entryids.remove(-1)
+        Log.i(TAG, "# child tasks: ${entryids.size}")
+        mCursor.close()
+        return entryids.toTypedArray()
+    }
+
+    /**
      * Return a Cursor over the list of all entries in the database
 
      * @return Cursor over all database entries
@@ -1914,10 +1955,10 @@ GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
             Log.d(TAG, "getTasksList")
             val reportCursor = daySummary()
             try {
-                val items = arrayOfNulls<String?>(reportCursor!!.getCount())
+                val items = arrayOfNulls<String?>(reportCursor!!.count)
                 reportCursor.moveToFirst()
                 var i = 0
-                while (reportCursor.isAfterLast()) {
+                while (reportCursor.isAfterLast) {
                     items[i] = reportCursor.getString(1)
                     reportCursor.moveToNext()
                     i++
@@ -2106,6 +2147,10 @@ INTEGER NOT NULL REFERENCES $TASKS_DATABASE_TABLE (
 $KEY_ROWID), $KEY_TIMEIN INTEGER NOT NULL,
 $KEY_TIMEOUT INTEGER NOT NULL DEFAULT 0);"""
 
+        // This probably allows duplicate KEY_TASK rows, which is bad.
+        // There's an assumption in the code that a lookup by KEY_TASK
+        // provides a unique KEY_ROWID when queried.
+        // TODO: Fix non-unique KEY_TASK problem.
         private val TASK_TABLE_CREATE = """CREATE TABLE
 $TASKS_DATABASE_TABLE ( $KEY_ROWID
 INTEGER PRIMARY KEY AUTOINCREMENT, $KEY_TASK

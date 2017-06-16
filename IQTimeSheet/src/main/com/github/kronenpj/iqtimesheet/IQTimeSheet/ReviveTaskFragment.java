@@ -104,6 +104,15 @@ public class ReviveTaskFragment extends ActionBarListActivity {
 		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
 		db.open();
 		db.activateTask(taskName);
+		long parentTaskID = db.getTaskIDByName(taskName);
+		Long[] children = db.fetchChildTasks(parentTaskID);
+		for (Long childID : children) {
+			try {
+				db.activateTask(db.getTaskNameByID(childID));
+				Log.v(TAG, "Reactivated Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
+			} catch (NullPointerException e) {
+			}
+		}
 		db.close();
 	}
 
@@ -123,7 +132,7 @@ public class ReviveTaskFragment extends ActionBarListActivity {
 			i++;
 		}
 
-		tasksList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+		tasksList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
 				android.R.layout.simple_list_item_single_choice, items));
 	}
 
@@ -135,7 +144,7 @@ public class ReviveTaskFragment extends ActionBarListActivity {
 		}
 		default:
 			return super
-					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+					.onOptionsItemSelected(menuItem);
 		}
 	}
 }

@@ -28,15 +28,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to provide an interface to change a task name and, potentially,
@@ -98,7 +104,7 @@ public class EditTaskHandler extends AppCompatActivity {
             i++;
         }
 
-        taskSpinner.setAdapter(new ArrayAdapter<String>(this,
+        taskSpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items));
 
         percentSlider.setMax(100);
@@ -147,6 +153,10 @@ public class EditTaskHandler extends AppCompatActivity {
     void showTaskEdit() {
         Log.d(TAG, "Changing to addtask layout.");
         setContentView(R.layout.addtask);
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+        }
 
         textField = (EditText) findViewById(R.id.EditTask);
         parentLabel = (TextView) findViewById(R.id.ParentLabel);
@@ -179,7 +189,24 @@ public class EditTaskHandler extends AppCompatActivity {
             }
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Look for tasks that are split children of this task and list them.
+        long parentTaskID = db.getTaskIDByName(oldData);
+        // Log.v(TAG, "Parent item: " + parentTaskID + " (" + db.getTaskNameByID(parentTaskID) + ")");
+        Long[] children = db.fetchChildTasks(parentTaskID);
+        if (children.length > 0) {
+            splitTask.setVisibility(View.GONE);
+            ListView myChildList = (ListView) findViewById(R.id.childlist);
+            List<String> childNames = new ArrayList<>(children.length);
+            for (Long childID : children) {
+                childNames.add(db.getTaskNameByID(childID));
+                // Log.v(TAG, "  Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
+            }
+            myChildList.setAdapter(new MyArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, childNames));
+            // TODO: Find some way to be able to edit these items and still be able to return here.
+            // myChildList.setOnItemClickListener(mChildListener);
+            myChildList.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -221,6 +248,35 @@ public class EditTaskHandler extends AppCompatActivity {
     };
 
     /**
+     * This method is what is registered with the button to cause an action to
+     * occur when it is pressed.
+     */
+    private AdapterView.OnItemClickListener mChildListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+            // Perform action on selected list item.
+
+            String item = ((TextView) v).getText().toString();
+            Log.d(TAG, "Edit (child) task");
+            Intent intent = new Intent(getApplicationContext(),
+                    EditTaskHandler.class);
+            intent.putExtra("taskName", ((TextView) v).getText().toString());
+            try {
+                startActivityForResult(intent, ActivityCodes.TASKEDIT.ordinal());
+            } catch (RuntimeException e) {
+                Toast.makeText(getApplicationContext(), "RuntimeException",
+                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "RuntimeException caught.");
+            }
+
+            // TODO: This finishes the entire activity, need to find a better way
+            // to display/edit this. Maybe another (duplicate) activity?`1
+            finish();
+        }
+    };
+
+    /**
      * Attempts to close both the cursor and the database connection.
      */
     private void closeCursorDB() {
@@ -251,11 +307,11 @@ public class EditTaskHandler extends AppCompatActivity {
                 percentSymbol.setVisibility(View.VISIBLE);
                 percentSlider.setVisibility(View.VISIBLE);
             } else {
-                parentLabel.setVisibility(View.INVISIBLE);
-                taskSpinner.setVisibility(View.INVISIBLE);
-                percentLabel.setVisibility(View.INVISIBLE);
-                percentSymbol.setVisibility(View.INVISIBLE);
-                percentSlider.setVisibility(View.INVISIBLE);
+                parentLabel.setVisibility(View.GONE);
+                taskSpinner.setVisibility(View.GONE);
+                percentLabel.setVisibility(View.GONE);
+                percentSymbol.setVisibility(View.GONE);
+                percentSlider.setVisibility(View.GONE);
             }
         }
     };
@@ -310,7 +366,7 @@ public class EditTaskHandler extends AppCompatActivity {
 		}
 		default:
 			return super
-					.onOptionsItemSelected((android.view.MenuItem) menuItem);
+					.onOptionsItemSelected(menuItem);
 		}
 	}
 

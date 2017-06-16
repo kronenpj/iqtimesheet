@@ -55,7 +55,7 @@ class AboutDialog : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // TODO: Make into string.xml reference.
-        version.setText("IQTimeSheet ${BuildConfig.VERSION_NAME} (${BuildConfig.GitHash} ${BuildConfig.BuildDate})")
+        version.text = "IQTimeSheet ${BuildConfig.VERSION_NAME} (${BuildConfig.GitHash} ${BuildConfig.BuildDate})"
         aboutText.setText(R.string.about_summary)
         Log.d(TAG, "Falling out of onCreate.")
     }

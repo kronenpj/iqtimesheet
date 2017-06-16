@@ -84,7 +84,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
             public void onPageScrolled(int position, float positionOffset,
@@ -219,9 +219,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                 try {
                     refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
                 } catch (NullPointerException e) {
-                    Log.d(TAG,
-                            "TaskRevive refreshTaskListAdapter: "
-                                    + e.toString());
+                    Log.d(TAG, "TaskRevive refreshTaskListAdapter: " + e.toString());
                 }
             }
         } else if (requestCode == ActivityCodes.TASKEDIT.ordinal()) {
@@ -356,7 +354,7 @@ public class TimeSheetActivity extends AppCompatActivity {
             }
             default:
                 return super
-                        .onOptionsItemSelected((android.view.MenuItem) menuItem);
+                        .onOptionsItemSelected(menuItem);
         }
     }
 
@@ -407,6 +405,14 @@ public class TimeSheetActivity extends AppCompatActivity {
                 db.open();
             } catch (Exception e) {
                 Log.i(TAG, "Database open threw exception" + e);
+            }
+            long parentTaskID = db.getTaskIDByName(((TextView) info.targetView).getText().toString());
+            Long[] children = db.fetchChildTasks(parentTaskID);
+            // List<String> childNames = new ArrayList<>(children.length);
+            for (Long childID : children) {
+                db.deactivateTask(db.getTaskNameByID(childID));
+                // childNames.add(db.getTaskNameByID(childID));
+                Log.v(TAG, "Retired Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
             }
             db.deactivateTask(((TextView) info.targetView).getText().toString());
             try {
@@ -666,7 +672,7 @@ public class TimeSheetActivity extends AppCompatActivity {
             Log.i(TAG, "Database open threw exception" + e);
         }
         // (Re-)Populate the ListView with an array adapter with the task items.
-        myTaskList.setAdapter(new MyArrayAdapter<String>(
+        myTaskList.setAdapter(new MyArrayAdapter<>(
                 getApplicationContext(),
                 android.R.layout.simple_list_item_single_choice, db.getTasksList()));
         setSelected(myTaskList);
@@ -916,6 +922,7 @@ public class TimeSheetActivity extends AppCompatActivity {
     private void updateTitleBar() {
         Log.d(TAG, "updateTitleBar");
         final String format = "(%.2fh / %.2fh) / (%.2fh / %.2fh)";
+        Locale locale = Locale.getDefault();
         float hoursPerDay = prefs.getHoursPerDay();
         float hoursPerWeek = prefs.getHoursPerWeek();
         float dayAdder = 0;
@@ -926,7 +933,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         Cursor reportCursor = db.daySummary(false);
         if (reportCursor == null) {
             getSupportActionBar().setSubtitle(
-                    String.format(format, dayAdder, hoursPerDay, weekAdder,
+                    String.format(locale, format, dayAdder, hoursPerDay, weekAdder,
                             hoursPerWeek));
             return;
         }
@@ -947,7 +954,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         reportCursor = db.weekSummary(day, false);
         if (reportCursor == null) {
             getSupportActionBar().setSubtitle(
-                    String.format(format, dayAdder, hoursPerDay - dayAdder,
+                    String.format(locale, format, dayAdder, hoursPerDay - dayAdder,
                             weekAdder, hoursPerWeek));
             return;
         }
@@ -966,7 +973,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setSubtitle(
-                String.format(format, dayAdder, hoursPerDay - dayAdder,
+                String.format(locale, format, dayAdder, hoursPerDay - dayAdder,
                         weekAdder, hoursPerWeek - weekAdder));
     }
 
