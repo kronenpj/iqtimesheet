@@ -54,9 +54,8 @@ class ChangeTime : Activity() {
             timeChange!!.currentHour = TimeHelpers.millisToHour(timeMillis)
             timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis)
 
-            if (TimeSheetActivity.prefs.alignTimePicker)
-                timeChange!!.setInterval(TimeSheetActivity.prefs
-                        .alignMinutes)
+            if (TimeSheetActivity.prefs!!.alignTimePicker)
+                timeChange!!.setInterval(TimeSheetActivity.prefs!!.alignMinutes)
         }
 
         val child = arrayOf(findViewById(R.id.changeok) as Button, findViewById(R.id.changecancel) as Button)

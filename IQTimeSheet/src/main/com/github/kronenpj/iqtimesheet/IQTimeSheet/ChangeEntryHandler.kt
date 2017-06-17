@@ -62,8 +62,8 @@ class ChangeEntryHandler : AppCompatActivity() {
             Log.e(TAG, e.toString() + " calling showChangeLayout")
         }
 
-        alignMinutes = TimeSheetActivity.prefs.alignMinutes
-        alignMinutesAuto = TimeSheetActivity.prefs.alignMinutesAuto
+        alignMinutes = TimeSheetActivity.prefs!!.alignMinutes
+        alignMinutesAuto = TimeSheetActivity.prefs!!.alignMinutesAuto
 
         val changeButton = findViewById(R.id.changealign) as Button
         changeButton.text = "Align ($alignMinutes min)"

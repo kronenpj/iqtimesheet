@@ -201,9 +201,9 @@ class TimeSheetDbAdapter
         // timeIn = TimeHelpers.millisToAlignMinutes(timeIn,
         // TimeSheetActivity.prefs.getAlignMinutes());
         // }
-        if (TimeSheetActivity.prefs.alignMinutesAuto) {
+        if (TimeSheetActivity.prefs!!.alignMinutesAuto) {
             timeIn = TimeHelpers.millisToAlignMinutes(timeIn,
-                    TimeSheetActivity.prefs.alignMinutes)
+                    TimeSheetActivity.prefs!!.alignMinutes)
         }
 
         incrementTaskUsage(chargeno)
@@ -286,9 +286,9 @@ class TimeSheetDbAdapter
         // if (TimeSheetActivity.prefs.getAlignMinutesAuto()) {
         // timeOut = TimeHelpers.millisToAlignMinutes(timeOut,
         // TimeSheetActivity.prefs.getAlignMinutes());
-        if (TimeSheetActivity.prefs.alignMinutesAuto) {
+        if (TimeSheetActivity.prefs!!.alignMinutesAuto) {
             timeOut = TimeHelpers.millisToAlignMinutes(timeOut,
-                    TimeSheetActivity.prefs.alignMinutes)
+                    TimeSheetActivity.prefs!!.alignMinutes)
             // TODO: Fix in a more sensible way.
             // Hack to account for a cross-day automatic clock out.
             // if (timeOut - origTimeOut == 1)
@@ -304,7 +304,7 @@ class TimeSheetDbAdapter
         // long boundary = TimeHelpers.millisToEoDBoundary(timeIn,
         // TimeSheetActivity.prefs.getTimeZone());
         val boundary = TimeHelpers.millisToEoDBoundary(timeIn,
-                TimeSheetActivity.prefs.timeZone)
+                TimeSheetActivity.prefs!!.timeZone)
         Log.d(TAG, "Boundary: $boundary")
         if (timeOut > boundary)
             timeOut = boundary - 1000
@@ -466,7 +466,7 @@ class TimeSheetDbAdapter
         if (mDb == null)
             open()
         val mCursor = mDb!!.query(true, CLOCK_DATABASE_TABLE,
-                arrayOf(KEY_TIMEIN), "$KEY_ROWID = lastClockID",
+                arrayOf(KEY_TIMEIN), "$KEY_ROWID = $lastClockID",
                 null, null, null, null, null) ?: return -1
 
         mCursor.moveToFirst()
@@ -816,8 +816,8 @@ class TimeSheetDbAdapter
         val endDay = TimeHelpers.millisToDayOfMonth(end - 1000)
         val now = TimeHelpers.millisNow()
         if (TimeHelpers.millisToDayOfMonth(now - 1000) == endDay || TimeHelpers.millisToDayOfMonth(TimeHelpers
-                .millisToEndOfWeek(now - 1000, TimeSheetActivity.prefs.weekStartDay,
-                        TimeSheetActivity.prefs.weekStartHour)) == endDay) {
+                .millisToEndOfWeek(now - 1000, TimeSheetActivity.prefs!!.weekStartDay,
+                        TimeSheetActivity.prefs!!.weekStartHour)) == endDay) {
             Log.d(TAG, "getEntryReportCursor: Allowing selection of zero-end-hour entries.")
             selection = "$KEY_TIMEIN >=? and $KEY_TIMEOUT <= ? and ($KEY_TIMEOUT >= $KEY_TIMEIN or $KEY_TIMEOUT = 0)"
         } else {
@@ -870,7 +870,7 @@ class TimeSheetDbAdapter
      * @return true if a new task was started, false if the old task was
      * stopped.
      */
-    protected fun processChange(taskID: Long): Boolean {
+    fun processChange(taskID: Long): Boolean {
         Log.d(TAG, "processChange for task ID: " + taskID)
 
         var lastRowID = lastClockEntry()
@@ -1051,8 +1051,8 @@ class TimeSheetDbAdapter
 
         // TODO: This is a first attempt and is likely to be convoluted.
         // If today is the split day for a 9/80-style week, adjust the start/end times appropriately.
-        if (TimeHelpers.millisToDayOfWeek(todayStart) == TimeSheetActivity.prefs.weekStartDay && TimeSheetActivity.prefs.weekStartHour > 0) {
-            val splitMillis = (TimeSheetActivity.prefs.weekStartHour * 3600 * 1000).toLong()
+        if (TimeHelpers.millisToDayOfWeek(todayStart) == TimeSheetActivity.prefs!!.weekStartDay && TimeSheetActivity.prefs!!.weekStartHour > 0) {
+            val splitMillis = (TimeSheetActivity.prefs!!.weekStartHour * 3600 * 1000).toLong()
             // This is the partial day where the week splits, only for schedules like a 9/80.
             if (time < todayStart + splitMillis)
             // Move the end of the day to the split time.
@@ -1095,11 +1095,11 @@ class TimeSheetDbAdapter
         //	long todayStart = TimeHelpers.millisToStartOfWeek(time);
         //	long todayEnd = TimeHelpers.millisToEndOfWeek(time);
         val todayStart = TimeHelpers.millisToStartOfWeek(time,
-                TimeSheetActivity.prefs.weekStartDay,
-                TimeSheetActivity.prefs.weekStartHour)
+                TimeSheetActivity.prefs!!.weekStartDay,
+                TimeSheetActivity.prefs!!.weekStartHour)
         val todayEnd = TimeHelpers.millisToEndOfWeek(time,
-                TimeSheetActivity.prefs.weekStartDay,
-                TimeSheetActivity.prefs.weekStartHour)
+                TimeSheetActivity.prefs!!.weekStartDay,
+                TimeSheetActivity.prefs!!.weekStartHour)
 
         // public Cursor query(boolean distinct, String table, String[] columns,
         // String selection, String[] selectionArgs, String groupBy, String
@@ -1129,11 +1129,11 @@ class TimeSheetDbAdapter
         //	long weekStart = TimeHelpers.millisToStartOfWeek(time);
         //	long weekEnd = TimeHelpers.millisToEndOfWeek(time);
         val weekStart = TimeHelpers.millisToStartOfWeek(time,
-                TimeSheetActivity.prefs.weekStartDay,
-                TimeSheetActivity.prefs.weekStartHour)
+                TimeSheetActivity.prefs!!.weekStartDay,
+                TimeSheetActivity.prefs!!.weekStartHour)
         val weekEnd = TimeHelpers.millisToEndOfWeek(weekStart + 86400000,
-                TimeSheetActivity.prefs.weekStartDay,
-                TimeSheetActivity.prefs.weekStartHour)
+                TimeSheetActivity.prefs!!.weekStartDay,
+                TimeSheetActivity.prefs!!.weekStartHour)
 
         Log.d(TAG, "weekSummary start: " + TimeHelpers.millisToTimeDate(weekStart))
         Log.d(TAG, "weekSummary   end: " + TimeHelpers.millisToTimeDate(weekEnd))
@@ -1858,7 +1858,7 @@ GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
 
     // TODO: Please tell me there's a better way of doing this.
     // This is just stupid...
-    protected val tasksList: Array<String?>
+    val tasksList: Array<String?>
         get() {
             Log.d(TAG, "getTasksList")
             val taskCursor = fetchAllTaskEntries()
@@ -1881,7 +1881,7 @@ GROUP BY $TASKSPLIT_DATABASE_TABLE.$KEY_TASK"""
 
     // TODO: Please tell me there's a better way of doing this.
     // This is just stupid...
-    protected val dayReportList: Array<String?>
+    val dayReportList: Array<String?>
         get() {
             Log.d(TAG, "getTasksList")
             val reportCursor = daySummary()
