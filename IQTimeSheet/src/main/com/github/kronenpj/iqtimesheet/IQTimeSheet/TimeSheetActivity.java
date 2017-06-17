@@ -705,7 +705,7 @@ public class TimeSheetActivity extends AppCompatActivity {
 
         TextView footerView = (TextView) myReportList.getRootView().findViewById(R.id.reportfooter);
         footerView.setText("Hours worked this day: 0\nHours remaining this day: "
-                + String.format("%.2f", dayHours));
+                + String.format(Locale.US, "%.2f", dayHours));
 
         Cursor timeEntryCursor;
 
@@ -739,8 +739,8 @@ public class TimeSheetActivity extends AppCompatActivity {
         }
 
         footerView.setText("Hours worked this day: "
-                + String.format("%.2f", accum) + "\nHours remaining this day: "
-                + String.format("%.2f", dayHours - accum));
+                + String.format(Locale.US, "%.2f", accum) + "\nHours remaining this day: "
+                + String.format(Locale.US, "%.2f", dayHours - accum));
 
         try {
             myReportList.setAdapter(new ReportCursorAdapter(
@@ -789,7 +789,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         TextView footerView = (TextView) myReportList.getRootView()
                 .findViewById(R.id.weekfooter);
         footerView.setText("Hours worked this week: 0\nHours remaining this week: "
-                + String.format("%.2f", weekHours));
+                + String.format(Locale.US, "%.2f", weekHours));
 
         Cursor timeEntryCursor;
 
@@ -824,9 +824,9 @@ public class TimeSheetActivity extends AppCompatActivity {
         }
 
         footerView.setText("Hours worked this week: "
-                + String.format("%.2f", accum)
+                + String.format(Locale.US, "%.2f", accum)
                 + "\nHours remaining this week: "
-                + String.format("%.2f", weekHours - accum));
+                + String.format(Locale.US, "%.2f", weekHours - accum));
 
         try {
             myReportList.setAdapter(new ReportCursorAdapter(

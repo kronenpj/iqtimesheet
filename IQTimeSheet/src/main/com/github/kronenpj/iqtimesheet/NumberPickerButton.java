@@ -50,8 +50,9 @@ public class NumberPickerButton extends android.support.v7.widget.AppCompatImage
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
         cancelLongpressIfRequired(event);
-        return super.onTouchEvent(event);
+        return super.performClick();
     }
 
     @Override
