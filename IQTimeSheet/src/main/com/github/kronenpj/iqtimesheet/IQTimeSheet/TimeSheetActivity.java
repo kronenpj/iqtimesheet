@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -77,8 +78,7 @@ public class TimeSheetActivity extends AppCompatActivity {
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the app.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -207,8 +207,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                 try {
                     refreshTaskListAdapter((ListView) findViewById(R.id.tasklistfragment));
                 } catch (NullPointerException e) {
-                    Log.d(TAG,
-                            "TaskAdd refreshTaskListAdapter: " + e.toString());
+                    Log.d(TAG, "TaskAdd refreshTaskListAdapter: " + e.toString());
                 }
             }
         } else if (requestCode == ActivityCodes.TASKREVIVE.ordinal()) {
@@ -265,50 +264,41 @@ public class TimeSheetActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.menu_settings: {
-                Intent intent = new Intent(getApplicationContext(),
-                        MyPreferenceActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MyPreferenceActivity.class);
                 try {
                     startActivityForResult(intent, ActivityCodes.PREFS.ordinal());
                 } catch (RuntimeException e) {
-                    Log.e(TAG, "RuntimeException caught in "
-                            + "onOptionsItemSelected for MyPreferenceActivity");
+                    Log.e(TAG, "RuntimeException caught in onOptionsItemSelected for MyPreferenceActivity");
                     Log.e(TAG, e.getLocalizedMessage());
                 }
                 return true;
             }
             case R.id.menu_edit_day_entries: {
-                Intent intent = new Intent(getApplicationContext(),
-                        EditDayEntriesHandler.class);
+                Intent intent = new Intent(getApplicationContext(), EditDayEntriesHandler.class);
                 try {
                     startActivityForResult(intent, ActivityCodes.EDIT.ordinal());
                 } catch (RuntimeException e) {
-                    Log.e(TAG, "RuntimeException caught in "
-                            + "onOptionsItemSelected for EditDayEntriesHandler");
+                    Log.e(TAG, "RuntimeException caught in onOptionsItemSelected for EditDayEntriesHandler");
                     Log.e(TAG, e.getLocalizedMessage());
                 }
                 return true;
             }
             case R.id.menu_revive_task: {
-                Intent intent = new Intent(getApplicationContext(),
-                        ReviveTaskFragment.class);
+                Intent intent = new Intent(getApplicationContext(), ReviveTaskFragment.class);
                 try {
-                    startActivityForResult(intent,
-                            ActivityCodes.TASKREVIVE.ordinal());
+                    startActivityForResult(intent, ActivityCodes.TASKREVIVE.ordinal());
                 } catch (RuntimeException e) {
-                    Log.e(TAG, "RuntimeException caught in "
-                            + "onOptionsItemSelected for ReviveTaskHandler");
+                    Log.e(TAG, "RuntimeException caught in onOptionsItemSelected for ReviveTaskHandler");
                     Log.e(TAG, e.getLocalizedMessage());
                 }
                 return true;
             }
             case R.id.menu_new_task: {
-                Intent intent = new Intent(getApplicationContext(),
-                        AddTaskHandler.class);
+                Intent intent = new Intent(getApplicationContext(), AddTaskHandler.class);
                 try {
                     startActivityForResult(intent, ActivityCodes.TASKADD.ordinal());
                 } catch (RuntimeException e) {
-                    Log.e(TAG, "RuntimeException caught in "
-                            + "onOptionsItemSelected for AddTaskHandler");
+                    Log.e(TAG, "RuntimeException caught in onOptionsItemSelected for AddTaskHandler");
                     Log.e(TAG, e.getLocalizedMessage());
                 }
                 return true;
@@ -341,20 +331,17 @@ public class TimeSheetActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.menu_about: {
-                Intent intent = new Intent(getApplicationContext(),
-                        AboutDialog.class);
+                Intent intent = new Intent(getApplicationContext(), AboutDialog.class);
                 try {
                     startActivity(intent);
                 } catch (RuntimeException e) {
-                    Log.e(TAG, "RuntimeException caught in "
-                            + "onOptionsItemSelected for AboutDialog");
+                    Log.e(TAG, "RuntimeException caught in onOptionsItemSelected for AboutDialog");
                     Log.e(TAG, e.getLocalizedMessage());
                 }
                 return true;
             }
             default:
-                return super
-                        .onOptionsItemSelected(menuItem);
+                return super.onOptionsItemSelected(menuItem);
         }
     }
 
@@ -406,15 +393,17 @@ public class TimeSheetActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.i(TAG, "Database open threw exception" + e);
             }
+
             long parentTaskID = db.getTaskIDByName(((TextView) info.targetView).getText().toString());
+            // Retire children.
             Long[] children = db.fetchChildTasks(parentTaskID);
-            // List<String> childNames = new ArrayList<>(children.length);
             for (Long childID : children) {
                 db.deactivateTask(db.getTaskNameByID(childID));
-                // childNames.add(db.getTaskNameByID(childID));
                 Log.v(TAG, "Retired Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
             }
-            db.deactivateTask(((TextView) info.targetView).getText().toString());
+
+            // Retire original task
+            db.deactivateTask(parentTaskID);
             try {
                 db.close();
             } catch (Exception e) {
@@ -1120,7 +1109,7 @@ public class TimeSheetActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 // If request is cancelled, the result arrays are empty.

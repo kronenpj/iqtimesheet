@@ -87,7 +87,11 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
             Log.e(TAG, "setOnItemClickLister setup");
             Log.e(TAG, e.toString());
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "setDisplayHomeAsUpEnabled returned null.");
+        }
 
     }
 
@@ -267,18 +271,14 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
                             if (extras != null) {
                                 Log.d(TAG, "Processing returned data.");
                                 long entryID = extras.getLong(ENTRY_ID);
-                                String newTask = extras
-                                        .getString(TimeSheetDbAdapter.Companion.getKEY_TASK());
-                                long newTimeIn = extras
-                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEIN());
-                                long newTimeOut = extras
-                                        .getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT());
+                                String newTask = extras.getString(TimeSheetDbAdapter.Companion.getKEY_TASK());
+                                long newTimeIn = extras.getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEIN());
+                                long newTimeOut = extras.getLong(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT());
                                 long chargeNo = db.getTaskIDByName(newTask);
                                 try {
                                     long prev = db.getPreviousClocking(entryID);
                                     if (prev > 0)
-                                        db.updateEntry(prev, -1, null, -1,
-                                                newTimeIn);
+                                        db.updateEntry(prev, -1, null, -1, newTimeIn);
                                 } catch (SQLException e) {
                                     // Don't do anything.
                                 }

@@ -18,6 +18,7 @@ package com.github.kronenpj.iqtimesheet;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -436,6 +437,7 @@ public class NumberPicker extends LinearLayout {
             return InputType.TYPE_CLASS_NUMBER;
         }
 
+        @NonNull
         @Override
         protected char[] getAcceptedChars() {
             return DIGIT_CHARACTERS;
