@@ -31,120 +31,124 @@ import android.widget.ListView;
  * Activity to allow the user to select a task to revive after being "deleted."
  * Tasks are "never" removed from the database so that entries always reference
  * a valid task.
- * 
+ *
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 public class ReviveTaskFragment extends ActionBarListActivity {
-	private static final String TAG = "ReviveTaskHandler";
-	private ListView tasksList;
+    private static final String TAG = "ReviveTaskHandler";
+    private ListView tasksList;
 
-	private Cursor taskCursor;
+    private Cursor taskCursor;
 
-	/**
-	 * Called when the activity is first created.
-	 */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Log.d(TAG, "In onCreate.");
-		setTitle("Select a task to reactivate");
-		setContentView(R.layout.fragment_revivelist);
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "In onCreate.");
+        setTitle("Select a task to reactivate");
+        setContentView(R.layout.fragment_revivelist);
 
-		try {
-			tasksList = (ListView) findViewById(android.R.id.list);
-			tasksList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		} catch (Exception e) {
-			Log.e(TAG, e.toString());
-		}
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try {
+            tasksList = (ListView) findViewById(android.R.id.list);
+            tasksList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "setDisplayHomeAsUpEnabled returned null.");
+        }
 
-		try {
-			fillData();
-		} catch (Exception e) {
-			Log.e(TAG, e.toString());
-		}
+        try {
+            fillData();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
 
-		try {
-			// Register listeners for the list items.
-			tasksList.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					String taskName = (String) parent
-							.getItemAtPosition(position);
-					reactivateTask(taskName);
-					setResult(RESULT_OK, (new Intent()));
-					finish();
-				}
-			});
-		} catch (Exception e) {
-			Log.e(TAG, e.toString());
-		}
-	}
+        try {
+            // Register listeners for the list items.
+            tasksList.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    String taskName = (String) parent
+                            .getItemAtPosition(position);
+                    reactivateTask(taskName);
+                    setResult(RESULT_OK, (new Intent()));
+                    finish();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
 
-	/**
-	 * Called when the activity destroyed.
-	 */
-	@Override
-	public void onDestroy() {
-		try {
-			taskCursor.close();
-		} catch (Exception e) {
-			Log.e(TAG, "onDestroy: " + e.toString());
-		}
+    /**
+     * Called when the activity destroyed.
+     */
+    @Override
+    public void onDestroy() {
+        try {
+            taskCursor.close();
+        } catch (Exception e) {
+            Log.e(TAG, "onDestroy: " + e.toString());
+        }
 
-		super.onDestroy();
-	}
+        super.onDestroy();
+    }
 
-	private void reloadTaskCursor(TimeSheetDbAdapter db) {
-		taskCursor = db.fetchAllDisabledTasks();
-	}
+    private void reloadTaskCursor(TimeSheetDbAdapter db) {
+        taskCursor = db.fetchAllDisabledTasks();
+    }
 
-	private void reactivateTask(String taskName) {
-		Log.d(TAG, "Reactivating task " + taskName);
-		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-		db.open();
-		db.activateTask(taskName);
-		long parentTaskID = db.getTaskIDByName(taskName);
-		Long[] children = db.fetchChildTasks(parentTaskID);
-		for (Long childID : children) {
-			try {
-				db.activateTask(db.getTaskNameByID(childID));
-				Log.v(TAG, "Reactivated Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
-			} catch (NullPointerException e) {
-			}
-		}
-		db.close();
-	}
+    private void reactivateTask(String taskName) {
+        Log.d(TAG, "Reactivating task " + taskName);
+        TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+        db.open();
+        db.activateTask(taskName);
+        long parentTaskID = db.getTaskIDByName(taskName);
+        Long[] children = db.fetchChildTasks(parentTaskID);
+        for (Long childID : children) {
+            try {
+                db.activateTask(db.getTaskNameByID(childID));
+                Log.v(TAG, "Reactivated Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
+            } catch (NullPointerException e) {
+                Log.d(TAG, "getTaskNameById(" + childID + ") returned null.");
+            }
+        }
+        db.close();
+    }
 
-	private void fillData() {
-		// Get all of the entries from the database and create the list
-		TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-		db.open();
+    private void fillData() {
+        // Get all of the entries from the database and create the list
+        TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
+        db.open();
 
-		reloadTaskCursor(db);
+        reloadTaskCursor(db);
 
-		String[] items = new String[taskCursor.getCount()];
-		taskCursor.moveToFirst();
-		int i = 0;
-		while (!taskCursor.isAfterLast()) {
-			items[i] = taskCursor.getString(1);
-			taskCursor.moveToNext();
-			i++;
-		}
+        String[] items = new String[taskCursor.getCount()];
+        taskCursor.moveToFirst();
+        int i = 0;
+        while (!taskCursor.isAfterLast()) {
+            items[i] = taskCursor.getString(1);
+            taskCursor.moveToNext();
+            i++;
+        }
 
-		tasksList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
-				android.R.layout.simple_list_item_single_choice, items));
-	}
+        tasksList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_single_choice, items));
+    }
 
-	public boolean onOptionsItemSelected(MenuItem menuItem) {
-		switch (menuItem.getItemId()) {
-		case android.R.id.home: {
-			finish();
-			return true;
-		}
-		default:
-			return super
-					.onOptionsItemSelected(menuItem);
-		}
-	}
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
 }

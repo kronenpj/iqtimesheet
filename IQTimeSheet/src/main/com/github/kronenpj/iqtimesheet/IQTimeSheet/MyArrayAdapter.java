@@ -1,6 +1,7 @@
 package com.github.kronenpj.iqtimesheet.IQTimeSheet;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,8 @@ class MyArrayAdapter<T> extends ArrayAdapter<T> {
     /**
      * {@inheritDoc}
      */
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         return createViewFromResource(position, convertView, parent, mResource);
     }
 

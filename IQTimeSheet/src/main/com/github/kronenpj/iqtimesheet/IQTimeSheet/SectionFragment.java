@@ -37,31 +37,29 @@ public class SectionFragment extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         Log.d(TAG, "in onCreateView (SectionFragment)");
 
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-        case 1:
-            return setupTaskListFragment(inflater, container);
-        case 2:
-            return setupDayReportFragment(inflater, container);
-        case 3:
-            return setupWeekReportFragment(inflater, container);
+            case 1:
+                return setupTaskListFragment(inflater, container);
+            case 2:
+                return setupDayReportFragment(inflater, container);
+            case 3:
+                return setupWeekReportFragment(inflater, container);
         }
         return null;
     }
 
     /**
      * Set up the task list fragment.
-     * 
-     * @param inflater
-     *            The inflater given the task of instantiating the view.
-     * @param container
-     *            The view group into which the view will be inflated.
+     *
+     * @param inflater  The inflater given the task of instantiating the view.
+     * @param container The view group into which the view will be inflated.
      * @return The inflated view.
      */
     private View setupTaskListFragment(LayoutInflater inflater,
-            ViewGroup container) {
+                                       ViewGroup container) {
         Log.d(TAG, "in setupTaskListFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
@@ -69,8 +67,7 @@ public class SectionFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_tasklist,
                 container, false);
-        final ListView myTaskList = (ListView) rootView
-                .findViewById(R.id.tasklistfragment);
+        final ListView myTaskList = (ListView) rootView.findViewById(R.id.tasklistfragment);
 
         // Populate the ListView with an array adapter with the task items.
         ((TimeSheetActivity) getActivity()).refreshTaskListAdapter(myTaskList);
@@ -83,13 +80,11 @@ public class SectionFragment extends Fragment {
 
         myTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
+                                    int position, long id) {
 
-                String taskName = (String) parent
-                        .getItemAtPosition(position);
+                String taskName = (String) parent.getItemAtPosition(position);
                 long taskID = db.getTaskIDByName(taskName);
-                Log.i(TAG, "Processing change for task: " + taskName
-                        + " / " + taskID);
+                Log.i(TAG, "Processing change for task: " + taskName + " / " + taskID);
                 if (db.processChange(taskID)) {
                     long timeIn = db.timeInForLastClockEntry();
 
@@ -118,47 +113,40 @@ public class SectionFragment extends Fragment {
 
     /**
      * Set up the day report fragment.
-     * 
-     * @param inflater
-     *            The inflater given the task of instantiating the view.
-     * @param container
-     *            The view group into which the view will be inflated.
+     *
+     * @param inflater  The inflater given the task of instantiating the view.
+     * @param container The view group into which the view will be inflated.
      * @return The inflated view.
      */
     private View setupDayReportFragment(LayoutInflater inflater,
-            ViewGroup container) {
+                                        ViewGroup container) {
         Log.d(TAG, "in setupDayReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
         try {
             db.open();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.i(TAG, "Database open threw exception" + e);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_reportlist,
                 container, false);
-        ListView reportList = (ListView) rootView
-                .findViewById(R.id.reportList);
+        ListView reportList = (ListView) rootView.findViewById(R.id.reportList);
 
         ((TimeSheetActivity) getActivity()).refreshReportListAdapter(reportList);
 
-        TextView footerView = (TextView) rootView
-                .findViewById(R.id.reportfooter);
+        TextView footerView = (TextView) rootView.findViewById(R.id.reportfooter);
 
         try {
-            footerView.setTextSize(TimeSheetActivity.prefs
-                    .getTotalsFontSize());
+            footerView.setTextSize(TimeSheetActivity.prefs.getTotalsFontSize());
         } catch (NullPointerException e) {
-            Log.d(TAG,
-                    "setupDayReportFragment: NullPointerException prefs: "
-                            + e);
+            Log.d(TAG, "setupDayReportFragment: NullPointerException prefs: " + e);
         }
 
-        Button[] child = new Button[] {
+        Button[] child = new Button[]{
                 (Button) rootView.findViewById(R.id.previous),
                 (Button) rootView.findViewById(R.id.today),
-                (Button) rootView.findViewById(R.id.next) };
+                (Button) rootView.findViewById(R.id.next)};
 
         /**
          * This method is what is registered with the button to cause an
@@ -169,52 +157,52 @@ public class SectionFragment extends Fragment {
                 Log.d(TAG, "onClickListener view id: " + v.getId());
 
                 switch (v.getId()) {
-                case R.id.previous:
-                    Log.d(TAG, "onClickListener button: previous");
-                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
-                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
-                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
-                            TimeSheetActivity.prefs.getWeekStartDay()) {
-                        TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
-                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    } else {
-                        if (TimeHelpers.millisToHour(TimeSheetActivity.day) <
-                                TimeSheetActivity.prefs.getWeekStartHour()) {
+                    case R.id.previous:
+                        Log.d(TAG, "onClickListener button: previous");
+                        Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                        Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                        Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
+                                TimeSheetActivity.prefs.getWeekStartDay()) {
                             TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
                             Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                         } else {
-                            TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) +
-                                    (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) - 1000;
-                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            if (TimeHelpers.millisToHour(TimeSheetActivity.day) <
+                                    TimeSheetActivity.prefs.getWeekStartHour()) {
+                                TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) - 1000;
+                                Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            } else {
+                                TimeSheetActivity.day = TimeHelpers.millisToStartOfDay(TimeSheetActivity.day) +
+                                        (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) - 1000;
+                                Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            }
                         }
-                    }
-                    break;
-                case R.id.today:
-                    Log.d(TAG, "onClickListener button: today");
-                    TimeSheetActivity.day = TimeHelpers.millisNow();
-                    break;
-                case R.id.next:
-                    Log.d(TAG, "onClickListener button: next");
-                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
-                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
-                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
-                            TimeSheetActivity.prefs.getWeekStartDay()) {
-                        TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
-                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    } else {
-                        if (TimeHelpers.millisToHour(TimeSheetActivity.day) >
-                                TimeSheetActivity.prefs.getWeekStartHour()) {
+                        break;
+                    case R.id.today:
+                        Log.d(TAG, "onClickListener button: today");
+                        TimeSheetActivity.day = TimeHelpers.millisNow();
+                        break;
+                    case R.id.next:
+                        Log.d(TAG, "onClickListener button: next");
+                        Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                        Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                        Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        if (TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day) !=
+                                TimeSheetActivity.prefs.getWeekStartDay()) {
                             TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
                             Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
                         } else {
-                            TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) +
-                                    (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
-                            Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            if (TimeHelpers.millisToHour(TimeSheetActivity.day) >
+                                    TimeSheetActivity.prefs.getWeekStartHour()) {
+                                TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) + 1000;
+                                Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            } else {
+                                TimeSheetActivity.day = TimeHelpers.millisToEndOfDay(TimeSheetActivity.day) +
+                                        (TimeSheetActivity.prefs.getWeekStartHour() * 3600 * 1000) + 1000;
+                                Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                            }
                         }
-                    }
-                    break;
+                        break;
                 }
 
                 TextView headerView = (TextView) v.getRootView()
@@ -241,46 +229,40 @@ public class SectionFragment extends Fragment {
 
     /**
      * Set up the week report fragment.
-     * 
-     * @param inflater
-     *            The inflater given the task of instantiating the view.
-     * @param container
-     *            The view group into which the view will be inflated.
+     *
+     * @param inflater  The inflater given the task of instantiating the view.
+     * @param container The view group into which the view will be inflated.
      * @return The inflated view.
      */
     private View setupWeekReportFragment(LayoutInflater inflater,
-            ViewGroup container) {
+                                         ViewGroup container) {
         Log.d(TAG, "in setupWeekReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
         try {
             db.open();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.i(TAG, "Database open threw exception" + e);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_weekreportlist,
                 container, false);
-        ListView reportList = (ListView) rootView
-                .findViewById(R.id.weekList);
+        ListView reportList = (ListView) rootView.findViewById(R.id.weekList);
 
         ((TimeSheetActivity) getActivity()).refreshWeekReportListAdapter(reportList);
 
-        TextView footerView = (TextView) rootView
-                .findViewById(R.id.weekfooter);
+        TextView footerView = (TextView) rootView.findViewById(R.id.weekfooter);
         try {
             footerView.setTextSize(TimeSheetActivity.prefs
                     .getTotalsFontSize());
         } catch (NullPointerException e) {
-            Log.d(TAG,
-                    "setupWeekeportFragment: NullPointerException prefs: "
-                            + e);
+            Log.d(TAG, "setupWeekeportFragment: NullPointerException prefs: " + e);
         }
 
-        Button[] child = new Button[] {
+        Button[] child = new Button[]{
                 (Button) rootView.findViewById(R.id.wprevious),
                 (Button) rootView.findViewById(R.id.wtoday),
-                (Button) rootView.findViewById(R.id.wnext) };
+                (Button) rootView.findViewById(R.id.wnext)};
 
         /**
          * This method is what is registered with the button to cause an
@@ -291,34 +273,34 @@ public class SectionFragment extends Fragment {
                 Log.d(TAG, "onClickListener view id: " + v.getId());
 
                 switch (v.getId()) {
-                case R.id.wprevious:
-                    Log.d(TAG, "onClickListener button: wprevious");
-                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
-                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
-                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                    case R.id.wprevious:
+                        Log.d(TAG, "onClickListener button: wprevious");
+                        Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                        Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                        Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
 
-                    // TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
-                    TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day,
-                            TimeSheetActivity.prefs.getWeekStartDay(),
-                            TimeSheetActivity.prefs.getWeekStartHour()) - 1000;
-                    Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    break;
-                case R.id.wtoday:
-                    TimeSheetActivity.day = TimeHelpers.millisNow();
-                    Log.d(TAG, "onClickListener button: wtoday");
-                    break;
-                case R.id.wnext:
-                    Log.d(TAG, "onClickListener button: wnext");
-                    Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
-                    Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
-                    Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        // TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day) - 1000;
+                        TimeSheetActivity.day = TimeHelpers.millisToStartOfWeek(TimeSheetActivity.day,
+                                TimeSheetActivity.prefs.getWeekStartDay(),
+                                TimeSheetActivity.prefs.getWeekStartHour()) - 1000;
+                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        break;
+                    case R.id.wtoday:
+                        TimeSheetActivity.day = TimeHelpers.millisNow();
+                        Log.d(TAG, "onClickListener button: wtoday");
+                        break;
+                    case R.id.wnext:
+                        Log.d(TAG, "onClickListener button: wnext");
+                        Log.d(TAG, "onClickListener Day of week #:" + TimeHelpers.millisToDayOfWeek(TimeSheetActivity.day));
+                        Log.d(TAG, "onClickListener Preference  #:" + TimeSheetActivity.prefs.getWeekStartDay());
+                        Log.d(TAG, "onClickListener Previous date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
 
-                    // TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
-                    TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day,
-                            TimeSheetActivity.prefs.getWeekStartDay(),
-                            TimeSheetActivity.prefs.getWeekStartHour()) + 1000;
-                    Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
-                    break;
+                        // TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day) + 1000;
+                        TimeSheetActivity.day = TimeHelpers.millisToEndOfWeek(TimeSheetActivity.day,
+                                TimeSheetActivity.prefs.getWeekStartDay(),
+                                TimeSheetActivity.prefs.getWeekStartHour()) + 1000;
+                        Log.d(TAG, "onClickListener New date:" + TimeHelpers.millisToTimeDate(TimeSheetActivity.day));
+                        break;
                 }
 
                 TextView headerView = (TextView) v.getRootView()
@@ -342,5 +324,4 @@ public class SectionFragment extends Fragment {
 
         return rootView;
     }
-
 }

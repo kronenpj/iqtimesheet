@@ -156,6 +156,7 @@ public class EditTaskHandler extends AppCompatActivity {
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (NullPointerException e) {
+            Log.d(TAG, "setDisplayHomeAsUpEnabled returned NullPointerException.");
         }
 
         textField = (EditText) findViewById(R.id.EditTask);

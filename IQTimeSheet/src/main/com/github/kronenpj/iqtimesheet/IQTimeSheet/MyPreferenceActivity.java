@@ -34,20 +34,6 @@ import android.preference.PreferenceActivity;
 public class MyPreferenceActivity extends PreferenceActivity {
     private static final String TAG = "MyPreferenceActivity";
 
-    //	@Override
-    //	public void onCreate(Bundle savedInstanceState) {
-    //		super.onCreate(savedInstanceState);
-    //
-    //		// Load the preferences from an XML resource
-    //		addPreferencesFromResource(R.xml.preferences);
-    //
-    //		ListPreference tzAnchor = (ListPreference) findPreference("tz.anchor");
-    //		tzAnchor.setOrder(70);
-    //		String[] timeZones = TimeZone.getAvailableIDs();
-    //		tzAnchor.setEntries(timeZones);
-    //		tzAnchor.setEntryValues(timeZones);
-    //    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +42,4 @@ public class MyPreferenceActivity extends PreferenceActivity {
         getFragmentManager().beginTransaction().replace(android.R.id.content,
                 new MyPreferenceFragment()).commit();
     }
-
-    //    @Override
-    //    public void onBuildHeaders(List<Header> target) {
-    //        loadHeadersFromResource(R.xml.headers_preference, target);
-    //    }
-
-    //    @Override
-    //    protected boolean isValidFragment(String fragmentName) {
-    //        return MyPreferenceActivity.class.getName().equals(fragmentName) ||
-    //                MyPreferenceFragment.class.getName().equals(fragmentName);
-    //    }
 }
