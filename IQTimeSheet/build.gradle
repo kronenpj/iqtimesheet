@@ -1,17 +1,23 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
-    }
-}
-
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getDateNow = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'date', '+%Y.%m.%d'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
 
 android {
     signingConfigs {
@@ -22,14 +28,16 @@ android {
             keyPassword RELEASE_KEY_PASSWORD
         }
     }
-    compileSdkVersion 18
-    buildToolsVersion '23.0.2'
-
+    compileSdkVersion 25
+    buildToolsVersion '26.0.0'
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 18
-//        versionCode 2015.2
-//        versionName "1.0"
+        minSdkVersion 14
+        targetSdkVersion 25
+        versionCode 19
+        versionName "2017-beta2"
+        applicationId 'com.github.kronenpj.iqtimesheet.IQTimeSheet'
+        buildConfigField "String", "GitHash", "\"${getGitHash()}\""
+        buildConfigField "String", "BuildDate", "\"${getDateNow()}\""
     }
     buildTypes {
         release {
@@ -37,26 +45,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dependencies {
-    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
+            kotlin.srcDirs = ['src/main']
             res.srcDirs = ['res']
         }
+    }
+    productFlavors {
     }
 }
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
 dependencies {
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.github.rtyley:roboguice-sherlock:1.5'
-    compile 'org.roboguice:roboguice:2.0'
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.anko:anko-sqlite:$anko_version"
+    // // Gradle >= 3
+    // implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    //     exclude group: 'com.android.support', module: 'support-annotations'
+    // })
+    // testImplementation 'junit:junit:4.12'
+    // implementation 'com.android.support:appcompat-v7:25.0.1'
+    // implementation 'com.android.support:design:25.4.0'
+    // implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
-
-

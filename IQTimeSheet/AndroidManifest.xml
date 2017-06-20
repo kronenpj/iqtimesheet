@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.googlecode.iqapps.IQTimeSheet"
-    android:installLocation="auto"
-    android:versionCode="17"
-    android:versionName="2016.beta1" >
+    package="com.github.kronenpj.iqtimesheet.IQTimeSheet"
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!--<uses-sdk-->
-        <!--android:minSdkVersion="8"-->
-        <!--android:targetSdkVersion="18" />-->
-
     <application
+        android:allowBackup="true"
+        android:allowClearUserData="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@drawable/icon_medium"
-        android:label="@string/app_name" android:allowClearUserData="true" android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".TimeSheetActivity"
-            android:label="@string/app_name" 
-            android:theme="@style/Theme.Sherlock">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AboutDialog" />
-        <activity android:name=".AddTaskHandler" />
-        <activity android:name=".ChangeDate" />
-        <activity android:name=".ChangeEntryHandler" />
-        <activity android:name=".ChangeTaskList" />
-        <activity android:name=".ChangeTime" />
-        <activity android:name=".EditDayEntriesHandler" />
-        <activity android:name=".EditTaskHandler" />
-        <activity android:name=".MyPreferenceActivity" />
-        <activity android:name=".ReviveTaskFragment" />
-        </application>
+	<activity android:name=".AboutDialog" android:theme="@style/AppTheme"/>
+	<activity android:name=".AddTaskHandler" android:theme="@style/AppTheme"/>
+	<activity android:name=".ChangeDate" android:theme="@style/AppTheme"/>
+	<activity android:name=".ChangeEntryHandler" android:theme="@style/AppTheme"/>
+	<activity android:name=".ChangeTaskList" android:theme="@style/AppTheme"/>
+	<activity android:name=".ChangeTime" android:theme="@style/AppTheme"/>
+	<activity android:name=".EditDayEntriesHandler" android:theme="@style/AppTheme"/>
+	<activity android:name=".EditTaskHandler" android:theme="@style/AppTheme"/>
+	<activity android:name=".MyPreferenceActivity" android:theme="@style/AppTheme"/>
+	<activity android:name=".ReviveTaskFragment" android:theme="@style/AppTheme"/>
+    </application>
 </manifest>

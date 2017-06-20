@@ -25,7 +25,7 @@
     <string name="sixminalign">Align (1 min)</string>
     <string name="about_summary">IQTimeSheet is my first Android application. It is based on a few
 		other similar applications both in function and style. Hopefully
-		you\'ll find it useful. The source code is available on <a href="http://iqapps.googlecode.com/">http://iqapps.googlecode.com/</a> and is released under the Apache license.</string>
+		you\'ll find it useful. The source code is available on <a href="https://github.com/kronenpj/iqtimesheet/">https://github.com/kronenpj/iqtimesheet/</a> and is released under the Apache license.</string>
     <string name="changeadjacent">Accept &amp; Change Adjacent</string>
     <string name="auto_align_summary_on">Automatically align to an X minute-increment when clocking in/out
 		or changing times.</string>
@@ -61,4 +61,6 @@
     <string name="title_section2">Day Report</string>
     <string name="title_section3">Week Report</string>
     <string name="restore_title">"This will overwrite the database.  Proceed?"</string>
+    <string name="DefaultPercentage">100</string>
+    <string name="PrecentSign">%</string>
 </resources>
