@@ -37,24 +37,24 @@
     <string name="fontsize_tasklist_summary">Font size for the task list.  20 is readable.</string>
     <string name="align_minutes_title">Snap to X minute increments</string>
     <string name="align_minutes_summary">Choose an interval to align minutes</string>
-	<string name="hours_day_title">Hours per day</string>
-	<string name="hours_day_summary">Hours normally worked per day</string>
-	<string name="hours_week_title">Hours per week</string>
-	<string name="hours_week_summary">Hours normally worked per week</string>
+    <string name="hours_day_title">Hours per day</string>
+    <string name="hours_day_summary">Hours normally worked per day</string>
+    <string name="hours_week_title">Hours per week</string>
+    <string name="hours_week_summary">Hours normally worked per week</string>
     <string name="week_start_day_title">Week start day</string>
     <string name="week_start_day_summary">Start day of the week</string>
     <string name="week_start_hour_title">Week day split hour</string>
     <string name="week_start_hour_summary">Hour of the day where the week splits</string>
     <string name="tz_anchor_title">Select anchor time zone</string>
     <string name="tz_anchor_summary">Anchor time zone for midnight and cross-day checks</string>
-	<string name="backup_sd_title">Enable backups?</string>
-	<string name="backup_sd_summary_on">Backups of time database will be made on SD card</string>
-	<string name="backup_sd_summary_off">Backups of time database are disabled</string>
-	<string name="align_minutes_auto">Align minutes automatically?</string>
-	<string name="align_within_time_picker">Align time within Time Picker?</string>
-	<string name="totals_font_size">Totals Font Size</string>
-	<string name="fontsize_tasklist">Tasklist Font Size</string>
-	<string name="select_parent_task">Select parent task</string>
+    <string name="backup_sd_title">Enable backups?</string>
+    <string name="backup_sd_summary_on">Backups of time database will be made on SD card</string>
+    <string name="backup_sd_summary_off">Backups of time database are disabled</string>
+    <string name="align_minutes_auto">Align minutes automatically?</string>
+    <string name="align_within_time_picker">Align time within Time Picker?</string>
+    <string name="totals_font_size">Totals Font Size</string>
+    <string name="fontsize_tasklist">Tasklist Font Size</string>
+    <string name="select_parent_task">Select parent task</string>
     <string name="scrub_database">Scrub the database</string>
     <string name="notification_title">Clocked in…</string>
     <string name="title_section1">Select Task</string>
@@ -63,4 +63,16 @@
     <string name="restore_title">"This will overwrite the database.  Proceed?"</string>
     <string name="DefaultPercentage">100</string>
     <string name="PrecentSign">%</string>
+    <string name="TASK_TABLE_CREATE">
+        CREATE TABLE
+        Tasks (
+          _id INTEGER PRIMARY KEY AUTOINCREMENT,
+          task TEXT NOT NULL,
+          active BOOLEAN NOT NULL DEFAULT 1,
+          usage INTEGER NOT NULL DEFAULT 0,
+          oldusage INTEGER NOT NULL DEFAULT 0,
+          lastused INTEGER NOT NULL DEFAULT 0,
+          split INTEGER DEFAULT 0
+        );
+    </string>
 </resources>

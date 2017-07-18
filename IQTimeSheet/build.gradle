@@ -67,7 +67,16 @@ dependencies {
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "org.jetbrains.anko:anko-sqlite:$anko_version"
+    compile "org.jetbrains.anko:anko:$anko_version"
+    compile "org.jetbrains.anko:anko-commons:$anko_version"
+    //compile "io.requery:requery:$requeryVersion"
+    //compile "io.requery:requery.kotlin:$requeryVersion"
+    //compile "io.requery:requery.android:$requeryVersion"
+    //kapt "io.requery:requery.processor:$requeryVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "com.nhaarman:mockito-kotlin:1.5.0"
+    testCompile 'org.amshove.kluent:kluent:1.15'
     // // Gradle >= 3
     // implementation fileTree(dir: 'libs', include: ['*.jar'])
     // androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
