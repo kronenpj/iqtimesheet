@@ -82,7 +82,7 @@ class ChangeEntryHandler : AppCompatActivity() {
      */
     public override fun onDestroy() {
         entryCursor!!.close()
-        db!!.close()
+        //db!!.close()
         super.onDestroy()
     }
 
@@ -136,14 +136,14 @@ class ChangeEntryHandler : AppCompatActivity() {
         entryCursor = db!!.fetchEntry(entryID)
 
         val chargeNo = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex(TimeSheetDbAdapter.KEY_CHARGENO))
+                .getColumnIndex("chargeno"))
         newTask = db!!.getTaskNameByID(chargeNo)
 
         newTimeIn = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEIN))
+                .getColumnIndex("timein"))
 
         newTimeOut = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex(TimeSheetDbAdapter.KEY_TIMEOUT))
+                .getColumnIndex("timeout"))
 
         newDate = TimeHelpers.millisToStartOfDay(newTimeIn)
     }
@@ -179,15 +179,15 @@ class ChangeEntryHandler : AppCompatActivity() {
      * in it.
      */
     private fun setupDB() {
-        try {
-            db!!.open()
-        } catch (e: SQLException) {
-            Log.e(TAG, e.toString())
-            finish()
-        } catch (e: Exception) {
-            Log.e(TAG, e.toString())
-            finish()
-        }
+        //try {
+        //    db!!.open()
+        //} catch (e: SQLException) {
+        //    Log.e(TAG, e.toString())
+        //    finish()
+        //} catch (e: Exception) {
+        //    Log.e(TAG, e.toString())
+        //    finish()
+        //}
 
     }
 
@@ -260,11 +260,11 @@ class ChangeEntryHandler : AppCompatActivity() {
                 intent = Intent()
                 intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID)
                 // Push task title into response.
-                intent.putExtra(TimeSheetDbAdapter.KEY_TASK, newTask)
+                intent.putExtra("task", newTask)
                 // Push start and end time milliseconds into response
                 // bundle.
-                intent.putExtra(TimeSheetDbAdapter.KEY_TIMEIN, newTimeIn)
-                intent.putExtra(TimeSheetDbAdapter.KEY_TIMEOUT, newTimeOut)
+                intent.putExtra("timein", newTimeIn)
+                intent.putExtra("tineout", newTimeOut)
                 intent.action = "accept"
                 setResult(Activity.RESULT_OK, intent)
                 finish()
@@ -273,11 +273,11 @@ class ChangeEntryHandler : AppCompatActivity() {
                 intent = Intent()
                 intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID)
                 // Push task title into response.
-                intent.putExtra(TimeSheetDbAdapter.KEY_TASK, newTask)
+                intent.putExtra("task", newTask)
                 // Push start and end time milliseconds into response
                 // bundle.
-                intent.putExtra(TimeSheetDbAdapter.KEY_TIMEIN, newTimeIn)
-                intent.putExtra(TimeSheetDbAdapter.KEY_TIMEOUT, newTimeOut)
+                intent.putExtra("timein", newTimeIn)
+                intent.putExtra("timeout", newTimeOut)
                 intent.action = "acceptadjacent"
                 setResult(Activity.RESULT_OK, intent)
                 finish()

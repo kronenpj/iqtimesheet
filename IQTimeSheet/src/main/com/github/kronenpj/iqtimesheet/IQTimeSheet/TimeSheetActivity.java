@@ -177,11 +177,11 @@ public class TimeSheetActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
 
         // Check to see that what we received is what we wanted to see.
         if (requestCode == ActivityCodes.TASKADD.ordinal()) {
@@ -258,7 +258,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                 }
             }
         }
-        db.close();
+        //db.close();
     }
 
     public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -304,7 +304,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.menu_backup: {
-                if (!SDBackup.doSDBackup(TimeSheetDbAdapter.Companion.getDATABASE_NAME(),
+                if (!SDBackup.doSDBackup(MySqlHelper.Companion.getDATABASE_NAME(),
                         getApplicationContext().getPackageName())) {
                     Log.w(TAG, "doSDBackup failed.");
                     Toast.makeText(getApplicationContext(),
@@ -388,11 +388,11 @@ public class TimeSheetActivity extends AppCompatActivity {
         if (item.getItemId() == ActivityCodes.RETIRE_ID.ordinal()) {
             TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                     getApplicationContext());
-            try {
-                db.open();
-            } catch (Exception e) {
-                Log.i(TAG, "Database open threw exception" + e);
-            }
+            //try {
+            //    db.open();
+            //} catch (Exception e) {
+            //    Log.i(TAG, "Database open threw exception" + e);
+            //}
 
             long parentTaskID = db.getTaskIDByName(((TextView) info.targetView).getText().toString());
             // Retire children.
@@ -404,11 +404,11 @@ public class TimeSheetActivity extends AppCompatActivity {
 
             // Retire original task
             db.deactivateTask(parentTaskID);
-            try {
-                db.close();
-            } catch (Exception e) {
-                Log.i(TAG, "Database close threw exception" + e);
-            }
+            //try {
+            //    db.close();
+            //} catch (Exception e) {
+            //    Log.i(TAG, "Database close threw exception" + e);
+            //}
             refreshTaskListAdapter((ListView) info.targetView.getParent());
             return true;
         }
@@ -438,7 +438,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                                         TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                                                 getApplicationContext());
                                         db.closeEntry();
-                                        db.close();
+                                        //db.close();
                                         clearSelected();
                                     }
                                 })
@@ -453,7 +453,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                                         long today = TimeHelpers
                                                 .millisToStartOfDay(now);
                                         db.createEntry(taskID, today);
-                                        db.close();
+                                        //db.close();
                                         setSelected();
                                     }
                                 });
@@ -472,7 +472,7 @@ public class TimeSheetActivity extends AppCompatActivity {
                                                         int id) {
                                         Log.d(TAG, "in onClick (restore dialog)");
                                         if (!SDBackup.doSDRestore(
-                                                TimeSheetDbAdapter.Companion.getDATABASE_NAME(),
+                                                MySqlHelper.Companion.getDATABASE_NAME(),
                                                 getApplicationContext()
                                                         .getPackageName())) {
                                             Log.w(TAG, "doSDRestore failed.");
@@ -603,17 +603,17 @@ public class TimeSheetActivity extends AppCompatActivity {
     void setSelected(ListView myTaskList) {
         Log.d(TAG, "in setSelected");
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
         long timeOut = db.timeOutForLastClockEntry();
         Log.d(TAG, "Last Time Out: " + timeOut + " / " + TimeHelpers.millisToTimeDate(timeOut));
 
         if (timeOut != 0) {
             Log.d(TAG, "Returning.");
-            db.close();
+            //db.close();
             return;
         }
 
@@ -636,7 +636,7 @@ public class TimeSheetActivity extends AppCompatActivity {
             }
         }
 
-        db.close();
+        //db.close();
     }
 
     /**
@@ -655,11 +655,11 @@ public class TimeSheetActivity extends AppCompatActivity {
     void refreshTaskListAdapter(ListView myTaskList) {
         Log.d(TAG, "In refreshTaskListAdapter");
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
         // (Re-)Populate the ListView with an array adapter with the task items.
         myTaskList.setAdapter(new MyArrayAdapter<>(
                 getApplicationContext(),
@@ -723,7 +723,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         while (!timeEntryCursor.isAfterLast()) {
             accum = accum
                     + timeEntryCursor.getFloat(timeEntryCursor
-                    .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL()));
+                    .getColumnIndex("total"));
             timeEntryCursor.moveToNext();
         }
 
@@ -735,8 +735,8 @@ public class TimeSheetActivity extends AppCompatActivity {
             myReportList.setAdapter(new ReportCursorAdapter(
                     getApplicationContext(), R.layout.mysimple_list_item_2,
                     timeEntryCursor, new String[]{
-                    TimeSheetDbAdapter.Companion.getKEY_TASK(),
-                    TimeSheetDbAdapter.Companion.getKEY_TOTAL()}, new int[]{
+                    "task",
+                    "total"}, new int[]{
                     android.R.id.text1, android.R.id.text2}));
             Log.i(TAG, "reportList.setAdapter: updated");
         } catch (Exception e) {
@@ -808,7 +808,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         while (!timeEntryCursor.isAfterLast()) {
             accum = accum
                     + timeEntryCursor.getFloat(timeEntryCursor
-                    .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL()));
+                    .getColumnIndex("total"));
             timeEntryCursor.moveToNext();
         }
 
@@ -821,8 +821,8 @@ public class TimeSheetActivity extends AppCompatActivity {
             myReportList.setAdapter(new ReportCursorAdapter(
                     getApplicationContext(), R.layout.mysimple_list_item_2,
                     timeEntryCursor, new String[]{
-                    TimeSheetDbAdapter.Companion.getKEY_TASK(),
-                    TimeSheetDbAdapter.Companion.getKEY_TOTAL()}, new int[]{
+                    "task",
+                    "total"}, new int[]{
                     android.R.id.text1, android.R.id.text2}));
         } catch (Exception e) {
             Log.e(TAG, "reportList.setAdapter: " + e.toString());
@@ -888,7 +888,7 @@ public class TimeSheetActivity extends AppCompatActivity {
      */
     public void doRestoreClick() {
         Log.d(TAG, "in doRestoreClick");
-        if (!SDBackup.doSDRestore(TimeSheetDbAdapter.Companion.getDATABASE_NAME(),
+        if (!SDBackup.doSDRestore(MySqlHelper.Companion.getDATABASE_NAME(),
                 getApplicationContext().getPackageName())) {
             Log.w(TAG, "doSDRestore failed.");
             Toast.makeText(getApplicationContext(), "Database restore failed.",
@@ -928,7 +928,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         }
         reportCursor.moveToFirst();
         if (!reportCursor.isAfterLast()) {
-            int column = reportCursor.getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL());
+            int column = reportCursor.getColumnIndex("total");
             while (!reportCursor.isAfterLast()) {
                 dayAdder = dayAdder + reportCursor.getFloat(column);
                 reportCursor.moveToNext();
@@ -949,7 +949,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         }
         reportCursor.moveToFirst();
         if (!reportCursor.isAfterLast()) {
-            int column = reportCursor.getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TOTAL());
+            int column = reportCursor.getColumnIndex("total");
             while (!reportCursor.isAfterLast()) {
                 weekAdder = weekAdder + reportCursor.getFloat(column);
                 reportCursor.moveToNext();
@@ -969,17 +969,17 @@ public class TimeSheetActivity extends AppCompatActivity {
     private void checkCrossSplitClock(int hour) {
         Log.d(TAG, "In checkCrossSplitClock");
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
         long lastRowID = db.lastClockEntry();
         long lastTaskID = db.taskIDForLastClockEntry();
         Cursor tempClockCursor = db.fetchEntry(lastRowID);
 
         long timeOut = tempClockCursor.getLong(tempClockCursor
-                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT()));
+                .getColumnIndex("timeout"));
 
         // If the last task is not "open" then skip.
         if (timeOut != 0) {
@@ -993,7 +993,7 @@ public class TimeSheetActivity extends AppCompatActivity {
 
         // Handle cross-boundary clockings.
         long lastClockIn = tempClockCursor.getLong(tempClockCursor
-                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEIN()));
+                .getColumnIndex("timein"));
         long boundary = TimeHelpers.millisToStartOfDay(lastClockIn) +
                 prefs.getWeekStartHour() * 3600 * 1000;
 
@@ -1015,17 +1015,17 @@ public class TimeSheetActivity extends AppCompatActivity {
     private void checkCrossDayClock() {
         Log.d(TAG, "In checkCrossDayClock");
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
         long lastRowID = db.lastClockEntry();
         long lastTaskID = db.taskIDForLastClockEntry();
         Cursor tempClockCursor = db.fetchEntry(lastRowID);
 
         long timeOut = tempClockCursor.getLong(tempClockCursor
-                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEOUT()));
+                .getColumnIndex("timeout"));
 
         // If the last task is not "open" then skip.
         if (timeOut != 0) {
@@ -1040,7 +1040,7 @@ public class TimeSheetActivity extends AppCompatActivity {
         // Handle cross-day clockings.
         long now = TimeHelpers.millisNow();
         long lastClockIn = tempClockCursor.getLong(tempClockCursor
-                .getColumnIndex(TimeSheetDbAdapter.Companion.getKEY_TIMEIN()));
+                .getColumnIndex("timein"));
         long boundary = TimeHelpers.millisToEoDBoundary(lastClockIn, prefs.getTimeZone());
 
         // Calculate where we are in relation to the boundary time.

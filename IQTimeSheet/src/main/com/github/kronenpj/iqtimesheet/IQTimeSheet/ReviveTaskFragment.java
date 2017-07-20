@@ -17,7 +17,6 @@
 package com.github.kronenpj.iqtimesheet.IQTimeSheet;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,6 +25,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to allow the user to select a task to revive after being "deleted."
@@ -38,7 +40,7 @@ public class ReviveTaskFragment extends ActionBarListActivity {
     private static final String TAG = "ReviveTaskHandler";
     private ListView tasksList;
 
-    private Cursor taskCursor;
+    private List<String> taskCursor = new ArrayList<>(0);
 
     /**
      * Called when the activity is first created.
@@ -90,23 +92,31 @@ public class ReviveTaskFragment extends ActionBarListActivity {
      */
     @Override
     public void onDestroy() {
-        try {
-            taskCursor.close();
-        } catch (Exception e) {
-            Log.e(TAG, "onDestroy: " + e.toString());
-        }
+        //try {
+        //    taskCursor.close();
+        //} catch (Exception e) {
+        //    Log.e(TAG, "onDestroy: " + e.toString());
+        //}
 
         super.onDestroy();
     }
 
     private void reloadTaskCursor(TimeSheetDbAdapter db) {
-        taskCursor = db.fetchAllDisabledTasks();
+        TimeSheetDbAdapter.tasksTuple[] temp;
+        temp = db.fetchAllDisabledTasks();
+        taskCursor.clear();
+        if (temp != null) {
+            for (TimeSheetDbAdapter.tasksTuple aTemp : temp) {
+                // component2 is the tasks element of the tuple
+                taskCursor.add(aTemp.component2());
+            }
+        }
     }
 
     private void reactivateTask(String taskName) {
         Log.d(TAG, "Reactivating task " + taskName);
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        db.open();
+        //db.open();
         db.activateTask(taskName);
         long parentTaskID = db.getTaskIDByName(taskName);
         Long[] children = db.fetchChildTasks(parentTaskID);
@@ -118,24 +128,25 @@ public class ReviveTaskFragment extends ActionBarListActivity {
                 Log.d(TAG, "getTaskNameById(" + childID + ") returned null.");
             }
         }
-        db.close();
+        //db.close();
     }
 
     private void fillData() {
         // Get all of the entries from the database and create the list
         TimeSheetDbAdapter db = new TimeSheetDbAdapter(getApplicationContext());
-        db.open();
+        //db.open();
 
         reloadTaskCursor(db);
 
-        String[] items = new String[taskCursor.getCount()];
-        taskCursor.moveToFirst();
-        int i = 0;
-        while (!taskCursor.isAfterLast()) {
-            items[i] = taskCursor.getString(1);
-            taskCursor.moveToNext();
-            i++;
-        }
+        //String[] items = new String[taskCursor.getCount()];
+        //taskCursor.moveToFirst();
+        //int i = 0;
+        //while (!taskCursor.isAfterLast()) {
+        //    items[i] = taskCursor.getString(1);
+        //    taskCursor.moveToNext();
+        //    i++;
+        //}
+        String[] items = taskCursor.toArray(new String[0]);
 
         tasksList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_list_item_single_choice, items));

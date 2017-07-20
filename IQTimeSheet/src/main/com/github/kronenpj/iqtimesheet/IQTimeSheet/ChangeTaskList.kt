@@ -24,6 +24,7 @@ import android.database.SQLException
 import android.os.Bundle
 import android.util.Log
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 
@@ -36,7 +37,7 @@ import android.widget.SimpleCursorAdapter
 class ChangeTaskList : ListActivity() {
     private var db: TimeSheetDbAdapter? = null
     private var taskList: ListView? = null
-    private var taskCursor: Cursor? = null
+    private var taskCursor: Array<TimeSheetDbAdapter.tasksTuple>? = null
 
     /**
      * Called when the activity is first created.
@@ -68,10 +69,10 @@ class ChangeTaskList : ListActivity() {
                 val listCursor = parent
                         .getItemAtPosition(position) as Cursor
                 val taskName = listCursor.getString(listCursor
-                        .getColumnIndex(TimeSheetDbAdapter.KEY_TASK))
+                        .getColumnIndex("task"))
                 val taskID = db!!.getTaskIDByName(taskName)
                 setResult(Activity.RESULT_OK, Intent().setAction(java.lang.Long.valueOf(
-                        taskID)!!.toString()))
+                        taskID).toString()))
                 try {
                     listCursor.close()
                 } catch (e: Exception) {
@@ -90,13 +91,13 @@ class ChangeTaskList : ListActivity() {
      * Called when the activity destroyed.
      */
     public override fun onDestroy() {
-        try {
-            taskCursor!!.close()
-        } catch (e: Exception) {
-            Log.e(TAG, "onDestroy: " + e.toString())
-        }
+        //try {
+        //    taskCursor!!.close()
+        //} catch (e: Exception) {
+        //    Log.e(TAG, "onDestroy: " + e.toString())
+        //}
 
-        db!!.close()
+        // db.close()
         super.onDestroy()
     }
 
@@ -105,12 +106,12 @@ class ChangeTaskList : ListActivity() {
      * in it.
      */
     private fun setupDB() {
-        try {
-            db!!.open()
-        } catch (e: SQLException) {
-            Log.e(TAG, e.toString())
-            finish()
-        }
+        //try {
+        //    db.open()
+        //} catch (e: SQLException) {
+        //    Log.e(TAG, e.toString())
+        //    finish()
+        //}
 
     }
 
@@ -123,10 +124,13 @@ class ChangeTaskList : ListActivity() {
         reloadTaskCursor()
 
         // Populate list
-        val adapter = SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_1, taskCursor,
-                arrayOf(TimeSheetDbAdapter.KEY_TASK),
-                intArrayOf(android.R.id.text1))
+        //val adapter = SimpleCursorAdapter(this,
+        //        android.R.layout.simple_list_item_1, taskCursor,
+        //        arrayOf("task"),
+        //        intArrayOf(android.R.id.text1))
+        val adapter = ArrayAdapter<TimeSheetDbAdapter.tasksTuple>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1,
+                taskCursor!!.asList())
 
         taskList!!.adapter = adapter
     }

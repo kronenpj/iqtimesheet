@@ -61,7 +61,7 @@ public class EditTaskHandler extends AppCompatActivity {
     private SeekBar percentSlider;
     private TextView percentSymbol;
     private TimeSheetDbAdapter db;
-    private Cursor parents;
+    private String[] parents;
     int oldSplitState = 0;
     long oldParent;
     int oldPercentage = 100;
@@ -84,25 +84,26 @@ public class EditTaskHandler extends AppCompatActivity {
         Log.d(TAG, "In onResume.");
 
         db = new TimeSheetDbAdapter(this);
-        try {
-            db.open();
-        } catch (SQLException e) {
-            Log.i(TAG, "Database open failed.");
-            finish();
-        }
+        //try {
+        //    db.open();
+        //} catch (SQLException e) {
+        //    Log.i(TAG, "Database open failed.");
+        //    finish();
+        //}
 
         showTaskEdit();
 
-        parents = db.fetchParentTasks();
-        startManagingCursor(parents);
-        items = new String[parents.getCount()];
-        parents.moveToFirst();
-        int i = 0;
-        while (!parents.isAfterLast()) {
-            items[i] = parents.getString(1);
-            parents.moveToNext();
-            i++;
-        }
+        //parents = db.fetchParentTasks();
+        //startManagingCursor(parents);
+        //items = new String[parents.getCount()];
+        //parents.moveToFirst();
+        //int i = 0;
+        //while (!parents.isAfterLast()) {
+        //    items[i] = parents.getString(1);
+        //    parents.moveToNext();
+        //    i++;
+        //}
+        items = db.fetchParentTasks();
 
         taskSpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items));
@@ -120,7 +121,7 @@ public class EditTaskHandler extends AppCompatActivity {
             // TODO: There must be a better way to find a string in the spinner.
             String parentName = db.getTaskNameByID(oldParent);
             Log.d(TAG, "showTaskEdit: trying to find: " + parentName);
-            i = 0;
+            int i = 0;
             for (int j = 0; j < items.length; j++) {
                 Log.d(TAG, "showTaskEdit: " + j + " / " + items[j]);
                 if (items[j].equalsIgnoreCase(parentName)) {
@@ -257,7 +258,7 @@ public class EditTaskHandler extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
             // Perform action on selected list item.
 
-            String item = ((TextView) v).getText().toString();
+            //String item = ((TextView) v).getText().toString();
             Log.d(TAG, "Edit (child) task");
             Intent intent = new Intent(getApplicationContext(),
                     EditTaskHandler.class);
@@ -281,16 +282,16 @@ public class EditTaskHandler extends AppCompatActivity {
      * Attempts to close both the cursor and the database connection.
      */
     private void closeCursorDB() {
-        try {
-            parents.close();
-        } catch (SQLException e) {
-            Log.i(TAG, "Cursor close: " + e.toString());
-        }
-        try {
-            db.close();
-        } catch (SQLException e) {
-            Log.i(TAG, "Database close: " + e.toString());
-        }
+        //try {
+        //    parents.close();
+        //} catch (SQLException e) {
+        //    Log.i(TAG, "Cursor close: " + e.toString());
+        //}
+        //try {
+        //    db.close();
+        //} catch (SQLException e) {
+        //    Log.i(TAG, "Database close: " + e.toString());
+        //}
     }
 
     /**

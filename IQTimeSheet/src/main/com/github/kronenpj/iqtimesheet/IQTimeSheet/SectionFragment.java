@@ -63,7 +63,7 @@ public class SectionFragment extends Fragment {
         Log.d(TAG, "in setupTaskListFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
-        db.open();
+        //db.open();
 
         View rootView = inflater.inflate(R.layout.fragment_tasklist,
                 container, false);
@@ -123,11 +123,11 @@ public class SectionFragment extends Fragment {
         Log.d(TAG, "in setupDayReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
 
         View rootView = inflater.inflate(R.layout.fragment_reportlist,
                 container, false);
@@ -239,11 +239,11 @@ public class SectionFragment extends Fragment {
         Log.d(TAG, "in setupWeekReportFragment");
         final TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                 getActivity().getApplicationContext());
-        try {
-            db.open();
-        } catch (Exception e) {
-            Log.i(TAG, "Database open threw exception" + e);
-        }
+        //try {
+        //    db.open();
+        //} catch (Exception e) {
+        //    Log.i(TAG, "Database open threw exception" + e);
+        //}
 
         View rootView = inflater.inflate(R.layout.fragment_weekreportlist,
                 container, false);

@@ -50,7 +50,7 @@ class AddTaskHandler : Activity() {
     private var percentSymbol: TextView? = null
     private var percentSlider: SeekBar? = null
     private var db: TimeSheetDbAdapter? = null
-    private var parents: Cursor? = null
+    // private var parents: Array<String>? = null
 
     /** Called when the activity is first created.  */
     // @Override
@@ -69,23 +69,24 @@ class AddTaskHandler : Activity() {
         showTaskAdd()
 
         db = TimeSheetDbAdapter(this)
-        try {
-            db!!.open()
-        } catch (e: SQLException) {
-            Log.i(TAG, "Database open failed.")
-            finish()
-        }
+        //try {
+        //    db!!.open()
+        //} catch (e: SQLException) {
+        //    Log.i(TAG, "Database open failed.")
+        //    finish()
+        //}
 
-        parents = db!!.fetchParentTasks()
-        startManagingCursor(parents)
-        val items = arrayOfNulls<String>(parents!!.count)
-        parents!!.moveToFirst()
-        var i = 0
-        while (!parents!!.isAfterLast) {
-            items[i] = parents!!.getString(1)
-            parents!!.moveToNext()
-            i++
-        }
+        //parents = db!!.fetchParentTasks()
+        //startManagingCursor(parents)
+        //val items = arrayOfNulls<String>(parents!!.count())
+        //parents!!.moveToFirst()
+        //var i = 0
+        //while (!parents!!.isAfterLast) {
+        //    items[i] = parents!!.getString(1)
+        //    parents!!.moveToNext()
+        //    i++
+        //}
+        val items = db!!.fetchParentTasks()
 
         taskSpinner!!.adapter = ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, items)
@@ -129,18 +130,18 @@ class AddTaskHandler : Activity() {
      */
     private fun closeCursorDB() {
         Log.i(TAG, "Entering closeCursorDB")
-        try {
-            parents!!.close()
-        } catch (e: SQLException) {
-            Log.i(TAG, "Cursor close: " + e.toString())
-        }
+        //try {
+        //    parents!!.close()
+        //} catch (e: SQLException) {
+        //    Log.i(TAG, "Cursor close: " + e.toString())
+        //}
 
-        Log.i(TAG, "Closing db connection")
-        try {
-            db!!.close()
-        } catch (e: SQLException) {
-            Log.i(TAG, "Database close: " + e.toString())
-        }
+        //Log.i(TAG, "Closing db connection")
+        //try {
+        //    db!!.close()
+        //} catch (e: SQLException) {
+        //    Log.i(TAG, "Database close: " + e.toString())
+        //}
 
         Log.i(TAG, "Leaving closeCursorDB")
     }

@@ -5,15 +5,17 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import org.jetbrains.anko.db.*
 
+
 /**
  * Created by kronenpj on 6/21/17.
  */
-class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "TimeSheetDB.db") {
+class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, DATABASE_NAME, version = DATABASE_VERSION) {
 
     companion object {
         private var instance: MySqlHelper? = null
         private val DATABASE_VERSION = 3
         private val TAG = "MySqlHelper"
+        val DATABASE_NAME = "TimeSheetDB.db"
 
         @Synchronized
         fun getInstance(ctx: Context): MySqlHelper {
@@ -26,29 +28,39 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "TimeSheetDB.db")
 
     override fun onCreate(db: SQLiteDatabase) {
         db.createTable("Tasks", true,
-                "_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                //"_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                "_id" to SqlType.create("INTEGER PRIMARY KEY AUTOINCREMENT"),
                 "task" to TEXT + NOT_NULL,
                 // Active should be a BOOLEAN, default to TRUE
-                "active" to INTEGER + NOT_NULL + DEFAULT("1"),
-                "usage" to INTEGER + NOT_NULL + DEFAULT("0"),
-                "oldusage" to INTEGER + NOT_NULL + DEFAULT("0"),
-                "lastused" to INTEGER + NOT_NULL + DEFAULT("0"),
+                //"active" to INTEGER + NOT_NULL + DEFAULT("1"),
+                "active" to SqlType.create("INTEGER NOT_NULL DEFAULT '1'"),
+                //"usage" to INTEGER + NOT_NULL + DEFAULT("0"),
+                "usage" to SqlType.create("INTEGER NOT_NULL DEFAULT '0'"),
+                //"oldusage" to INTEGER + NOT_NULL + DEFAULT("0"),
+                "oldusage" to SqlType.create("INTEGER NOT_NULL DEFAULT '0'"),
+                //"lastused" to INTEGER + NOT_NULL + DEFAULT("0"),
+                "lastused" to SqlType.create("INTEGER NOT_NULL DEFAULT '0'"),
                 "split" to INTEGER + DEFAULT("0")
         )
 
         db.createTable("TimeSheet", true,
-                "_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                //"_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                "_id" to SqlType.create("INTEGER PRIMARY KEY AUTOINCREMENT"),
                 "chargeno" to INTEGER + NOT_NULL,
-                "timein" to INTEGER + NOT_NULL + DEFAULT("0"),
-                "timeout" to INTEGER + NOT_NULL + DEFAULT("0"),
+                //"timein" to INTEGER + NOT_NULL + DEFAULT("0"),
+                "timein" to SqlType.create("INTEGER NOT_NULL DEFAULT '0'"),
+                //"timeout" to INTEGER + NOT_NULL + DEFAULT("0"),
+                "timeout" to SqlType.create("INTEGER NOT_NULL DEFAULT '0'"),
                 FOREIGN_KEY("chargeno", "Tasks", "_id")
         )
 
         db.createTable("TaskSplit", true,
-                "_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                //"_id" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                "_id" to SqlType.create("INTEGER PRIMARY KEY AUTOINCREMENT"),
                 "chargeno" to INTEGER + NOT_NULL,
                 "task" to INTEGER + NOT_NULL,
-                "percentage" to REAL + NOT_NULL + DEFAULT("100"),
+                //"percentage" to REAL + NOT_NULL + DEFAULT("100"),
+                "percentage" to SqlType.create("REAL NOT_NULL DEFAULT '100' CHECK ('percentage' >=0 AND 'percentage' <= 100)"),
                 FOREIGN_KEY("chargeno", "Tasks", "_id"),
                 FOREIGN_KEY("task", "Tasks", "_id")
                 // Need bounds check here, preferably.
@@ -68,7 +80,7 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "TimeSheetDB.db")
                 Tasks.task AS task,
                 TimeSheet.timein AS timein,
                 TimeSheet.timeout AS timeout
-                FROM TimeSheet, Tasks, WHERE TimeSheet.chargeno = Tasks._id"""
+                FROM TimeSheet, Tasks WHERE TimeSheet.chargeno = Tasks._id"""
         )
 
         db.execSQL("""CREATE VIEW TaskSplitReport AS
@@ -79,15 +91,15 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "TimeSheetDB.db")
                 FROM Tasks, TaskSplit WHERE Tasks._id = TaskSplit.task"""
         )
 
-        db.execSQL("""CREATE VIEW EntryReport AS SELECT 
-                TimeSheet._id AS _id, 
-                Tasks.task AS task 
-                TimeSheet.timein AS timein 
-                TimeSheet.timeout AS timeout 
+        db.execSQL("""CREATE VIEW EntryReport AS SELECT
+                TimeSheet._id AS _id,
+                Tasks.task AS task,
+                TimeSheet.timein AS timein,
+                TimeSheet.timeout AS timeout,
                 strftime("%H:%M", timein/1000,"unixepoch","localtime")
                 || ' to ' || CASE WHEN timeout = 0 THEN 'now' ELSE
                 strftime("%H:%M", timeout/1000,"unixepoch","localtime") END as range
-                FROM TimeSheet, Tasks, WHERE 
+                FROM TimeSheet, Tasks WHERE
                 TimeSheet.chargeno = Tasks._id"""
         )
 

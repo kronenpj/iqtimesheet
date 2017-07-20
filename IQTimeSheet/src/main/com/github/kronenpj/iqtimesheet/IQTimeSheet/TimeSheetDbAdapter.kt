@@ -15,15 +15,16 @@ import java.util.*
  * Created by kronenpj on 6/22/17.
  */
 
-class TimeSheetAnkoDbAdapter
+class TimeSheetDbAdapter
 /**
  * Primary Constructor - takes the context to allow the database to be
  * opened/created
  */
-(private val mCtx: Context, private var instance: MySqlHelper = MySqlHelper.getInstance(mCtx)) {
+@JvmOverloads constructor(private val mCtx: Context,
+                          private var instance: MySqlHelper = MySqlHelper.getInstance(mCtx)) {
 
     companion object {
-        private val TAG = "TimeSheetAnkoDbAdapter"
+        private val TAG = "TimeSheetDbAdapter"
         val DB_FALSE = "0"
         val DB_TRUE = "1"
     }
@@ -40,7 +41,8 @@ class TimeSheetAnkoDbAdapter
     data class timeTotalTuple(val id: Long, val task: String, val total: Float)
     data class timeEntryTuple(val id: Long, val task: String, val timein: Long, val timeout: Long)
     data class chargeNoTuple(val id: Long, val chargeno: Long, val timein: Long, val timeout: Long)
-    data class tasksTuple(val id: Long, val task: String, val active: Boolean, val usage: Long,
+    // TODO: active should be: Boolean
+    data class tasksTuple(val id: Long, val task: String, val active: Long, val usage: Long,
                           val oldusage: Long, val lastused: Long)
 
     val timeTotalParser = rowParser { id: Long, task: String, total: Float ->
@@ -52,7 +54,8 @@ class TimeSheetAnkoDbAdapter
     val chargeNoParser = rowParser { id: Long, chargeno: Long, timein: Long, timeout: Long ->
         chargeNoTuple(id, chargeno, timein, timeout)
     }
-    val tasksParser = rowParser { id: Long, task: String, active: Boolean, usage: Long,
+    // TODO: active should be: Boolean
+    val tasksParser = rowParser { id: Long, task: String, active: Long, usage: Long,
                                   oldusage: Long, lastused: Long ->
         tasksTuple(id, task, active, usage, oldusage, lastused)
     }
@@ -197,8 +200,8 @@ class TimeSheetAnkoDbAdapter
         var result = 0
         // TODO: Figure out how to get the Long return code here.
         instance.use {
-            result = update("TimeSheet", "timeout" to timeOut).whereArgs(
-                    "_id = {0} and chargeno = {1}".format(lastClockEntry(), chargeno))
+            result = update("TimeSheet", "timeout" to timeOut)
+                    .whereArgs("_id = ${lastClockEntry()} and chargeno = $chargeno")
                     .exec()
         }
         return result
@@ -318,7 +321,7 @@ class TimeSheetAnkoDbAdapter
 
         var retval: Long? = null
         instance.use {
-            retval = select("TimeSheet", "_id", "chargeno")
+            retval = select("TimeSheet", "chargeno")
                     .whereArgs("_id = $lastClockID")
                     .parseOpt(LongParser)
         }
@@ -370,7 +373,7 @@ class TimeSheetAnkoDbAdapter
     fun lastTaskEntry(): Long {
         var retval: Long? = -1
         instance.use {
-            retval = select("Tasks", "max('_id')")
+            retval = select("Tasks", "max(_id)")
                     .parseOpt(LongParser)
         }
 
@@ -517,7 +520,7 @@ class TimeSheetAnkoDbAdapter
     fun lastClockEntry(): Long {
         var response: Long = -1
         instance.use {
-            select("TimeSheet", "max('_id')").exec {
+            select("TimeSheet", "max(_id)").exec {
                 response = parseOpt(LongParser) ?: -1L
             }
         }
@@ -1043,6 +1046,7 @@ GROUP BY TaskSplit.task"""
         instance.use {
             retval = select("Tasks", "_id", "task", "active", "usage", "oldusage", "lastused")
                     .whereArgs("active = '$DB_TRUE'")
+                    .orderBy("usage + oldusage / 2", SqlOrderDirection.DESC)
                     .parseList(tasksParser).toTypedArray()
         }
         return retval
@@ -1053,11 +1057,17 @@ GROUP BY TaskSplit.task"""
      *
      * @return Cursor over all database entries
      */
-    fun fetchAllDisabledTasks(): Cursor {
+    fun fetchAllDisabledTasks(): Array<tasksTuple>? {
         Log.d(TAG, "fetchAllDisabledTasks: Issuing DB query.")
-        return instance.readableDatabase.query("Tasks",
-                arrayOf("_id", "task", "active", "usage", "oldusage", "lastused"),
-                "active='$DB_FALSE'", null, null, null, "task")
+        var retval: Array<tasksTuple>? = null
+        instance.use {
+            retval = select("Tasks",
+                    "_id", "task", "active", "usage", "oldusage", "lastused")
+                    .whereArgs("active='$DB_FALSE'")
+                    .orderBy("task")
+                    .parseList(tasksParser).toTypedArray()
+        }
+        return retval
     }
 
     /**
@@ -1109,10 +1119,19 @@ GROUP BY TaskSplit.task"""
         Log.d(TAG, "getTaskNameByID: Issuing DB query for ID: " + taskID)
 
         var response = ""
-        instance.use {
-            response = select("Tasks", "task")
-                    .whereArgs("_id = '$taskID'")
-                    .parseSingle(StringParser)
+        if (taskID < 0) {
+            Log.d(TAG, "getTaskNameByID: $taskID is less than 0, returning empty string.")
+            return response
+        }
+        try {
+            instance.use {
+                response = select("Tasks", "task")
+                        .whereArgs("_id = '$taskID'")
+                        .parseSingle(StringParser)
+            }
+        } catch (e: SQLException) {
+            Log.d(TAG, "getTaskNameByID: Task ID '$taskID' doesn't have an entry.")
+            Log.d(TAG, "getTaskNameByID: Ignoring SQLException: $e")
         }
 
         return response
@@ -1138,12 +1157,22 @@ GROUP BY TaskSplit.task"""
      * @return parent's task ID, if found, 0 if not
      */
     fun getSplitTaskParent(rowId: Long): Long {
-        Log.d(TAG, "getSplitTaskParent: Issuing DB query.")
+        Log.d(TAG, "getSplitTaskParent: Issuing DB query. requesting rrrow ID: $rowId")
         var retval: Long = -1L
-        instance.use {
-            retval = select("TaskSplit", "chargeno")
-                    .whereArgs("task = $rowId")
-                    .parseSingle(LongParser)
+
+        if (rowId < 0) {
+            Log.d(TAG, "getSplitTaskParent: $rowId is less than 0, returning -1.")
+            return retval
+        }
+        try {
+            instance.use {
+                retval = select("TaskSplit", "chargeno")
+                        .whereArgs("task = $rowId")
+                        .parseSingle(LongParser)
+            }
+        } catch (e: SQLException) {
+            Log.d(TAG, "getSplitTaskParent: '${getTaskNameByID(rowId)}' doesn't have a parent.")
+            Log.d(TAG, "getSplitTaskParent: Ignoring SQLException: $e")
         }
 
         Log.d(TAG, "getSplitTaskParent: " + retval + " / " + getTaskNameByID(retval))
@@ -1173,10 +1202,19 @@ GROUP BY TaskSplit.task"""
         Log.d(TAG, "getSplitTaskPercentage: Issuing DB query.")
         var retval: Int = -1
 
-        instance.use {
-            retval = select("tasksplit", "percentage")
-                    .whereArgs("task = $rowId")
-                    .parseSingle(IntParser)
+        if (rowId < 0) {
+            Log.d(TAG, "getSplitTaskPercentage: $rowId is less than 0, returning -1.")
+            return retval
+        }
+        try {
+            instance.use {
+                retval = select("tasksplit", "percentage")
+                        .whereArgs("task = $rowId")
+                        .parseSingle(IntParser)
+            }
+        } catch (e: SQLException) {
+            Log.d(TAG, "getSplitTaskPercentage: '${getTaskNameByID(rowId)}' doesn't have a percentags.")
+            Log.d(TAG, "getSplitTaskPercentage: Ignoring SQLException: $e")
         }
 
         Log.d(TAG, "getSplitTaskPercentage: $retval")
@@ -1202,16 +1240,25 @@ GROUP BY TaskSplit.task"""
      *
      * @param rowId id of task to retrieve
      *
-     * @return parent's task ID, if found, 0 if not
+     * @return 1 if the task is part of a split, and if found, 0 otherwise
      */
     fun getSplitTaskFlag(rowId: Long): Int {
         Log.d(TAG, "getSplitTaskFlag: Issuing DB query.")
         var retval: Int = 0
 
-        instance.use {
-            retval = select("Tasks", "split")
-                    .whereArgs("_id = $rowId")
-                    .parseSingle(IntParser)
+        if (rowId < 0) {
+            Log.d(TAG, "getSplitTaskFlag: $rowId is less than 0, returning 0 (False).")
+            return retval
+        }
+        try {
+            instance.use {
+                retval = select("Tasks", "split")
+                        .whereArgs("_id = $rowId")
+                        .parseSingle(IntParser)
+            }
+        } catch (e: SQLException) {
+            Log.d(TAG, "getSplitTaskFlag: '${getTaskNameByID(rowId)}' isn't part of a split.")
+            Log.d(TAG, "getSplitTaskFlag: Ignoring SQLException: $e")
         }
 
         Log.d(TAG, "getSplitTaskFlag: " + retval)
@@ -1229,10 +1276,15 @@ GROUP BY TaskSplit.task"""
         Log.d(TAG, "getQuantityOfSplits: Issuing DB query.")
         var retval: Long = 0
 
-        instance.use {
-            retval = select("taskSplit", "count('task')")
-                    .whereArgs("chargeno = $rowId")
-                    .parseSingle(LongParser)
+        try {
+            instance.use {
+                retval = select("taskSplit", "count(task)")
+                        .whereArgs("chargeno = $rowId")
+                        .parseSingle(LongParser)
+            }
+        } catch (e: SQLException) {
+            Log.d(TAG, "getQuantityOfSplits: '${getTaskNameByID(rowId)}' isn't part of a split.")
+            Log.d(TAG, "getQuantityOfSplits: Ignoring SQLException: $e")
         }
 
         Log.d(TAG, "getQuantityOfSplits: " + retval)
@@ -1251,7 +1303,9 @@ GROUP BY TaskSplit.task"""
         val taskID = getTaskIDByName(origName)
 
         instance.use {
-            update("Tasks", "task" to newName).whereArgs("_id = $taskID")
+            update("Tasks", "task" to newName)
+                    .whereArgs("_id = $taskID")
+                    .exec()
         }
     }
 
@@ -1492,7 +1546,7 @@ GROUP BY TaskSplit.task"""
 
         var response = -1
         instance.use {
-            response = select("TimeSheetMeta", "max('version')").parseSingle(IntParser)
+            response = select("TimeSheetMeta", "max(version)").parseSingle(IntParser)
         }
         return response
     }
