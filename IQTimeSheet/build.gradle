@@ -87,3 +87,17 @@ dependencies {
     // implementation 'com.android.support:design:25.4.0'
     // implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
+
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.3'
+    }
+    repositories {
+        jcenter()
+    }
+}
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
