@@ -53,7 +53,7 @@ public class ReviveTaskFragment extends ActionBarListActivity {
         setContentView(R.layout.fragment_revivelist);
 
         try {
-            tasksList = (ListView) findViewById(android.R.id.list);
+            tasksList = (ListView) findViewById(R.id.revivetasklist);
             tasksList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         } catch (Exception e) {
             Log.e(TAG, e.toString());

@@ -58,12 +58,6 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
         setTitle("Entries for today");
 
         db = new TimeSheetDbAdapter(this);
-        try {
-            setupDB();
-        } catch (Exception e) {
-            Log.e(TAG, "setupDB: " + e.toString());
-            finish();
-        }
 
         try {
             fillData();
@@ -108,19 +102,6 @@ public class EditDayEntriesHandler extends ActionBarListActivity {
 
         //db.close();
         super.onDestroy();
-    }
-
-    /**
-     * Encapsulate what's needed to open the database and make sure something is
-     * in it.
-     */
-    private void setupDB() {
-        //try {
-        //    db.open();
-        //} catch (SQLException e) {
-        //    Log.e(TAG, e.toString());
-        //    finish();
-        //}
     }
 
     /*

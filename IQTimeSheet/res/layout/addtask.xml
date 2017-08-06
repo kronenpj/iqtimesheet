@@ -71,7 +71,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ParentLabel"
         android:visibility="gone">
-
         <!-- android:textColor="@android:color/primary_text_dark" -->
         <!-- Preview: listitem=@android:layout/simple_spinner_item -->
     </Spinner>
@@ -80,8 +79,9 @@
         android:id="@+id/PercentLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TaskSpinner"
-        android:layout_centerHorizontal="true"
+        android:layout_alignBaseline="@+id/PercentSymbol"
+        android:layout_toLeftOf="@+id/PercentSymbol"
+        android:layout_toStartOf="@+id/PercentSymbol"
         android:inputType="number"
         android:selectAllOnFocus="true"
         android:text="@string/DefaultPercentage"
@@ -92,10 +92,10 @@
         style="@android:style/TextAppearance.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/TaskSpinner"
-        android:layout_toEndOf="@+id/PercentLabel"
-        android:layout_toRightOf="@+id/PercentLabel"
-        android:text="@string/PrecentSign"
+        android:text="@string/PercentSign"
         android:visibility="gone" />
 
     <SeekBar

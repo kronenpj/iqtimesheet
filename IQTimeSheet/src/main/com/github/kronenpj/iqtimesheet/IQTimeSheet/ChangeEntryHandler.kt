@@ -36,7 +36,7 @@ import com.github.kronenpj.iqtimesheet.TimeHelpers
 /**
  * Activity to provide an interface to change an entry.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeEntryHandler : AppCompatActivity() {
     private var entryCursor: Cursor? = null
@@ -264,7 +264,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 // Push start and end time milliseconds into response
                 // bundle.
                 intent.putExtra("timein", newTimeIn)
-                intent.putExtra("tineout", newTimeOut)
+                intent.putExtra("timeout", newTimeOut)
                 intent.action = "accept"
                 setResult(Activity.RESULT_OK, intent)
                 finish()

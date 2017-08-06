@@ -33,7 +33,7 @@ import java.util.*
 /**
  * Activity that provides an interface to change the date of an entry.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeDate : Activity() {
     private var dateChange: DatePicker? = null

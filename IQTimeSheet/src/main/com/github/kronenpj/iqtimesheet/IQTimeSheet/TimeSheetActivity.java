@@ -258,7 +258,6 @@ public class TimeSheetActivity extends AppCompatActivity {
                 }
             }
         }
-        //db.close();
     }
 
     public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -388,27 +387,19 @@ public class TimeSheetActivity extends AppCompatActivity {
         if (item.getItemId() == ActivityCodes.RETIRE_ID.ordinal()) {
             TimeSheetDbAdapter db = new TimeSheetDbAdapter(
                     getApplicationContext());
-            //try {
-            //    db.open();
-            //} catch (Exception e) {
-            //    Log.i(TAG, "Database open threw exception" + e);
-            //}
 
             long parentTaskID = db.getTaskIDByName(((TextView) info.targetView).getText().toString());
             // Retire children.
             Long[] children = db.fetchChildTasks(parentTaskID);
             for (Long childID : children) {
+                Log.d(TAG, "Trying to retire item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
                 db.deactivateTask(db.getTaskNameByID(childID));
                 Log.v(TAG, "Retired Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")");
             }
 
             // Retire original task
             db.deactivateTask(parentTaskID);
-            //try {
-            //    db.close();
-            //} catch (Exception e) {
-            //    Log.i(TAG, "Database close threw exception" + e);
-            //}
+
             refreshTaskListAdapter((ListView) info.targetView.getParent());
             return true;
         }

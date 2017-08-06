@@ -38,7 +38,7 @@ import android.widget.TextView.OnEditorActionListener
 /**
  * Activity to provide an interface to add a task to the database.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class AddTaskHandler : Activity() {
 

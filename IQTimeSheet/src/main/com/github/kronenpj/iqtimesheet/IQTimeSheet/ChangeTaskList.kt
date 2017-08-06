@@ -19,20 +19,17 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 import android.app.Activity
 import android.app.ListActivity
 import android.content.Intent
-import android.database.Cursor
-import android.database.SQLException
 import android.os.Bundle
 import android.util.Log
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.SimpleCursorAdapter
 
 /**
  * Activity to provide an interface to choose a new task for an entry to be
  * changed to.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeTaskList : ListActivity() {
     private var db: TimeSheetDbAdapter? = null
@@ -52,12 +49,6 @@ class ChangeTaskList : ListActivity() {
 
         db = TimeSheetDbAdapter(this)
         try {
-            setupDB()
-        } catch (e: Exception) {
-            Log.d(TAG, "setupDB: " + e.toString())
-        }
-
-        try {
             fillData()
         } catch (e: Exception) {
             Log.d(TAG, "fillData: " + e.toString())
@@ -66,18 +57,10 @@ class ChangeTaskList : ListActivity() {
         try {
             // Register listeners for the list items.
             taskList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-                val listCursor = parent
-                        .getItemAtPosition(position) as Cursor
-                val taskName = listCursor.getString(listCursor
-                        .getColumnIndex("task"))
+                val taskName: String = parent.getItemAtPosition(position) as String
                 val taskID = db!!.getTaskIDByName(taskName)
                 setResult(Activity.RESULT_OK, Intent().setAction(java.lang.Long.valueOf(
                         taskID).toString()))
-                try {
-                    listCursor.close()
-                } catch (e: Exception) {
-                    Log.e(TAG, "onItemClick: " + e.toString())
-                }
 
                 finish()
             }
@@ -87,50 +70,17 @@ class ChangeTaskList : ListActivity() {
 
     }
 
-    /**
-     * Called when the activity destroyed.
-     */
-    public override fun onDestroy() {
-        //try {
-        //    taskCursor!!.close()
-        //} catch (e: Exception) {
-        //    Log.e(TAG, "onDestroy: " + e.toString())
-        //}
-
-        // db.close()
-        super.onDestroy()
-    }
-
-    /**
-     * Encapsulate what's needed to open the database and make sure something is
-     * in it.
-     */
-    private fun setupDB() {
-        //try {
-        //    db.open()
-        //} catch (e: SQLException) {
-        //    Log.e(TAG, e.toString())
-        //    finish()
-        //}
-
-    }
-
-    private fun reloadTaskCursor() {
-        taskCursor = db!!.fetchAllTaskEntries()
-    }
-
     private fun fillData() {
         // Get all of the entries from the database and create the list
-        reloadTaskCursor()
+        taskCursor = db!!.fetchAllTaskEntries()
 
-        // Populate list
-        //val adapter = SimpleCursorAdapter(this,
-        //        android.R.layout.simple_list_item_1, taskCursor,
-        //        arrayOf("task"),
-        //        intArrayOf(android.R.id.text1))
-        val adapter = ArrayAdapter<TimeSheetDbAdapter.tasksTuple>(this,
+        // Need to extract task (component2()) from taskCursor data class.
+        val textList: MutableList<String> = mutableListOf()
+        // This is a replacement for a for-loop. Interesting.
+        taskCursor!!.asList().mapTo(textList) { it.component2() }
+        val adapter = ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1,
-                taskCursor!!.asList())
+                textList)
 
         taskList!!.adapter = adapter
     }

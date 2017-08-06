@@ -935,6 +935,7 @@ TimeSheet.chargeno = Tasks._id AND Tasks._id = TaskSplit.chargeno AND
 Tasks._id = TaskSplitReport.parenttask AND TaskSplit.task ||
 TaskSplit.percentage = TaskSplitReport._id || TaskSplitReport.percentage
 GROUP BY TaskSplit.task"""
+// TODO: Figure out why the second-to-last line above makes no sense.
         Log.v(TAG, "populateTemp2\n$populateTemp2")
         instance.readableDatabase.execSQL(populateTemp2)
     }
@@ -984,9 +985,9 @@ GROUP BY TaskSplit.task"""
         instance.use {
             newRow = insert("Tasks", "task" to task, "lastused" to tempDate, "split" to 1)
             Log.d(TAG, "new row   : " + newRow)
-            update("Tasks", "split" to 2).whereArgs("_id = $parentId")
+            update("Tasks", "split" to 2).whereArgs("_id = $parentId").exec()
             retval = insert("TaskSplit", "task" to newRow, "chargeno" to parentId,
-                    "percentags" to percentage)
+                    "percentage" to percentage)
         }
 
         return retval
@@ -1067,6 +1068,7 @@ GROUP BY TaskSplit.task"""
                     .orderBy("task")
                     .parseList(tasksParser).toTypedArray()
         }
+        Log.i(TAG, "Fetched ${retval!!.size} disabled tasks.")
         return retval
     }
 
@@ -1213,7 +1215,7 @@ GROUP BY TaskSplit.task"""
                         .parseSingle(IntParser)
             }
         } catch (e: SQLException) {
-            Log.d(TAG, "getSplitTaskPercentage: '${getTaskNameByID(rowId)}' doesn't have a percentags.")
+            Log.d(TAG, "getSplitTaskPercentage: '${getTaskNameByID(rowId)}' doesn't have a percentage.")
             Log.d(TAG, "getSplitTaskPercentage: Ignoring SQLException: $e")
         }
 
@@ -1334,7 +1336,7 @@ GROUP BY TaskSplit.task"""
         if (getQuantityOfSplits(currentParent) < 2 && currentParent != parentID) {
             val i = instance.use {
                 update("Tasks", "split" to 0).whereArgs(
-                        "_id = $currentParent")
+                        "_id = $currentParent").exec()
             }
             Log.d(TAG, "Reverting task $currentParent to standard task returned $i")
         }
@@ -1345,7 +1347,7 @@ GROUP BY TaskSplit.task"""
             initialValues.put("split", 2)
             val i = instance.use {
                 update("Tasks", "split" to 2)
-                        .whereArgs("_id = $parentID")
+                        .whereArgs("_id = $parentID").exec()
             }
             Log.d(TAG, "Converting task $parentID to parent task returned: $i")
         }
@@ -1422,7 +1424,7 @@ GROUP BY TaskSplit.task"""
     fun deactivateTask(taskID: Long) {
         Log.d(TAG, "deactivateTask: Issuing DB query.")
         instance.use {
-            update("Tasks", "active" to DB_FALSE).whereArgs("_id = $taskID")
+            update("Tasks", "active" to DB_FALSE).whereArgs("_id = $taskID").exec()
         }
     }
 
@@ -1446,7 +1448,7 @@ GROUP BY TaskSplit.task"""
         Log.d(TAG, "activateTask: Issuing DB query.")
 
         instance.use {
-            update("Tasks", "active" to DB_TRUE).whereArgs("_id = $taskID")
+            update("Tasks", "active" to DB_TRUE).whereArgs("_id = $taskID").exec()
         }
     }
 
@@ -1487,7 +1489,7 @@ GROUP BY TaskSplit.task"""
 
         instance.use {
             update("Tasks", "lastused" to now, "usage" to usage + 1, "oldusage" to oldUsage)
-                    .whereArgs("_id = $taskID")
+                    .whereArgs("_id = $taskID").exec()
         }
     }
 

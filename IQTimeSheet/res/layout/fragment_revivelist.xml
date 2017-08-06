@@ -10,7 +10,7 @@
     tools:context=".TaskListFragment">
 
     <ListView
-        android:id="@+id/tasklist"
+        android:id="@+id/revivetasklist"
         android:name=".TaskListFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
