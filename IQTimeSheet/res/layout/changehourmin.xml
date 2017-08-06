@@ -6,8 +6,9 @@
     android:layout_height="fill_parent"
     android:layout="@layout/changehourmin">
 
-    <com.github.kronenpj.iqtimesheet.TimePicker
+    <TimePicker
         android:id="@+id/TimePicker01"
+        android:timePickerMode="spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

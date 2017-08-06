@@ -18,19 +18,20 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
+import android.widget.NumberPicker
+import android.widget.TimePicker
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
-import com.github.kronenpj.iqtimesheet.TimePicker
 
 /**
  * Activity that provides an interface to change the time of an entry.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeTime : Activity() {
     private var timeChange: TimePicker? = null
@@ -50,15 +51,16 @@ class ChangeTime : Activity() {
         timeChange = findViewById(R.id.TimePicker01) as TimePicker
 
         if (timeChange != null) {
+            if (TimeSheetActivity.prefs!!.alignTimePicker)
+                setTimePickerInterval(timeChange as TimePicker)
+
             timeChange!!.setIs24HourView(true)
             timeChange!!.currentHour = TimeHelpers.millisToHour(timeMillis)
-            timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis)
-
-            if (TimeSheetActivity.prefs!!.alignTimePicker)
-                timeChange!!.setInterval(TimeSheetActivity.prefs!!.alignMinutes)
+            timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) / TimeSheetActivity.prefs!!.alignMinutes
         }
 
-        val child = arrayOf(findViewById(R.id.changeok) as Button, findViewById(R.id.changecancel) as Button)
+        val child = arrayOf(findViewById(R.id.changeok) as Button,
+                findViewById(R.id.changecancel) as Button)
 
         for (aChild in child) {
             try {
@@ -71,13 +73,40 @@ class ChangeTime : Activity() {
         }
     }
 
+    private fun setTimePickerInterval(timePicker: TimePicker) {
+        Log.d(TAG, "In setTimePickerInterval")
+        try {
+            val fieldMin = Resources.getSystem().getIdentifier("minute",
+                    "id", "android")
+            val mMinutePicker = timePicker.findViewById(fieldMin) as NumberPicker
+
+            // set number of minutes in desired interval
+            mMinutePicker.minValue = 0
+            mMinutePicker.maxValue = 59 / TimeSheetActivity.prefs!!.alignMinutes
+            Log.d(TAG, "maxValue is: " + mMinutePicker.maxValue)
+            val mDisplayedValuesMin = ArrayList<String>()
+
+            // Populate array.
+            for (i in 0..59 step TimeSheetActivity.prefs!!.alignMinutes) {
+                mDisplayedValuesMin.add(String.format("%02d", i))
+            }
+
+            mMinutePicker.displayedValues = mDisplayedValuesMin.toArray(arrayOfNulls<String>(0))
+            mMinutePicker.wrapSelectorWheel = true
+        } catch (e: Exception) {
+            Log.d(TAG, "setTimePickerInterval Exception:")
+            Log.d(TAG, e.message)
+        }
+    }
+
     /**
      * This method is what is registered with the button to cause an action to
      * occur when it is pressed.
      */
     private val mButtonListener = OnClickListener { v ->
         val newTime = TimeHelpers.millisSetTime(timeMillis,
-                timeChange!!.currentHour!!, timeChange!!.currentMinute!!)
+                timeChange!!.currentHour!!,
+                timeChange!!.currentMinute!! * TimeSheetActivity.prefs!!.alignMinutes)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
