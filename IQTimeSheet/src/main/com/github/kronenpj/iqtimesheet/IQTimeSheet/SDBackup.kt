@@ -85,7 +85,7 @@ object SDBackup {
                         dst.close()
                         src.close()
                     } catch (e: FileNotFoundException) {
-                        Log.i(TAG, "FileNotFoundException: ${e.toString()}")
+                        Log.i(TAG, "FileNotFoundException: $e")
                     }
 
                     return true
@@ -96,7 +96,7 @@ object SDBackup {
                 Log.d(TAG, "Backups aren't allowed by the OS. Permission must be granted.")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "SDBackup threw exception: ${e.toString()}")
+            Log.e(TAG, "SDBackup threw exception: $e")
         }
 
         return false
@@ -147,11 +147,11 @@ object SDBackup {
                     dst.close()
                     src.close()
                 } catch (e: FileNotFoundException) {
-                    Log.i(TAG, "FileNotFoundException: ${e.toString()}")
+                    Log.i(TAG, "FileNotFoundException: $e")
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "SDRestore threw exception: ${e.toString()}")
+            Log.e(TAG, "SDRestore threw exception: $e")
             Log.e(TAG, e.localizedMessage)
         }
 
