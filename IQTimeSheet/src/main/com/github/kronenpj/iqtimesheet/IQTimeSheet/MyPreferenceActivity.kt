@@ -16,30 +16,37 @@
 
 /**
  * @author (classes and interfaces only, required)
+ * *
  * @version (classes and interfaces only, required. See footnote 1)
+ * *
  * @param (methods and constructors only)
+ * *
  * @return (methods only)
+ * *
  * @exception (@throws is a synonym added in Javadoc 1.2)
- * @ deprecated  (see How and When To Deprecate APIs)
+ * * @ deprecated  (see How and When To Deprecate APIs)
+ * *
  * @see
  */
-package com.github.kronenpj.iqtimesheet.IQTimeSheet;
+package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.os.Bundle
+import android.preference.PreferenceActivity
 
 /**
  * @author kronenpj
  */
-public class MyPreferenceActivity extends PreferenceActivity {
-    private static final String TAG = "MyPreferenceActivity";
+class MyPreferenceActivity : PreferenceActivity() {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         // Display the fragment as the main content.
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
-                new MyPreferenceFragment()).commit();
+        fragmentManager.beginTransaction().replace(android.R.id.content,
+                MyPreferenceFragment()).commit()
+    }
+
+    companion object {
+        private val TAG = "MyPreferenceActivity"
     }
 }
