@@ -3,7 +3,7 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 /**
  * Class to export the current database to the SDcard.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  * *
  * @author Neil http://stackoverflow.com/users/319625/user319625
  */
@@ -33,8 +33,7 @@ object SDBackup {
 
             if (sd.canWrite()) {
                 val currentDBPath = "/data/$packageName/databases/$databaseName"
-                val backupDBPath = packageName
-                        .substring(packageName.lastIndexOf('.') + 1)
+                val backupDBPath = packageName.substring(packageName.lastIndexOf('.') + 1)
                 val currentDB = File(data, currentDBPath)
                 val backupDir = File(sd, backupDBPath)
                 val backupDB = File(sd, "$backupDBPath/$databaseName")
@@ -111,8 +110,7 @@ object SDBackup {
 
             if (sd.canWrite()) {
                 val currentDBPath = "/data/$packageName/databases/$databaseName"
-                val backupDBPath = packageName
-                        .substring(packageName.lastIndexOf('.') + 1)
+                val backupDBPath = packageName.substring(packageName.lastIndexOf('.') + 1)
                 val currentDB = File(data, currentDBPath)
                 val currentDBbak = File(data, "$currentDBPath.bak")
                 val backupDB = File(sd, "$backupDBPath/$databaseName")
@@ -125,22 +123,24 @@ object SDBackup {
 
                 if (currentDBbak.exists()) currentDBbak.delete()
 
-                val src: FileChannel
-                val dst: FileChannel
                 if (backupDB.exists()) {
+                    val src: FileChannel
+                    val dst: FileChannel
                     currentDB.renameTo(currentDBbak)
                     src = FileInputStream(backupDB).channel
                     dst = FileOutputStream(currentDB).channel
                     dst.transferFrom(src, 0, src.size())
                     src.close()
                     dst.close()
-                    return true
                 } else {
                     Log.d(TAG, "SDRestore: $currentDBPath doesn't exist.")
+                    return false
                 }
 
-                // Make a backup of the preferences
+                // Restore the preferences
                 try {
+                    val src: FileChannel
+                    val dst: FileChannel
                     src = FileInputStream(backupPref).channel
                     dst = FileOutputStream(currentPref).channel
                     dst.transferFrom(src, 0, src.size())
@@ -149,6 +149,7 @@ object SDBackup {
                 } catch (e: FileNotFoundException) {
                     Log.i(TAG, "FileNotFoundException: $e")
                 }
+                return true
             }
         } catch (e: Exception) {
             Log.e(TAG, "SDRestore threw exception: $e")
