@@ -24,6 +24,7 @@ import android.util.Log
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import kotlinx.android.synthetic.main.revivetask.*
 
 /**
  * Activity to provide an interface to choose a new task for an entry to be
@@ -59,15 +60,14 @@ class ChangeTaskList : ListActivity() {
             taskList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val taskName: String = parent.getItemAtPosition(position) as String
                 val taskID = db!!.getTaskIDByName(taskName)
-                setResult(Activity.RESULT_OK, Intent().setAction(java.lang.Long.valueOf(
-                        taskID).toString()))
+                setResult(Activity.RESULT_OK, Intent()
+                        .setAction(java.lang.Long.valueOf(taskID).toString()))
 
                 finish()
             }
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
-
     }
 
     private fun fillData() {

@@ -430,14 +430,14 @@ class TimeSheetDbAdapter
         var thisTimeIn: Long = -1
         var prevTimeOut: Long = -1
 
-        Log.d(TAG, "getPreviousClocking for row: " + rowID)
+        Log.d(TAG, "getPreviousClocking for row: $rowID")
 
         // Get the tuple from the provided row
         var mCurrent: timeEntryTuple? = getTimeEntryTuple(rowID)
 
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
         thisTimeIn = mCurrent?.timein ?: return -1L
-        Log.d(TAG, "timeIn for current: " + thisTimeIn)
+        Log.d(TAG, "timeIn for current: $thisTimeIn")
 
         var retval: timeEntryTuple? = null
         instance.use {
@@ -449,14 +449,14 @@ class TimeSheetDbAdapter
         }
 
         var prevRowID = retval?.id ?: return -1L
-        Log.d(TAG, "rowID for previous: " + prevRowID)
+        Log.d(TAG, "rowID for previous: $prevRowID")
 
         // Get the tuple from the just-retrieved row
         mCurrent = getTimeEntryTuple(prevRowID)
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
 
         prevTimeOut = mCurrent?.timeout ?: return -1L
-        Log.d(TAG, "timeOut for previous: " + prevTimeOut)
+        Log.d(TAG, "timeOut for previous: $prevTimeOut")
 
         // If the two tasks don't flow from one to another, don't allow the
         // entry to be adjusted.
@@ -478,13 +478,13 @@ class TimeSheetDbAdapter
         var thisTimeOut: Long = -1L
         var nextTimeIn: Long = -1L
 
-        Log.d(TAG, "getNextClocking for row: " + rowID)
+        Log.d(TAG, "getNextClocking for row: $rowID")
 
         // Get the tuple from the provided row
         var mCurrent: timeEntryTuple? = getTimeEntryTuple(rowID)
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
         thisTimeOut = mCurrent?.timeout ?: return -1L
-        Log.d(TAG, "timeOut for current: " + thisTimeOut)
+        Log.d(TAG, "timeOut for current: $thisTimeOut")
 
         var retval: timeEntryTuple? = null
         instance.use {
@@ -496,13 +496,13 @@ class TimeSheetDbAdapter
         }
 
         var nextRowID = retval?.id ?: return -1
-        Log.d(TAG, "rowID for next: " + nextRowID)
+        Log.d(TAG, "rowID for next: $nextRowID")
 
         // Get the tuple from the just-retrieved row
         mCurrent = getTimeEntryTuple(nextRowID)
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
         nextTimeIn = mCurrent?.timein ?: return -1L
-        Log.d(TAG, "timeIn for next: " + nextTimeIn)
+        Log.d(TAG, "timeIn for next: $nextTimeIn")
 
         // If the two tasks don't flow from one to another, don't allow the
         // entry to be adjusted.
@@ -601,8 +601,7 @@ class TimeSheetDbAdapter
 
         Log.d(TAG, "getEntryReportCursor: Selection criteria: $selection")
         Log.d(TAG, "getEntryReportCursor: Selection arguments: $start, $end")
-        Log.d(TAG, "getEntryReportCursor: Selection arguments: " +
-                TimeHelpers.millisToTimeDate(start) + ", " + TimeHelpers.millisToTimeDate(end))
+        Log.d(TAG, "getEntryReportCursor: Selection arguments: ${TimeHelpers.millisToTimeDate(start)}, ${TimeHelpers.millisToTimeDate(end)}")
 
         val mCursor = instance.readableDatabase.query(distinct, "EntryReport", columns,
                 selection, arrayOf(start.toString(), end.toString()), groupBy, null,
@@ -639,12 +638,12 @@ class TimeSheetDbAdapter
      * stopped.
      */
     fun processChange(taskID: Long): Boolean {
-        Log.d(TAG, "processChange for task ID: " + taskID)
+        Log.d(TAG, "processChange for task ID: $taskID")
 
         var lastRowID = lastClockEntry()
         val lastTaskID = taskIDForLastClockEntry()
 
-        Log.d(TAG, "Last Task Entry Row: " + lastRowID)
+        Log.d(TAG, "Last Task Entry Row: $lastRowID")
 
         val timeOut = getTimeEntryTuple(lastRowID)?.timeout ?: -1L
 
@@ -652,7 +651,7 @@ class TimeSheetDbAdapter
         // closed.
         if (timeOut == 0L && lastTaskID == taskID) {
             closeEntry(taskID)
-            Log.d(TAG, "Closed task ID: " + taskID)
+            Log.d(TAG, "Closed task ID: $taskID")
             return false
         } else {
             if (timeOut == 0L)
@@ -685,15 +684,13 @@ class TimeSheetDbAdapter
         // Log.d(TAG, "getSummaryCursor: Selection criteria: " +
         // selection);
         try {
-            Log.d(TAG, "getSummaryCursor: Columns: " + columns[0] + ", "
-                    + columns[1] + " and " + columns[2])
+            Log.d(TAG, "getSummaryCursor: Columns: ${columns[0]}, ${columns[1]} and ${columns[2]}")
         } catch (e: Exception) {
             Log.d(TAG, "getSummaryCursor has fewer than 3 columns.")
         }
 
         Log.d(TAG, "getSummaryCursor: Selection arguments: $start, $end")
-        Log.d(TAG, "getSummaryCursor: Selection arguments: "
-                + TimeHelpers.millisToTimeDate(start) + ", " + TimeHelpers.millisToTimeDate(end))
+        Log.d(TAG, "getSummaryCursor: Selection arguments: ${TimeHelpers.millisToTimeDate(start)}, ${TimeHelpers.millisToTimeDate(end)}")
         // Cursor mCursor = mDb.query(distinct, SUMMARY_DATABASE_TABLE, columns,
         // selection, new String[] { String.valueOf(start).toString(),
         // String.valueOf(end).toString() }, groupBy, null, orderBy, null);
@@ -718,7 +715,7 @@ class TimeSheetDbAdapter
         select += " FROM Summary WHERE total > 0"
         if (groupBy != null) select += " GROUP BY " + groupBy
         if (orderBy != null) select += " ORDER BY " + orderBy
-        Log.d(TAG, "getSummaryCursor: query: " + select)
+        Log.d(TAG, "getSummaryCursor: query: $select")
 
         val mCursor = instance.readableDatabase.rawQuery(select, null)
 
@@ -748,8 +745,8 @@ class TimeSheetDbAdapter
         val todayStart = TimeHelpers.millisToStartOfDay(time)
         val todayEnd = TimeHelpers.millisToEndOfDay(time)
 
-        Log.d(TAG, "dayEntryReport start: " + TimeHelpers.millisToTimeDate(todayStart))
-        Log.d(TAG, "dayEntryReport   end: " + TimeHelpers.millisToTimeDate(todayEnd))
+        Log.d(TAG, "dayEntryReport start: ${TimeHelpers.millisToTimeDate(todayStart)}")
+        Log.d(TAG, "dayEntryReport   end: ${TimeHelpers.millisToTimeDate(todayEnd)}")
 
         val columns = arrayOf("_id", "task", "range", "timein", "timeout")
         return getEntryReportCursor(false, columns, null, "timein", todayStart, todayEnd)
@@ -811,7 +808,7 @@ class TimeSheetDbAdapter
             return getSummaryCursor(true, columns, groupBy, orderBy,
                     todayStart, todayEnd)
         } catch (e: SQLiteException) {
-            Log.e(TAG, "getSummaryCursor: " + e.toString())
+            Log.e(TAG, "getSummaryCursor: $e")
             return null
         }
     }
@@ -836,8 +833,8 @@ class TimeSheetDbAdapter
         // String selection, String[] selectionArgs, String groupBy, String
         // having, String orderBy) {
 
-        Log.d(TAG, "weekEntryReport start: " + TimeHelpers.millisToTimeDate(todayStart))
-        Log.d(TAG, "weekEntryReport   end: " + TimeHelpers.millisToTimeDate(todayEnd))
+        Log.d(TAG, "weekEntryReport start: ${TimeHelpers.millisToTimeDate(todayStart)}")
+        Log.d(TAG, "weekEntryReport   end: ${TimeHelpers.millisToTimeDate(todayEnd)}")
 
         val columns = arrayOf("_id", "task", "range", "timein", "timeout")
         return getEntryReportCursor(false, columns, todayStart, todayEnd)
@@ -855,7 +852,7 @@ class TimeSheetDbAdapter
         Log.d(TAG, "In weekSummary.")
         if (time <= 0)
             time = TimeHelpers.millisNow()
-        Log.d(TAG, "weekSummary time arg: " + TimeHelpers.millisToTimeDate(time))
+        Log.d(TAG, "weekSummary time arg: ${TimeHelpers.millisToTimeDate(time)}")
 
         val weekStart = TimeHelpers.millisToStartOfWeek(time,
                 TimeSheetActivity.prefs!!.weekStartDay,
@@ -864,8 +861,8 @@ class TimeSheetDbAdapter
                 TimeSheetActivity.prefs!!.weekStartDay,
                 TimeSheetActivity.prefs!!.weekStartHour)
 
-        Log.d(TAG, "weekSummary start: " + TimeHelpers.millisToTimeDate(weekStart))
-        Log.d(TAG, "weekSummary   end: " + TimeHelpers.millisToTimeDate(weekEnd))
+        Log.d(TAG, "weekSummary start: ${TimeHelpers.millisToTimeDate(weekStart)}")
+        Log.d(TAG, "weekSummary   end: ${TimeHelpers.millisToTimeDate(weekEnd)}")
 
         populateSummary(weekStart, weekEnd, omitOpen)
 
@@ -879,7 +876,7 @@ class TimeSheetDbAdapter
             return getSummaryCursor(true, columns, groupBy, orderBy, weekStart,
                     weekEnd)
         } catch (e: SQLiteException) {
-            Log.e(TAG, "getSummaryCursor: " + e.localizedMessage)
+            Log.e(TAG, "getSummaryCursor: ${e.localizedMessage}")
             return null
         }
     }
@@ -950,7 +947,7 @@ GROUP BY TaskSplit.task"""
      * @return rowId or -1 if failed
      */
     fun createTask(task: String): Long {
-        Log.d(TAG, "createTask: " + task)
+        Log.d(TAG, "createTask: $task")
         val tempDate = System.currentTimeMillis() // Local time...
 
         var retval: Long = -1L
@@ -974,9 +971,9 @@ GROUP BY TaskSplit.task"""
      * @return rowId or -1 if failed
      */
     fun createTask(task: String, parent: String, percentage: Int): Long {
-        Log.d(TAG, "createTask: " + task)
-        Log.d(TAG, "    parent: " + parent)
-        Log.d(TAG, "percentage: " + percentage)
+        Log.d(TAG, "createTask: $task")
+        Log.d(TAG, "    parent: $parent")
+        Log.d(TAG, "percentage: $percentage")
         val tempDate = System.currentTimeMillis() // Local time...
         val parentId = getTaskIDByName(parent)
 
@@ -1106,7 +1103,7 @@ GROUP BY TaskSplit.task"""
                     .parseSingle(LongParser)
         }
 
-        Log.d(TAG, "getTaskIDByName: " + response)
+        Log.d(TAG, "getTaskIDByName: $response")
         return response
     }
 
@@ -1118,7 +1115,7 @@ GROUP BY TaskSplit.task"""
      * @return Name of the task identified by the taskID
      */
     fun getTaskNameByID(taskID: Long): String? {
-        Log.d(TAG, "getTaskNameByID: Issuing DB query for ID: " + taskID)
+        Log.d(TAG, "getTaskNameByID: Issuing DB query for ID: $taskID")
 
         var response = ""
         if (taskID < 0) {
@@ -1147,7 +1144,7 @@ GROUP BY TaskSplit.task"""
      * @return parent's task ID, if found, 0 if not
      */
     fun getSplitTaskParent(splitTask: String): Long {
-        Log.d(TAG, "getSplitTaskParent: " + splitTask)
+        Log.d(TAG, "getSplitTaskParent: $splitTask")
         return getSplitTaskParent(getTaskIDByName(splitTask))
     }
 
@@ -1177,7 +1174,7 @@ GROUP BY TaskSplit.task"""
             Log.d(TAG, "getSplitTaskParent: Ignoring SQLException: $e")
         }
 
-        Log.d(TAG, "getSplitTaskParent: " + retval + " / " + getTaskNameByID(retval))
+        Log.d(TAG, "getSplitTaskParent: $retval / ${getTaskNameByID(retval)}")
         return retval
     }
 
@@ -1189,7 +1186,7 @@ GROUP BY TaskSplit.task"""
      * @return parent's task ID, if found, 0 if not
      */
     fun getSplitTaskPercentage(splitTask: String): Int {
-        Log.d(TAG, "getSplitTaskPercentage: " + splitTask)
+        Log.d(TAG, "getSplitTaskPercentage: $splitTask")
         return getSplitTaskPercentage(getTaskIDByName(splitTask))
     }
 
@@ -1232,7 +1229,7 @@ GROUP BY TaskSplit.task"""
      * @return parent's task ID, if found, 0 if not
      */
     fun getSplitTaskFlag(splitTask: String): Int {
-        Log.d(TAG, "getSplitTaskFlag: " + splitTask)
+        Log.d(TAG, "getSplitTaskFlag: $splitTask")
         return getSplitTaskFlag(getTaskIDByName(splitTask))
     }
 
@@ -1289,7 +1286,7 @@ GROUP BY TaskSplit.task"""
             Log.d(TAG, "getQuantityOfSplits: Ignoring SQLException: $e")
         }
 
-        Log.d(TAG, "getQuantityOfSplits: " + retval)
+        Log.d(TAG, "getQuantityOfSplits: $retval")
         return retval
     }
 

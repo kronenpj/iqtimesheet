@@ -30,6 +30,7 @@ import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import kotlinx.android.synthetic.main.report.*
 
 /**
  * Activity to provide an interface to edit entries for a selected day.
@@ -57,7 +58,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         try {
             fillData()
         } catch (e: Exception) {
-            Log.e(TAG, "fillData: " + e.toString())
+            Log.e(TAG, "fillData: $e")
             finish()
         }
 
@@ -67,7 +68,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
             // Register listeners for the list items.
             reportList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val itemID = parent.getItemIdAtPosition(position)
-                Log.d(TAG, "itemID: " + itemID)
+                Log.d(TAG, "itemID: $itemID")
                 processChange(itemID)
             }
         } catch (e: Exception) {
@@ -89,10 +90,9 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         try {
             timeEntryCursor!!.close()
         } catch (e: Exception) {
-            Log.e(TAG, "onDestroy: " + e.toString())
+            Log.e(TAG, "onDestroy: $e")
         }
 
-        //db.close();
         super.onDestroy()
     }
 
@@ -105,14 +105,14 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         // Cheat a little on the date. This was originally referencing timeIn
         // from the cursor below.
         val date = TimeHelpers.millisToDate(day)
-        title = "Entries for " + date
+        title = "Entries for $date"
 
         try {
             timeEntryCursor!!.close()
         } catch (e: NullPointerException) {
             // Do nothing, this is expected sometimes.
         } catch (e: Exception) {
-            Log.e(TAG, "timeEntryCursor.close: " + e.toString())
+            Log.e(TAG, "timeEntryCursor.close: $e")
         }
 
         timeEntryCursor = db!!.dayEntryReport(day)
@@ -120,19 +120,19 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         try {
             timeEntryCursor!!.moveToFirst()
         } catch (e: NullPointerException) {
-            Log.d(TAG, "timeEntryCursor.moveToFirst: " + e.toString())
+            Log.d(TAG, "timeEntryCursor.moveToFirst: $e")
             return
         }
 
-        Log.d(TAG, "timeEntryCursor has " + timeEntryCursor!!.count
-                + " entries.")
+        Log.d(TAG, "timeEntryCursor has ${timeEntryCursor!!.count} entries.")
 
         try {
             reportList!!.adapter = SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2, timeEntryCursor,
-                    arrayOf("task", "range"), intArrayOf(android.R.id.text1, android.R.id.text2))
+                    arrayOf("task", "range"),
+                    intArrayOf(android.R.id.text1, android.R.id.text2))
         } catch (e: Exception) {
-            Log.d(TAG, "reportList.setAdapter: " + e.toString())
+            Log.d(TAG, "reportList.setAdapter: $e")
         }
     }
 
@@ -145,12 +145,13 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         try {
             setContentView(R.layout.report)
         } catch (e: Exception) {
-            Log.e(TAG, "Caught " + e.toString()
-                    + " while calling setContentView(R.layout.report)")
+            Log.e(TAG, "Caught $e while calling setContentView(R.layout.report)")
         }
 
         reportList = findViewById(android.R.id.list) as ListView
-        val child = arrayOf(findViewById(R.id.previous) as Button, findViewById(R.id.today) as Button, findViewById(R.id.next) as Button)
+        val child = arrayOf(findViewById(R.id.previous) as Button,
+                findViewById(R.id.today) as Button,
+                findViewById(R.id.next) as Button)
 
         for (aChild in child) {
             try {
@@ -169,29 +170,25 @@ class EditDayEntriesHandler : ActionBarListActivity() {
      */
     private fun processChange(itemID: Long) {
         Log.d(TAG, "processChange: " + itemID)
-        val intent = Intent(this@EditDayEntriesHandler,
-                ChangeEntryHandler::class.java)
+        val intent = Intent(this@EditDayEntriesHandler, ChangeEntryHandler::class.java)
 
         val entryCursor = db!!.fetchEntry(itemID)
         entryCursor!!.moveToFirst()
         if (entryCursor.isAfterLast) {
-            Log.d(TAG, "processChange cursor had no entries for itemID " + itemID)
+            Log.d(TAG, "processChange cursor had no entries for itemID $itemID")
             return
         }
 
         try {
             intent.putExtra(ENTRY_ID, itemID)
             intent.putExtra("chargeno", entryCursor
-                    .getString(entryCursor
-                            .getColumnIndex("chargeno")))
+                    .getString(entryCursor.getColumnIndex("chargeno")))
             intent.putExtra("timein", entryCursor
-                    .getLong(entryCursor
-                            .getColumnIndex("timein")))
+                    .getLong(entryCursor.getColumnIndex("timein")))
             intent.putExtra("timeout", entryCursor
-                    .getLong(entryCursor
-                            .getColumnIndex("timeout")))
+                    .getLong(entryCursor.getColumnIndex("timeout")))
         } catch (e: Exception) {
-            Log.d(TAG, e.toString() + " populating intent.")
+            Log.d(TAG, "$e populating intent.")
         }
 
         try {
@@ -218,25 +215,20 @@ class EditDayEntriesHandler : ActionBarListActivity() {
             ENTRY_CODE -> if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
                     val result = data.action
-                    Log.d(TAG, "Got result from activity: " + result)
+                    Log.d(TAG, "Got result from activity: $result")
                     if (result.equals("accept", ignoreCase = true)) {
                         val extras = data.extras
                         if (extras != null) {
                             Log.d(TAG, "Processing returned data.")
                             val entryID = extras.getLong(ENTRY_ID)
-                            val newTask = extras
-                                    .getString("task")
-                            val newTimeIn = extras
-                                    .getLong("timein")
-                            val newTimeOut = extras
-                                    .getLong("timeout")
+                            val newTask = extras.getString("task")
+                            val newTimeIn = extras.getLong("timein")
+                            val newTimeOut = extras.getLong("timeout")
                             val chargeNo = db!!.getTaskIDByName(newTask!!)
-                            db!!.updateEntry(entryID, chargeNo, null, newTimeIn,
-                                    newTimeOut)
+                            db!!.updateEntry(entryID, chargeNo, null, newTimeIn, newTimeOut)
                         }
                     } else if (result.equals("acceptadjacent", ignoreCase = true)) {
-                        // Pass something back in the extra package to specify
-                        // adjust adjacent.
+                        // Pass something back in the extra package to specify adjust adjacent.
                         val extras = data.extras
                         if (extras != null) {
                             Log.d(TAG, "Processing returned data.")
@@ -256,16 +248,14 @@ class EditDayEntriesHandler : ActionBarListActivity() {
                             try {
                                 val next = db!!.getNextClocking(entryID)
                                 if (next > 0)
-                                    db!!.updateEntry(next, -1, null, newTimeOut,
-                                            -1)
+                                    db!!.updateEntry(next, -1, null, newTimeOut, -1)
                             } catch (e: SQLException) {
                                 // Don't do anything.
                             }
 
                             // Change this last because the getNext/Previous
                             // depend on the DB data.
-                            db!!.updateEntry(entryID, chargeNo, null, newTimeIn,
-                                    newTimeOut)
+                            db!!.updateEntry(entryID, chargeNo, null, newTimeIn, newTimeOut)
                         }
                     } else if (result.equals("delete", ignoreCase = true)) {
                         val extras = data.extras
@@ -287,8 +277,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
                 finish()
                 return true
             }
-            else -> return super
-                    .onOptionsItemSelected(menuItem)
+            else -> return super.onOptionsItemSelected(menuItem)
         }
     }
 

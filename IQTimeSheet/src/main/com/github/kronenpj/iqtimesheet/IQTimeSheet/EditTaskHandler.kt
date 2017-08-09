@@ -29,6 +29,7 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView.OnEditorActionListener
 import java.util.*
+import kotlinx.android.synthetic.main.addtask.*
 
 /**
  * Activity to provide an interface to change a task name and, potentially,
@@ -52,14 +53,6 @@ class EditTaskHandler : AppCompatActivity() {
     internal var oldPercentage = 100
     internal var items: Array<String>? = null
 
-    /** Called when the activity is first created.  */
-    // @Override
-    // public void onCreate(Bundle savedInstanceState) {
-    // super.onCreate(savedInstanceState);
-    // Log.d(TAG, "In onCreate.");
-    // showTaskEdit();
-    // }
-
     /**
      * Called when the activity is resumed or created.
      */
@@ -68,25 +61,9 @@ class EditTaskHandler : AppCompatActivity() {
         Log.d(TAG, "In onResume.")
 
         db = TimeSheetDbAdapter(this)
-        //try {
-        //    db.open();
-        //} catch (SQLException e) {
-        //    Log.i(TAG, "Database open failed.");
-        //    finish();
-        //}
 
         showTaskEdit()
 
-        //parents = db.fetchParentTasks();
-        //startManagingCursor(parents);
-        //items = new String[parents.getCount()];
-        //parents.moveToFirst();
-        //int i = 0;
-        //while (!parents.isAfterLast()) {
-        //    items[i] = parents.getString(1);
-        //    parents.moveToNext();
-        //    i++;
-        //}
         items = db!!.fetchParentTasks()
 
         taskSpinner!!.adapter = ArrayAdapter(this,
@@ -107,14 +84,13 @@ class EditTaskHandler : AppCompatActivity() {
             Log.d(TAG, "showTaskEdit: trying to find: " + parentName!!)
             var i = 0
             for (j in items!!.indices) {
-                Log.d(TAG, "showTaskEdit: " + j + " / " + items!![j])
+                Log.d(TAG, "showTaskEdit: $j / ${items!![j]}")
                 if (items!![j].equals(parentName, ignoreCase = true)) {
                     i = j
                     break
                 }
             }
-            Log.d(TAG, "showTaskEdit: trying to select: " + i + " / "
-                    + items!![i])
+            Log.d(TAG, "showTaskEdit: trying to select: $i / ${items!![i]}")
             taskSpinner!!.setSelection(i)
             percentSlider!!.progress = oldPercentage
             percentLabel!!.text = oldPercentage.toString()
@@ -127,13 +103,10 @@ class EditTaskHandler : AppCompatActivity() {
                 percentSlider!!.visibility = View.VISIBLE
             }
         } catch (e: CursorIndexOutOfBoundsException) {
-            Log.i(TAG, "showTaskEdit: " + e.toString())
-            if (oldData == null)
-                Log.d(TAG, "showTaskEdit: oldData is null")
-            if (db == null)
-                Log.d(TAG, "showTaskEdit: db is null")
+            Log.i(TAG, "showTaskEdit: $e")
+            if (oldData == null) Log.d(TAG, "showTaskEdit: oldData is null")
+            if (db == null) Log.d(TAG, "showTaskEdit: db is null")
         }
-
     }
 
     internal fun showTaskEdit() {
@@ -165,7 +138,8 @@ class EditTaskHandler : AppCompatActivity() {
         percentLabel!!.onFocusChangeListener = mTextListener
         percentLabel!!.setOnEditorActionListener(mEditorListener)
 
-        val child = arrayOf(findViewById(R.id.ChangeTask) as Button, findViewById(R.id.CancelEdit) as Button)
+        val child = arrayOf(findViewById(R.id.ChangeTask) as Button,
+                findViewById(R.id.CancelEdit) as Button)
 
         for (aChild in child) {
             try {
@@ -220,15 +194,13 @@ class EditTaskHandler : AppCompatActivity() {
             }
             intent.putExtra("oldSplit", oldSplitState)
             if (splitTask!!.isChecked) {
-                intent.putExtra("parent",
-                        taskSpinner!!.selectedItem as String)
+                intent.putExtra("parent", taskSpinner!!.selectedItem as String)
                 intent.putExtra("oldParent", oldParent)
                 intent.putExtra("percentage", percentSlider!!.progress)
                 intent.putExtra("oldPercentage", oldPercentage)
             }
             setResult(Activity.RESULT_OK, intent)
         }
-        closeCursorDB()
         finish()
     }
 
@@ -241,8 +213,7 @@ class EditTaskHandler : AppCompatActivity() {
 
         //String item = ((TextView) v).getText().toString();
         Log.d(TAG, "Edit (child) task")
-        val intent = Intent(applicationContext,
-                EditTaskHandler::class.java)
+        val intent = Intent(applicationContext, EditTaskHandler::class.java)
         intent.putExtra("taskName", (v as TextView).text.toString())
         try {
             startActivityForResult(intent, ActivityCodes.TASKEDIT.ordinal)
@@ -256,22 +227,6 @@ class EditTaskHandler : AppCompatActivity() {
         // TODO: This finishes the entire activity, need to find a better way
         // to display/edit this. Maybe another (duplicate) activity?`1
         finish()
-    }
-
-    /**
-     * Attempts to close both the cursor and the database connection.
-     */
-    private fun closeCursorDB() {
-        //try {
-        //    parents.close();
-        //} catch (SQLException e) {
-        //    Log.i(TAG, "Cursor close: " + e.toString());
-        //}
-        //try {
-        //    db.close();
-        //} catch (SQLException e) {
-        //    Log.i(TAG, "Database close: " + e.toString());
-        //}
     }
 
     /**
@@ -321,16 +276,13 @@ class EditTaskHandler : AppCompatActivity() {
     private val mTextListener = OnFocusChangeListener { v, hasFocus ->
         if (!hasFocus) {
             try {
-                var temp = Integer.valueOf((v as TextView).text
-                        .toString())!!
+                var temp = Integer.valueOf((v as TextView).text.toString())!!
                 if (temp > 100) temp = 100
                 if (temp < 0) temp = 0
                 percentSlider!!.progress = temp
             } catch (e: NumberFormatException) {
-                percentLabel!!.text = percentSlider!!
-                        .progress.toString()
+                percentLabel!!.text = percentSlider!!.progress.toString()
             }
-
         }
     }
 
@@ -340,8 +292,7 @@ class EditTaskHandler : AppCompatActivity() {
                 finish()
                 return true
             }
-            else -> return super
-                    .onOptionsItemSelected(menuItem)
+            else -> return super.onOptionsItemSelected(menuItem)
         }
     }
 

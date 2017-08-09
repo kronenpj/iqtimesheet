@@ -29,6 +29,7 @@ import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import kotlinx.android.synthetic.main.changeentry.*
 
 /**
  * Activity to provide an interface to change an entry.
@@ -68,7 +69,6 @@ class ChangeEntryHandler : AppCompatActivity() {
             changeButton.visibility = View.INVISIBLE
 
         db = TimeSheetDbAdapter(this)
-        setupDB()
 
         retrieveData()
         fillData()
@@ -79,7 +79,6 @@ class ChangeEntryHandler : AppCompatActivity() {
      */
     public override fun onDestroy() {
         entryCursor!!.close()
-        //db!!.close()
         super.onDestroy()
     }
 
@@ -91,11 +90,10 @@ class ChangeEntryHandler : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Are you sure you want to delete this entry?")
                 .setCancelable(true)
-                .setPositiveButton("Yes"
-                ) { dialog, id ->
+                .setPositiveButton("Yes")
+                { dialog, id ->
                     val intent = Intent()
-                    intent.putExtra(EditDayEntriesHandler.ENTRY_ID,
-                            entryID)
+                    intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID)
                     intent.action = "delete"
                     setResult(Activity.RESULT_OK, intent)
                     this@ChangeEntryHandler.finish()
@@ -110,7 +108,15 @@ class ChangeEntryHandler : AppCompatActivity() {
 
         // NOTE: The order of these is important, the array is referenced
         // by index a few times below.
-        child = arrayOf(findViewById(R.id.defaulttask) as Button, findViewById(R.id.date) as Button, findViewById(R.id.starttime) as Button, findViewById(R.id.endtime) as Button, findViewById(R.id.changeok) as Button, findViewById(R.id.changecancel) as Button, findViewById(R.id.changedelete) as Button, findViewById(R.id.changealign) as Button, findViewById(R.id.changeadjacent) as Button)
+        child = arrayOf(findViewById(R.id.defaulttask) as Button,
+                findViewById(R.id.date) as Button,
+                findViewById(R.id.starttime) as Button,
+                findViewById(R.id.endtime) as Button,
+                findViewById(R.id.changeok) as Button,
+                findViewById(R.id.changecancel) as Button,
+                findViewById(R.id.changedelete) as Button,
+                findViewById(R.id.changealign) as Button,
+                findViewById(R.id.changeadjacent) as Button)
 
         for (aChild in child!!) {
             try {
@@ -119,7 +125,6 @@ class ChangeEntryHandler : AppCompatActivity() {
                 Toast.makeText(this@ChangeEntryHandler, "NullPointerException",
                         Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
@@ -132,15 +137,12 @@ class ChangeEntryHandler : AppCompatActivity() {
         entryID = extras.getLong(EditDayEntriesHandler.ENTRY_ID)
         entryCursor = db!!.fetchEntry(entryID)
 
-        val chargeNo = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex("chargeno"))
+        val chargeNo = entryCursor!!.getLong(entryCursor!!.getColumnIndex("chargeno"))
         newTask = db!!.getTaskNameByID(chargeNo)
 
-        newTimeIn = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex("timein"))
+        newTimeIn = entryCursor!!.getLong(entryCursor!!.getColumnIndex("timein"))
 
-        newTimeOut = entryCursor!!.getLong(entryCursor!!
-                .getColumnIndex("timeout"))
+        newTimeOut = entryCursor!!.getLong(entryCursor!!.getColumnIndex("timeout"))
 
         newDate = TimeHelpers.millisToStartOfDay(newTimeIn)
     }
@@ -172,30 +174,13 @@ class ChangeEntryHandler : AppCompatActivity() {
     }
 
     /**
-     * Encapsulate what's needed to open the database and make sure something is
-     * in it.
-     */
-    private fun setupDB() {
-        //try {
-        //    db!!.open()
-        //} catch (e: SQLException) {
-        //    Log.e(TAG, e.toString())
-        //    finish()
-        //} catch (e: Exception) {
-        //    Log.e(TAG, e.toString())
-        //    finish()
-        //}
-
-    }
-
-    /**
      * This method is what is registered with the button to cause an action to
      * occur when it is pressed.
      */
     private val mButtonListener = OnClickListener { v ->
         val intent: Intent
-        // Perform action on selected list item.
 
+        // Perform action on selected list item.
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
 
@@ -205,14 +190,12 @@ class ChangeEntryHandler : AppCompatActivity() {
                 finish()
             }
             R.id.defaulttask -> {
-                intent = Intent(this@ChangeEntryHandler,
-                        ChangeTaskList::class.java)
+                intent = Intent(this@ChangeEntryHandler, ChangeTaskList::class.java)
                 try {
                     startActivityForResult(intent, TASKCHOOSE_CODE)
                 } catch (e: RuntimeException) {
                     Log.e(TAG, "startActivity ChangeTaskList: " + e.toString())
                 }
-
             }
             R.id.date -> {
                 intent = Intent(this@ChangeEntryHandler, ChangeDate::class.java)
@@ -222,7 +205,6 @@ class ChangeEntryHandler : AppCompatActivity() {
                 } catch (e: RuntimeException) {
                     Log.e(TAG, "startActivity ChangeDate: " + e.toString())
                 }
-
             }
             R.id.starttime -> {
                 intent = Intent(this@ChangeEntryHandler, ChangeTime::class.java)
@@ -232,7 +214,6 @@ class ChangeEntryHandler : AppCompatActivity() {
                 } catch (e: RuntimeException) {
                     Log.e(TAG, "startActivity ChangeTime: " + e.toString())
                 }
-
             }
             R.id.endtime -> {
                 intent = Intent(this@ChangeEntryHandler, ChangeTime::class.java)
@@ -242,7 +223,6 @@ class ChangeEntryHandler : AppCompatActivity() {
                 } catch (e: RuntimeException) {
                     Log.e(TAG, "startActivity ChangeTime: " + e.toString())
                 }
-
             }
             R.id.changealign -> {
                 newTimeIn = TimeHelpers.millisToAlignMinutes(newTimeIn,
@@ -301,8 +281,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                     Log.d(TAG, "onActivityResult action: " + data.action)
                     // db.updateEntry(entryID, Long.parseLong(data.getAction()),
                     // null, -1, -1);
-                    newTask = db!!
-                            .getTaskNameByID(java.lang.Long.valueOf(data.action)!!)
+                    newTask = db!!.getTaskNameByID(java.lang.Long.valueOf(data.action)!!)
                     fillData()
                 }
             }

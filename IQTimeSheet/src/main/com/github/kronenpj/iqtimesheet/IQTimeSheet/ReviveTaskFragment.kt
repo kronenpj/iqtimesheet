@@ -25,6 +25,7 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import java.util.*
+import kotlinx.android.synthetic.main.fragment_revivelist.*
 
 /**
  * Activity to allow the user to select a task to revive after being "deleted."
@@ -35,7 +36,6 @@ import java.util.*
  */
 class ReviveTaskFragment : ActionBarListActivity() {
     private var tasksList: ListView? = null
-
     private val taskCursor = ArrayList<String>(0)
 
     /**
@@ -69,8 +69,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
         try {
             // Register listeners for the list items.
             tasksList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-                val taskName = parent
-                        .getItemAtPosition(position) as String
+                val taskName = parent.getItemAtPosition(position) as String
                 reactivateTask(taskName)
                 setResult(Activity.RESULT_OK, Intent())
                 finish()
@@ -78,19 +77,12 @@ class ReviveTaskFragment : ActionBarListActivity() {
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
-
     }
 
     /**
      * Called when the activity destroyed.
      */
     public override fun onDestroy() {
-        //try {
-        //    taskCursor.close();
-        //} catch (Exception e) {
-        //    Log.e(TAG, "onDestroy: " + e.toString());
-        //}
-
         super.onDestroy()
     }
 
@@ -109,7 +101,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
     private fun reactivateTask(taskName: String) {
         Log.d(TAG, "Reactivating task " + taskName)
         val db = TimeSheetDbAdapter(applicationContext)
-        //db.open();
+
         db.activateTask(taskName)
         val parentTaskID = db.getTaskIDByName(taskName)
         val children = db.fetchChildTasks(parentTaskID)
@@ -120,9 +112,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
             } catch (e: NullPointerException) {
                 Log.d(TAG, "getTaskNameById($childID) returned null.")
             }
-
         }
-        //db.close();
     }
 
     private fun fillData() {
@@ -132,14 +122,6 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         reloadTaskCursor(db)
 
-        //String[] items = new String[taskCursor.getCount()];
-        //taskCursor.moveToFirst();
-        //int i = 0;
-        //while (!taskCursor.isAfterLast()) {
-        //    items[i] = taskCursor.getString(1);
-        //    taskCursor.moveToNext();
-        //    i++;
-        //}
         val items = taskCursor.toTypedArray()
 
         tasksList!!.adapter = ArrayAdapter(applicationContext,

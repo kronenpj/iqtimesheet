@@ -25,6 +25,7 @@ import android.view.View.OnFocusChangeListener
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView.OnEditorActionListener
+import kotlinx.android.synthetic.main.addtask.*
 
 /**
  * Activity to provide an interface to add a task to the database.
@@ -60,23 +61,7 @@ class AddTaskHandler : Activity() {
         showTaskAdd()
 
         db = TimeSheetDbAdapter(this)
-        //try {
-        //    db!!.open()
-        //} catch (e: SQLException) {
-        //    Log.i(TAG, "Database open failed.")
-        //    finish()
-        //}
 
-        //parents = db!!.fetchParentTasks()
-        //startManagingCursor(parents)
-        //val items = arrayOfNulls<String>(parents!!.count())
-        //parents!!.moveToFirst()
-        //var i = 0
-        //while (!parents!!.isAfterLast) {
-        //    items[i] = parents!!.getString(1)
-        //    parents!!.moveToNext()
-        //    i++
-        //}
         val items = db!!.fetchParentTasks()
 
         taskSpinner!!.adapter = ArrayAdapter<String>(this,
@@ -93,7 +78,8 @@ class AddTaskHandler : Activity() {
         setContentView(R.layout.addtask)
 
         textField = findViewById(R.id.EditTask) as EditText
-        val child = arrayOf(findViewById(R.id.ChangeTask) as Button, findViewById(R.id.CancelEdit) as Button)
+        val child = arrayOf(findViewById(R.id.ChangeTask) as Button,
+                findViewById(R.id.CancelEdit) as Button)
         parentLabel = findViewById(R.id.ParentLabel) as TextView
         taskSpinner = findViewById(R.id.TaskSpinner) as Spinner
         splitTask = findViewById(R.id.SplitTask) as CheckBox
@@ -117,27 +103,6 @@ class AddTaskHandler : Activity() {
     }
 
     /**
-
-     */
-    private fun closeCursorDB() {
-        Log.i(TAG, "Entering closeCursorDB")
-        //try {
-        //    parents!!.close()
-        //} catch (e: SQLException) {
-        //    Log.i(TAG, "Cursor close: " + e.toString())
-        //}
-
-        //Log.i(TAG, "Closing db connection")
-        //try {
-        //    db!!.close()
-        //} catch (e: SQLException) {
-        //    Log.i(TAG, "Database close: " + e.toString())
-        //}
-
-        Log.i(TAG, "Leaving closeCursorDB")
-    }
-
-    /**
      * This method is what is registered with the button to cause an action to
      * occur when it is pressed.
      */
@@ -152,14 +117,12 @@ class AddTaskHandler : Activity() {
             val mIntent = Intent()
             mIntent.putExtra("split", splitTask!!.isChecked)
             if (splitTask!!.isChecked) {
-                mIntent.putExtra("parent",
-                        taskSpinner!!.selectedItem as String)
+                mIntent.putExtra("parent", taskSpinner!!.selectedItem as String)
                 mIntent.putExtra("percentage", percentSlider!!.progress)
             }
             mIntent.action = result
             setResult(Activity.RESULT_OK, mIntent)
         }
-        closeCursorDB()
         finish()
     }
 
@@ -219,7 +182,6 @@ class AddTaskHandler : Activity() {
                 percentLabel!!.setText(percentSlider!!
                         .progress.toString())
             }
-
         }
     }
 

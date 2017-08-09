@@ -12,6 +12,7 @@ import android.widget.ListView
 import android.widget.TextView
 
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import kotlinx.android.synthetic.main.fragment_tasklist.*
 
 /**
  * A fragment representing a section of the application.
@@ -49,9 +50,7 @@ class SectionFragment : Fragment() {
     private fun setupTaskListFragment(inflater: LayoutInflater,
                                       container: ViewGroup): View {
         Log.d(TAG, "in setupTaskListFragment")
-        val db = TimeSheetDbAdapter(
-                activity.applicationContext)
-        //db.open();
+        val db = TimeSheetDbAdapter(activity.applicationContext)
 
         val rootView = inflater.inflate(R.layout.fragment_tasklist,
                 container, false)

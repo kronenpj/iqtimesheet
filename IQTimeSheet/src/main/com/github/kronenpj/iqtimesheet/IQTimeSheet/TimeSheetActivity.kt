@@ -28,6 +28,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 import java.util.*
+import kotlinx.android.synthetic.main.activity_time_sheet.*
 
 class TimeSheetActivity : AppCompatActivity() {
 
@@ -45,9 +46,9 @@ class TimeSheetActivity : AppCompatActivity() {
      * The [ViewPager] that will host the section contents.
      */
     private var mViewPager: ViewPager? = null
+
     /**
      * Return the menu object for testing.
-
      * @return optionMenu
      */
     var optionsMenu: Menu? = null
@@ -77,11 +78,13 @@ class TimeSheetActivity : AppCompatActivity() {
 
             override fun onPageSelected(position: Int) {
                 Log.v(TAG, "In onPageSelected")
-                Log.d(TAG, "Today         : " + TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()))
-                Log.d(TAG, "DoW Preference: " + prefs!!.weekStartDay)
-                Log.d(TAG, "HoD Preference: " + prefs!!.weekStartHour)
+                Log.d(TAG, "Today         : ${TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow())}")
+                Log.d(TAG, "DoW Preference: ${prefs!!.weekStartDay}")
+                Log.d(TAG, "HoD Preference: ${prefs!!.weekStartHour}")
                 checkCrossDayClock()
-                if (TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()) == TimeSheetActivity.prefs!!.weekStartDay && TimeSheetActivity.prefs!!.weekStartHour > 0)
+                if (TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()) ==
+                        TimeSheetActivity.prefs!!.weekStartDay &&
+                        TimeSheetActivity.prefs!!.weekStartHour > 0)
                     checkCrossSplitClock(TimeSheetActivity.prefs!!.weekStartHour)
                 when (position) {
                     0 -> {
@@ -132,26 +135,26 @@ class TimeSheetActivity : AppCompatActivity() {
         try {
             refreshTaskListAdapter()
         } catch (e: NullPointerException) {
-            Log.d(TAG, "onResume refreshTaskListAdapter: " + e.toString())
+            Log.d(TAG, "onResume refreshTaskListAdapter: $e")
         }
 
         setSelected()
         try {
             refreshReportListAdapter()
         } catch (e: NullPointerException) {
-            Log.d(TAG, "onResume refreshReportListAdapter: " + e.toString())
+            Log.d(TAG, "onResume refreshReportListAdapter: $e")
         }
 
         try {
             refreshWeekReportListAdapter()
         } catch (e: NullPointerException) {
-            Log.d(TAG, "onResume refreshWeekReportListAdapter: " + e.toString())
+            Log.d(TAG, "onResume refreshWeekReportListAdapter: $e")
         }
 
         try {
             updateTitleBar()
         } catch (e: NullPointerException) {
-            Log.d(TAG, "onResume updateTitleBar: " + e.toString())
+            Log.d(TAG, "onResume updateTitleBar: $e")
         }
 
     }
@@ -176,11 +179,6 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val db = TimeSheetDbAdapter(applicationContext)
-        //try {
-        //    db.open();
-        //} catch (Exception e) {
-        //    Log.i(TAG, "Database open threw exception" + e);
-        //}
 
         // Check to see that what we received is what we wanted to see.
         if (requestCode == ActivityCodes.TASKADD.ordinal) {
@@ -200,16 +198,14 @@ class TimeSheetActivity : AppCompatActivity() {
                                     data.getIntExtra("percentage", 100))
                         }
                     } catch (e: NullPointerException) {
-                        Log.d(TAG, "TaskAdd Result: " + e.toString())
+                        Log.d(TAG, "TaskAdd Result: $e")
                     }
-
                 }
                 try {
                     refreshTaskListAdapter(findViewById(R.id.tasklistfragment) as ListView)
                 } catch (e: NullPointerException) {
-                    Log.d(TAG, "TaskAdd refreshTaskListAdapter: " + e.toString())
+                    Log.d(TAG, "TaskAdd refreshTaskListAdapter: $e")
                 }
-
             }
         } else if (requestCode == ActivityCodes.TASKREVIVE.ordinal) {
             // This one is a special case, since it has its own database
@@ -219,9 +215,8 @@ class TimeSheetActivity : AppCompatActivity() {
                 try {
                     refreshTaskListAdapter(findViewById(R.id.tasklistfragment) as ListView)
                 } catch (e: NullPointerException) {
-                    Log.d(TAG, "TaskRevive refreshTaskListAdapter: " + e.toString())
+                    Log.d(TAG, "TaskRevive refreshTaskListAdapter: $e")
                 }
-
             }
         } else if (requestCode == ActivityCodes.TASKEDIT.ordinal) {
             if (resultCode == Activity.RESULT_OK) {
@@ -256,9 +251,8 @@ class TimeSheetActivity : AppCompatActivity() {
                     refreshWeekReportListAdapter()
                     updateTitleBar()
                 } catch (e: NullPointerException) {
-                    Log.d(TAG, "TaskEdit refreshTaskListAdapter: " + e.toString())
+                    Log.d(TAG, "TaskEdit refreshTaskListAdapter: $e")
                 }
-
             }
         }
     }
@@ -357,8 +351,7 @@ class TimeSheetActivity : AppCompatActivity() {
      * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
      * android.view.View, android.view.ContextMenu.ContextMenuInfo)
      */
-    override fun onCreateContextMenu(menu: ContextMenu, v: View,
-                                     menuInfo: ContextMenuInfo) {
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo)
         menu.add(0, ActivityCodes.EDIT_ID.ordinal, 0, R.string.taskedit)
         menu.add(0, ActivityCodes.RETIRE_ID.ordinal, 0, R.string.taskretire)
@@ -370,14 +363,11 @@ class TimeSheetActivity : AppCompatActivity() {
      * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
      */
     override fun onContextItemSelected(item: android.view.MenuItem): Boolean {
-        val info = item
-                .menuInfo as AdapterContextMenuInfo
+        val info = item.menuInfo as AdapterContextMenuInfo
         if (item.itemId == ActivityCodes.EDIT_ID.ordinal) {
             Log.d(TAG, "Edit task: " + info.id)
-            val intent = Intent(applicationContext,
-                    EditTaskHandler::class.java)
-            intent.putExtra("taskName", (info.targetView as TextView).text
-                    .toString())
+            val intent = Intent(applicationContext, EditTaskHandler::class.java)
+            intent.putExtra("taskName", (info.targetView as TextView).text.toString())
             try {
                 startActivityForResult(intent, ActivityCodes.TASKEDIT.ordinal)
             } catch (e: RuntimeException) {
@@ -391,16 +381,15 @@ class TimeSheetActivity : AppCompatActivity() {
             return true
         }
         if (item.itemId == ActivityCodes.RETIRE_ID.ordinal) {
-            val db = TimeSheetDbAdapter(
-                    applicationContext)
+            val db = TimeSheetDbAdapter(applicationContext)
 
             val parentTaskID = db.getTaskIDByName((info.targetView as TextView).text.toString())
             // Retire children.
             val children = db.fetchChildTasks(parentTaskID)
             for (childID in children) {
-                Log.d(TAG, "Trying to retire item: " + childID + " (" + db.getTaskNameByID(childID) + ")")
+                Log.d(TAG, "Trying to retire item: $childID (${db.getTaskNameByID(childID)})")
                 db.deactivateTask(db.getTaskNameByID(childID)!!)
-                Log.v(TAG, "Retired Child item: " + childID + " (" + db.getTaskNameByID(childID) + ")")
+                Log.v(TAG, "Retired Child item: $childID (${db.getTaskNameByID(childID)})")
             }
 
             // Retire original task
@@ -424,20 +413,18 @@ class TimeSheetActivity : AppCompatActivity() {
             CROSS_DIALOG -> {
                 builder = AlertDialog.Builder(applicationContext)
                 builder.setMessage(
-                        "The last entry is still open from yesterday." + "  What should I do?")
+                        "The last entry is still open from yesterday.  What should I do?")
                         .setCancelable(false)
                         .setPositiveButton("Close"
                         ) { dialog, id ->
-                            val db = TimeSheetDbAdapter(
-                                    applicationContext)
+                            val db = TimeSheetDbAdapter(applicationContext)
                             db.closeEntry()
                             //db.close();
                             clearSelected()
                         }
                         .setNegativeButton("Close & Re-open"
                         ) { dialog, id ->
-                            val db = TimeSheetDbAdapter(
-                                    applicationContext)
+                            val db = TimeSheetDbAdapter(applicationContext)
                             val taskID = db.taskIDForLastClockEntry()
                             val now = TimeHelpers.millisNow()
                             val today = TimeHelpers
@@ -452,8 +439,7 @@ class TimeSheetActivity : AppCompatActivity() {
             CONFIRM_RESTORE_DIALOG -> {
                 Log.d(TAG, "in onCreateDialog (restore)")
                 builder = AlertDialog.Builder(applicationContext)
-                builder.setMessage(
-                        "This will overwrite the database." + "  Proceed?")
+                builder.setMessage("This will overwrite the database.  Proceed?")
                         .setCancelable(true)
                         .setPositiveButton("Yes"
                         ) { dialog, id ->
@@ -473,14 +459,12 @@ class TimeSheetActivity : AppCompatActivity() {
                                         Toast.LENGTH_SHORT).show()
                             }
                             // fillData();
-                            Log.d(TAG,
-                                    "onCreateDialog restore dialog.  Calling refreshTaskListAdapter")
+                            Log.d(TAG, "onCreateDialog restore dialog.  Calling refreshTaskListAdapter")
                             refreshTaskListAdapter()
                             updateTitleBar()
                             setSelected()
                         }
-                        .setNegativeButton("No"
-                        ) { dialog, id -> dialog.cancel() }
+                        .setNegativeButton("No") { dialog, id -> dialog.cancel() }
                 dialog = builder.create()
             }
         }
@@ -528,11 +512,6 @@ class TimeSheetActivity : AppCompatActivity() {
     private fun clearSelected() {
         Log.d(TAG, "in clearSelected()")
         val myTaskList = findViewById(R.id.tasklistfragment) as ListView
-        //if (myTaskList == null) {
-        //    Log.i(TAG, "findViewByID(tasklistfragment) returned null.")
-        //    return
-        //}
-
         clearSelected(myTaskList)
     }
 
@@ -548,9 +527,8 @@ class TimeSheetActivity : AppCompatActivity() {
             try {
                 (myTaskList.getChildAt(i) as Checkable).isChecked = false
             } catch (e: NullPointerException) {
-                Log.d(TAG, "NullPointerException at item " + i)
+                //Log.d(TAG, "NullPointerException at item " + i)
             }
-
     }
 
     /**
@@ -575,40 +553,32 @@ class TimeSheetActivity : AppCompatActivity() {
     internal fun setSelected(myTaskList: ListView) {
         Log.d(TAG, "in setSelected")
         val db = TimeSheetDbAdapter(applicationContext)
-        //try {
-        //    db.open();
-        //} catch (Exception e) {
-        //    Log.i(TAG, "Database open threw exception" + e);
-        //}
+
         val timeOut = db.timeOutForLastClockEntry()
-        Log.d(TAG, "Last Time Out: " + timeOut + " / " + TimeHelpers.millisToTimeDate(timeOut))
+        Log.d(TAG, "Last Time Out: $timeOut / ${TimeHelpers.millisToTimeDate(timeOut)}")
 
         if (timeOut != 0L) {
             Log.d(TAG, "Returning.")
-            //db.close();
             return
         }
 
-        Log.e(TAG, "myTaskList child count is: " + myTaskList.count)
+        Log.e(TAG, "myTaskList child count is: ${myTaskList.count}")
 
         myTaskList.clearChoices()
 
         val lastTaskID = db.taskIDForLastClockEntry()
-        Log.d(TAG, "Last Task ID: " + lastTaskID)
+        Log.d(TAG, "Last Task ID: $lastTaskID")
 
         val taskName = db.getTaskNameByID(lastTaskID)
         // TODO: There should be a better way to do this.
         // Iterate over the entire ListView to find the name of the
         // entry that is to be selected.
         for (i in 0..myTaskList.count - 1) {
-            if (taskName!!.equals(myTaskList
-                    .getItemAtPosition(i) as String, ignoreCase = true)) {
+            if (taskName!!.equals(myTaskList.getItemAtPosition(i) as String, ignoreCase = true)) {
                 myTaskList.setItemChecked(i, true)
                 myTaskList.setSelection(i)
             }
         }
-
-        //db.close();
     }
 
     /**
@@ -662,10 +632,9 @@ class TimeSheetActivity : AppCompatActivity() {
         val db = TimeSheetDbAdapter(applicationContext)
         val dayHours = TimeSheetActivity.prefs!!.hoursPerDay
         val date = TimeHelpers.millisToDate(day)
-        Log.d(TAG, "refreshReportListAdapter: Updating to " + TimeHelpers.millisToTimeDate(day))
+        Log.d(TAG, "refreshReportListAdapter: Updating to ${TimeHelpers.millisToTimeDate(day)}")
 
-        val headerView = myReportList.rootView
-                .findViewById(R.id.reportheader) as TextView
+        val headerView = myReportList.rootView.findViewById(R.id.reportheader) as TextView
         headerView.text = "Day Report - $date"
 
         val footerView = myReportList.rootView.findViewById(R.id.reportfooter) as TextView
@@ -687,11 +656,11 @@ class TimeSheetActivity : AppCompatActivity() {
 
             timeEntryCursor.moveToFirst()
         } catch (e: NullPointerException) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString())
+            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
             myReportList.adapter = null
             return
         } catch (e: Exception) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString())
+            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
             return
         }
 
@@ -714,9 +683,8 @@ class TimeSheetActivity : AppCompatActivity() {
                     intArrayOf(android.R.id.text1, android.R.id.text2))
             Log.i(TAG, "reportList.setAdapter: updated")
         } catch (e: Exception) {
-            Log.e(TAG, "reportList.setAdapter: " + e.toString())
+            Log.e(TAG, "reportList.setAdapter: $e")
         }
-
     }
 
     /**
@@ -743,7 +711,7 @@ class TimeSheetActivity : AppCompatActivity() {
         val weekHours = TimeSheetActivity.prefs!!.hoursPerWeek
         val date = TimeHelpers.millisToDate(TimeHelpers.millisToEndOfWeek(day,
                 prefs!!.weekStartDay, prefs!!.weekStartHour))
-        Log.d(TAG, "refreshWeekReportListAdapter: Updating to " + date)
+        Log.d(TAG, "refreshWeekReportListAdapter: Updating to $date")
 
         try {
             val headerView = myReportList.rootView
@@ -764,8 +732,9 @@ class TimeSheetActivity : AppCompatActivity() {
         // If the day being reported is the current week, most probably
         // where the current open task exists, then include it, otherwise
         // omit.
-        if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow()) && day <= TimeHelpers.millisToEndOfWeek(TimeHelpers.millisNow(),
-                prefs!!.weekStartDay, prefs!!.weekStartHour)) {
+        if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow()) &&
+                day <= TimeHelpers.millisToEndOfWeek(TimeHelpers.millisNow(),
+                        prefs!!.weekStartDay, prefs!!.weekStartHour)) {
             timeEntryCursor = db.weekSummary(day, false)!!
         } else {
             timeEntryCursor = db.weekSummary(day, true)!!
@@ -774,11 +743,11 @@ class TimeSheetActivity : AppCompatActivity() {
         try {
             timeEntryCursor.moveToFirst()
         } catch (e: NullPointerException) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString())
+            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
             myReportList.adapter = null
             return
         } catch (e: Exception) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: " + e.toString())
+            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
             return
         }
 
@@ -794,11 +763,11 @@ class TimeSheetActivity : AppCompatActivity() {
         try {
             myReportList.adapter = ReportCursorAdapter(
                     applicationContext, R.layout.mysimple_list_item_2,
-                    timeEntryCursor, arrayOf("task", "total"), intArrayOf(android.R.id.text1, android.R.id.text2))
+                    timeEntryCursor, arrayOf("task", "total"),
+                    intArrayOf(android.R.id.text1, android.R.id.text2))
         } catch (e: Exception) {
-            Log.e(TAG, "reportList.setAdapter: " + e.toString())
+            Log.e(TAG, "reportList.setAdapter: $e")
         }
-
     }
 
     /**
@@ -812,8 +781,7 @@ class TimeSheetActivity : AppCompatActivity() {
         if (!prefs!!.persistentNotification) {
             return
         }
-        val myNotification = NotificationCompat.Builder(
-                applicationContext)
+        val myNotification = NotificationCompat.Builder(applicationContext)
                 .setContentTitle(resources.getString(R.string.notification_title))
                 .setContentText(taskName).setWhen(timeIn)
                 .setContentIntent(contentIntent).setAutoCancel(false).setOngoing(true)
@@ -851,7 +819,6 @@ class TimeSheetActivity : AppCompatActivity() {
             // Do nothing. The preference was probably set to false, so this was
             // never created.
         }
-
     }
 
     /**
@@ -937,11 +904,7 @@ class TimeSheetActivity : AppCompatActivity() {
     private fun checkCrossSplitClock(hour: Int) {
         Log.d(TAG, "In checkCrossSplitClock")
         val db = TimeSheetDbAdapter(applicationContext)
-        //try {
-        //    db.open();
-        //} catch (Exception e) {
-        //    Log.i(TAG, "Database open threw exception" + e);
-        //}
+
         val lastRowID = db.lastClockEntry()
         val lastTaskID = db.taskIDForLastClockEntry()
         val tempClockCursor = db.fetchEntry(lastRowID)
@@ -954,7 +917,7 @@ class TimeSheetActivity : AppCompatActivity() {
             try {
                 tempClockCursor.close()
             } catch (e: IllegalStateException) {
-                Log.d(TAG, "checkCrossDayClock " + e.toString())
+                Log.d(TAG, "checkCrossDayClock $e")
             }
 
             return
@@ -968,12 +931,12 @@ class TimeSheetActivity : AppCompatActivity() {
         try {
             tempClockCursor.close()
         } catch (e: IllegalStateException) {
-            Log.d(TAG, "checkCrossDayClock " + e.toString())
+            Log.d(TAG, "checkCrossDayClock $e")
         }
 
-        Log.d(TAG, "boundary time   : " + boundary)
-        Log.d(TAG, "lastClockIn time: " + lastClockIn)
-        Log.d(TAG, "timeOut         : " + timeOut)
+        Log.d(TAG, "boundary time   : $boundary")
+        Log.d(TAG, "lastClockIn time: $lastClockIn")
+        Log.d(TAG, "timeOut         : $timeOut")
         if (lastClockIn != boundary && boundary != timeOut) {
             db.closeEntry(lastTaskID, boundary - 1000)
             db.createEntry(lastTaskID, boundary)
@@ -983,11 +946,7 @@ class TimeSheetActivity : AppCompatActivity() {
     private fun checkCrossDayClock() {
         Log.d(TAG, "In checkCrossDayClock")
         val db = TimeSheetDbAdapter(applicationContext)
-        //try {
-        //    db.open();
-        //} catch (Exception e) {
-        //    Log.i(TAG, "Database open threw exception" + e);
-        //}
+
         val lastRowID = db.lastClockEntry()
         val lastTaskID = db.taskIDForLastClockEntry()
         val tempClockCursor = db.fetchEntry(lastRowID)
@@ -1000,7 +959,7 @@ class TimeSheetActivity : AppCompatActivity() {
             try {
                 tempClockCursor.close()
             } catch (e: IllegalStateException) {
-                Log.d(TAG, "checkCrossDayClock " + e.toString())
+                Log.d(TAG, "checkCrossDayClock $e")
             }
 
             return
@@ -1017,24 +976,22 @@ class TimeSheetActivity : AppCompatActivity() {
 
         // If the difference in days is 1, ask. If it's greater than 1, just
         // close it.
-        Log.d(TAG, "checkCrossDayClock: now=" + now + " / " + TimeHelpers.millisToTimeDate(now))
-        Log.d(TAG, "checkCrossDayClock: lastClockIn=" + lastClockIn + " / "
-                + TimeHelpers.millisToTimeDate(lastClockIn))
-        Log.d(TAG, "checkCrossDayClock: delta=" + delta)
+        Log.d(TAG, "checkCrossDayClock: now=$now / ${TimeHelpers.millisToTimeDate(now)}")
+        Log.d(TAG, "checkCrossDayClock: lastClockIn=$lastClockIn / ${TimeHelpers.millisToTimeDate(lastClockIn)}")
+        Log.d(TAG, "checkCrossDayClock: delta=$delta")
 
         // TODO: This should be handled better.
         // Less than one day
         if (delta < 1) {
-            Log.d(TAG, "Ignoring.  delta = " + delta)
+            Log.d(TAG, "Ignoring.  delta = $delta")
         } else if (now - TimeHelpers.millisToStartOfDay(lastClockIn) > 86400000) { // More
             // than one day.
-            Log.d(TAG, "Closing entry.  delta = " + delta / 86400000.0
-                    + " days.")
-            Log.d(TAG, "With timeOut = " + boundary)
+            Log.d(TAG, "Closing entry.  delta = ${delta / 86400000.0} days.")
+            Log.d(TAG, "With timeOut = $boundary")
             db.closeEntry(lastTaskID, boundary)
             refreshTaskListAdapter()
         } else if (delta > 0) { // Now is beyond the boundary.
-            Log.d(TAG, "Opening dialog.  delta = " + delta)
+            Log.d(TAG, "Opening dialog.  delta = $delta")
             db.closeEntry(lastTaskID, boundary)
             showDialog(CROSS_DIALOG)
         }
@@ -1042,9 +999,8 @@ class TimeSheetActivity : AppCompatActivity() {
         try {
             tempClockCursor.close()
         } catch (e: IllegalStateException) {
-            Log.d(TAG, "taskIDForLastClockEntry " + e.toString())
+            Log.d(TAG, "taskIDForLastClockEntry $e")
         }
-
     }
 
     private fun processPermissions() {
@@ -1056,19 +1012,14 @@ class TimeSheetActivity : AppCompatActivity() {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-
             } else {
-
                 // No explanation needed, we can request the permission.
-
                 ActivityCompat.requestPermissions(thisActivity,
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
-
                 // MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.

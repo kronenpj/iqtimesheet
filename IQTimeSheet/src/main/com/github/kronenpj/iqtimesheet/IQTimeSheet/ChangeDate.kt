@@ -29,6 +29,7 @@ import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.android.synthetic.main.changedate.*
 
 /**
  * Activity that provides an interface to change the date of an entry.
@@ -63,7 +64,8 @@ class ChangeDate : Activity() {
                 TimeHelpers.millisToMonthOfYear(timeMillis),
                 TimeHelpers.millisToDayOfMonth(timeMillis))
 
-        val child = arrayOf(findViewById(R.id.changeok) as Button, findViewById(R.id.changecancel) as Button)
+        val child = arrayOf(findViewById(R.id.changeok) as Button,
+                findViewById(R.id.changecancel) as Button)
 
         for (aChild in child) {
             try {
@@ -72,7 +74,6 @@ class ChangeDate : Activity() {
                 Toast.makeText(this@ChangeDate, "NullPointerException",
                         Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
@@ -93,16 +94,14 @@ class ChangeDate : Activity() {
                 finish()
             }
             R.id.changeok -> {
-                setResult(Activity.RESULT_OK,
-                        Intent().setAction(java.lang.Long.toString(newDate)))
+                setResult(Activity.RESULT_OK, Intent().setAction(java.lang.Long.toString(newDate)))
                 finish()
             }
         }
     }
 
     private fun updateDateText(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        val date = GregorianCalendar(year, monthOfYear,
-                dayOfMonth)
+        val date = GregorianCalendar(year, monthOfYear, dayOfMonth)
         val simpleDate = SimpleDateFormat("E, MMM d, yyyy", Locale.US)
         dateText!!.text = simpleDate.format(date.time)
     }

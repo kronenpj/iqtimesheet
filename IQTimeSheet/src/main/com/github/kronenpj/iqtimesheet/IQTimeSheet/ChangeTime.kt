@@ -27,6 +27,7 @@ import android.widget.NumberPicker
 import android.widget.TimePicker
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import kotlinx.android.synthetic.main.changehourmin.*
 
 /**
  * Activity that provides an interface to change the time of an entry.
@@ -56,7 +57,8 @@ class ChangeTime : Activity() {
 
             timeChange!!.setIs24HourView(true)
             timeChange!!.currentHour = TimeHelpers.millisToHour(timeMillis)
-            timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) / TimeSheetActivity.prefs!!.alignMinutes
+            timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) /
+                    TimeSheetActivity.prefs!!.alignMinutes
         }
 
         val child = arrayOf(findViewById(R.id.changeok) as Button,
@@ -69,7 +71,6 @@ class ChangeTime : Activity() {
                 Toast.makeText(this@ChangeTime, "NullPointerException",
                         Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 

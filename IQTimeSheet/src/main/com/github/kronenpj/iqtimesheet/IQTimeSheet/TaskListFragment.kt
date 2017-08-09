@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_tasklist.*
 
 class TaskListFragment : ListFragment() {
 
@@ -19,8 +20,7 @@ class TaskListFragment : ListFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         Log.d(TAG, "in onCreateView")
 
-        return inflater!!.inflate(R.layout.fragment_tasklist, container,
-                false)
+        return inflater!!.inflate(R.layout.fragment_tasklist, container, false)
 
     }
 

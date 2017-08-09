@@ -52,13 +52,11 @@ class ReportCursorAdapter
         // TODO: Remove the extraneous tempString and temp declarations and
         // assignments.
         var t = view.findViewById(android.R.id.text1) as TextView
-        val tempString = cursor.getString(cursor
-                .getColumnIndex("task"))
+        val tempString = cursor.getString(cursor.getColumnIndex("task"))
         t.text = tempString
 
         t = view.findViewById(android.R.id.text2) as TextView
-        val temp = cursor.getFloat(cursor
-                .getColumnIndex("total"))
+        val temp = cursor.getFloat(cursor.getColumnIndex("total"))
         Log.d(TAG, "bindView: task: " + tempString + ", total: "
                 + String.format(Locale.US, "%1.2f hours", temp))
         t.text = String.format(Locale.US, "%1.2f hours", temp)
