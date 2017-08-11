@@ -22,7 +22,6 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.View.OnClickListener
-import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TimePicker
 import android.widget.Toast
@@ -35,7 +34,6 @@ import kotlinx.android.synthetic.main.changehourmin.*
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeTime : Activity() {
-    private var timeChange: TimePicker? = null
     private var timeMillis: Long = -1
 
     /**
@@ -49,20 +47,17 @@ class ChangeTime : Activity() {
         val extras = intent.extras
         timeMillis = extras.getLong("time")
 
-        timeChange = findViewById(R.id.TimePicker01) as TimePicker
-
-        if (timeChange != null) {
+        if (TimePicker01 != null) {
             if (TimeSheetActivity.prefs!!.alignTimePicker)
-                setTimePickerInterval(timeChange as TimePicker)
+                setTimePickerInterval(TimePicker01 as TimePicker)
 
-            timeChange!!.setIs24HourView(true)
-            timeChange!!.currentHour = TimeHelpers.millisToHour(timeMillis)
-            timeChange!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) /
+            TimePicker01!!.setIs24HourView(true)
+            TimePicker01!!.currentHour = TimeHelpers.millisToHour(timeMillis)
+            TimePicker01!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) /
                     TimeSheetActivity.prefs!!.alignMinutes
         }
 
-        val child = arrayOf(findViewById(R.id.changeok) as Button,
-                findViewById(R.id.changecancel) as Button)
+        val child = arrayOf(changeok, changecancel)
 
         for (aChild in child) {
             try {
@@ -106,8 +101,8 @@ class ChangeTime : Activity() {
      */
     private val mButtonListener = OnClickListener { v ->
         val newTime = TimeHelpers.millisSetTime(timeMillis,
-                timeChange!!.currentHour!!,
-                timeChange!!.currentMinute!! * TimeSheetActivity.prefs!!.alignMinutes)
+                TimePicker01!!.currentHour!!,
+                TimePicker01!!.currentMinute!! * TimeSheetActivity.prefs!!.alignMinutes)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)

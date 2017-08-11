@@ -29,6 +29,7 @@ import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 import java.util.*
 import kotlinx.android.synthetic.main.activity_time_sheet.*
+import kotlinx.android.synthetic.main.fragment_tasklist.*
 
 class TimeSheetActivity : AppCompatActivity() {
 
@@ -252,6 +253,12 @@ class TimeSheetActivity : AppCompatActivity() {
                     updateTitleBar()
                 } catch (e: NullPointerException) {
                     Log.d(TAG, "TaskEdit refreshTaskListAdapter: $e")
+                }
+                // TODO: Figure out what can be done to change the notification here.
+                if (data != null) {
+                    stopNotification()
+                    startNotification(data.extras.getString("task"),
+                            data.extras.getLong("timein"))
                 }
             }
         }

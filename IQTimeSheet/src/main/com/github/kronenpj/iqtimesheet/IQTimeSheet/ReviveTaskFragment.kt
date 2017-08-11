@@ -24,8 +24,8 @@ import android.view.MenuItem
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import java.util.*
 import kotlinx.android.synthetic.main.fragment_revivelist.*
+import java.util.*
 
 /**
  * Activity to allow the user to select a task to revive after being "deleted."
@@ -35,7 +35,6 @@ import kotlinx.android.synthetic.main.fragment_revivelist.*
  * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
  */
 class ReviveTaskFragment : ActionBarListActivity() {
-    private var tasksList: ListView? = null
     private val taskCursor = ArrayList<String>(0)
 
     /**
@@ -48,8 +47,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
         setContentView(R.layout.fragment_revivelist)
 
         try {
-            tasksList = findViewById(R.id.revivetasklist) as ListView
-            tasksList!!.choiceMode = ListView.CHOICE_MODE_SINGLE
+            revivetasklist!!.choiceMode = ListView.CHOICE_MODE_SINGLE
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
@@ -68,7 +66,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         try {
             // Register listeners for the list items.
-            tasksList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            revivetasklist!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val taskName = parent.getItemAtPosition(position) as String
                 reactivateTask(taskName)
                 setResult(Activity.RESULT_OK, Intent())
@@ -124,7 +122,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         val items = taskCursor.toTypedArray()
 
-        tasksList!!.adapter = ArrayAdapter(applicationContext,
+        revivetasklist!!.adapter = ArrayAdapter(applicationContext,
                 android.R.layout.simple_list_item_single_choice, items)
     }
 

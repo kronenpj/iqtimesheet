@@ -25,12 +25,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View.OnClickListener
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.Button
-import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
-import kotlinx.android.synthetic.main.report.*
+import kotlinx.android.synthetic.main.daybuttons.*
+import kotlinx.android.synthetic.main.main.*
 
 /**
  * Activity to provide an interface to edit entries for a selected day.
@@ -38,7 +37,6 @@ import kotlinx.android.synthetic.main.report.*
  * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
  */
 class EditDayEntriesHandler : ActionBarListActivity() {
-    private var reportList: ListView? = null
     private var db: TimeSheetDbAdapter? = null
     private var timeEntryCursor: Cursor? = null
     private var day = TimeHelpers.millisNow()
@@ -66,7 +64,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
 
         try {
             // Register listeners for the list items.
-            reportList!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            list!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val itemID = parent.getItemIdAtPosition(position)
                 Log.d(TAG, "itemID: $itemID")
                 processChange(itemID)
@@ -127,12 +125,12 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         Log.d(TAG, "timeEntryCursor has ${timeEntryCursor!!.count} entries.")
 
         try {
-            reportList!!.adapter = SimpleCursorAdapter(this,
+            list!!.adapter = SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2, timeEntryCursor,
                     arrayOf("task", "range"),
                     intArrayOf(android.R.id.text1, android.R.id.text2))
         } catch (e: Exception) {
-            Log.d(TAG, "reportList.setAdapter: $e")
+            Log.d(TAG, "list.setAdapter: $e")
         }
     }
 
@@ -148,10 +146,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
             Log.e(TAG, "Caught $e while calling setContentView(R.layout.report)")
         }
 
-        reportList = findViewById(android.R.id.list) as ListView
-        val child = arrayOf(findViewById(R.id.previous) as Button,
-                findViewById(R.id.today) as Button,
-                findViewById(R.id.next) as Button)
+        val child = arrayOf(previous, today, next)
 
         for (aChild in child) {
             try {

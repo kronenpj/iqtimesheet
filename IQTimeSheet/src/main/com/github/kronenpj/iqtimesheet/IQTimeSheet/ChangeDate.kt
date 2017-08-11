@@ -22,14 +22,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.OnClickListener
 import android.widget.Button
-import android.widget.DatePicker
 import android.widget.DatePicker.OnDateChangedListener
-import android.widget.TextView
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import kotlinx.android.synthetic.main.changedate.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlinx.android.synthetic.main.changedate.*
 
 /**
  * Activity that provides an interface to change the date of an entry.
@@ -37,8 +35,6 @@ import kotlinx.android.synthetic.main.changedate.*
  * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ChangeDate : Activity() {
-    private var dateChange: DatePicker? = null
-    private var dateText: TextView? = null
 
     /**
      * Called when the activity is first created.
@@ -47,16 +43,13 @@ class ChangeDate : Activity() {
         super.onCreate(savedInstanceState)
         title = "Choose a date"
         setContentView(R.layout.changedate)
-        dateText = findViewById(R.id.DateText) as TextView
 
         val extras = intent.extras
         val timeMillis = extras.getLong("time")
 
-        dateChange = findViewById(R.id.DatePicker01) as DatePicker
-
         val mDateChangedListener = OnDateChangedListener { view, year, monthOfYear, dayOfMonth -> updateDateText(year, monthOfYear, dayOfMonth) }
 
-        dateChange!!.init(TimeHelpers.millisToYear(timeMillis),
+        DatePicker01!!.init(TimeHelpers.millisToYear(timeMillis),
                 TimeHelpers.millisToMonthOfYear(timeMillis),
                 TimeHelpers.millisToDayOfMonth(timeMillis),
                 mDateChangedListener)
@@ -64,8 +57,7 @@ class ChangeDate : Activity() {
                 TimeHelpers.millisToMonthOfYear(timeMillis),
                 TimeHelpers.millisToDayOfMonth(timeMillis))
 
-        val child = arrayOf(findViewById(R.id.changeok) as Button,
-                findViewById(R.id.changecancel) as Button)
+        val child = arrayOf(changeok, changecancel)
 
         for (aChild in child) {
             try {
@@ -82,8 +74,8 @@ class ChangeDate : Activity() {
      * occur when it is pressed.
      */
     private val mButtonListener = OnClickListener { v ->
-        val newDate = TimeHelpers.millisSetDate(dateChange!!.year,
-                dateChange!!.month + 1, dateChange!!.dayOfMonth)
+        val newDate = TimeHelpers.millisSetDate(DatePicker01!!.year,
+                DatePicker01!!.month + 1, DatePicker01!!.dayOfMonth)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
@@ -103,7 +95,7 @@ class ChangeDate : Activity() {
     private fun updateDateText(year: Int, monthOfYear: Int, dayOfMonth: Int) {
         val date = GregorianCalendar(year, monthOfYear, dayOfMonth)
         val simpleDate = SimpleDateFormat("E, MMM d, yyyy", Locale.US)
-        dateText!!.text = simpleDate.format(date.time)
+        DateText!!.text = simpleDate.format(date.time)
     }
 
     companion object {

@@ -63,10 +63,8 @@ class ChangeEntryHandler : AppCompatActivity() {
         alignMinutes = TimeSheetActivity.prefs!!.alignMinutes
         alignMinutesAuto = TimeSheetActivity.prefs!!.alignMinutesAuto
 
-        val changeButton = findViewById(R.id.changealign) as Button
-        changeButton.text = "Align ($alignMinutes min)"
-        if (alignMinutesAuto)
-            changeButton.visibility = View.INVISIBLE
+        changealign.text = "Align ($alignMinutes min)"
+        if (alignMinutesAuto) changealign.visibility = View.INVISIBLE
 
         db = TimeSheetDbAdapter(this)
 
@@ -108,15 +106,8 @@ class ChangeEntryHandler : AppCompatActivity() {
 
         // NOTE: The order of these is important, the array is referenced
         // by index a few times below.
-        child = arrayOf(findViewById(R.id.defaulttask) as Button,
-                findViewById(R.id.date) as Button,
-                findViewById(R.id.starttime) as Button,
-                findViewById(R.id.endtime) as Button,
-                findViewById(R.id.changeok) as Button,
-                findViewById(R.id.changecancel) as Button,
-                findViewById(R.id.changedelete) as Button,
-                findViewById(R.id.changealign) as Button,
-                findViewById(R.id.changeadjacent) as Button)
+        child = arrayOf(defaulttask, date, starttime, endtime, changeok,
+                changecancel, changedelete, changealign, changeadjacent)
 
         for (aChild in child!!) {
             try {
@@ -181,8 +172,8 @@ class ChangeEntryHandler : AppCompatActivity() {
         val intent: Intent
 
         // Perform action on selected list item.
-        Log.d(TAG, "onClickListener view id: " + v.id)
-        Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
+        Log.d(TAG, "onClickListener view id: ${v.id}")
+        Log.d(TAG, "onClickListener defaulttask id: ${R.id.defaulttask}")
 
         when (v.id) {
             R.id.changecancel -> {
@@ -194,7 +185,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 try {
                     startActivityForResult(intent, TASKCHOOSE_CODE)
                 } catch (e: RuntimeException) {
-                    Log.e(TAG, "startActivity ChangeTaskList: " + e.toString())
+                    Log.e(TAG, "startActivity ChangeTaskList: $e")
                 }
             }
             R.id.date -> {
@@ -203,7 +194,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 try {
                     startActivityForResult(intent, CHANGEDATE_CODE)
                 } catch (e: RuntimeException) {
-                    Log.e(TAG, "startActivity ChangeDate: " + e.toString())
+                    Log.e(TAG, "startActivity ChangeDate: $e")
                 }
             }
             R.id.starttime -> {
@@ -212,7 +203,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 try {
                     startActivityForResult(intent, CHANGETIMEIN_CODE)
                 } catch (e: RuntimeException) {
-                    Log.e(TAG, "startActivity ChangeTime: " + e.toString())
+                    Log.e(TAG, "startActivity ChangeTime: $e")
                 }
             }
             R.id.endtime -> {
@@ -221,16 +212,13 @@ class ChangeEntryHandler : AppCompatActivity() {
                 try {
                     startActivityForResult(intent, CHANGETIMEOUT_CODE)
                 } catch (e: RuntimeException) {
-                    Log.e(TAG, "startActivity ChangeTime: " + e.toString())
+                    Log.e(TAG, "startActivity ChangeTime: $e")
                 }
             }
             R.id.changealign -> {
-                newTimeIn = TimeHelpers.millisToAlignMinutes(newTimeIn,
-                        alignMinutes)
-                if (newTimeOut != 0L) {
-                    newTimeOut = TimeHelpers.millisToAlignMinutes(newTimeOut,
-                            alignMinutes)
-                }
+                newTimeIn = TimeHelpers.millisToAlignMinutes(newTimeIn, alignMinutes)
+                if (newTimeOut != 0L)
+                    newTimeOut = TimeHelpers.millisToAlignMinutes(newTimeOut, alignMinutes)
                 fillData()
             }
             R.id.changeok -> {
@@ -238,8 +226,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID)
                 // Push task title into response.
                 intent.putExtra("task", newTask)
-                // Push start and end time milliseconds into response
-                // bundle.
+                // Push start and end time milliseconds into response bundle.
                 intent.putExtra("timein", newTimeIn)
                 intent.putExtra("timeout", newTimeOut)
                 intent.action = "accept"
@@ -251,8 +238,7 @@ class ChangeEntryHandler : AppCompatActivity() {
                 intent.putExtra(EditDayEntriesHandler.ENTRY_ID, entryID)
                 // Push task title into response.
                 intent.putExtra("task", newTask)
-                // Push start and end time milliseconds into response
-                // bundle.
+                // Push start and end time milliseconds into response bundle.
                 intent.putExtra("timein", newTimeIn)
                 intent.putExtra("timeout", newTimeOut)
                 intent.action = "acceptadjacent"
