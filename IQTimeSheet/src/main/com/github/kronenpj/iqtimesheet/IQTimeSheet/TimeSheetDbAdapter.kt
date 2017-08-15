@@ -1481,7 +1481,7 @@ GROUP BY TaskSplit.task"""
         // Roll-over the old usage when transitioning into a new month.
         if (todayCal.get(Calendar.MONTH) != dateLastUsedCal.get(Calendar.MONTH)) {
             oldUsage = usage
-            usage = 0
+            if (usage >= 0) usage = 0 else usage = -1
         }
 
         instance.use {
