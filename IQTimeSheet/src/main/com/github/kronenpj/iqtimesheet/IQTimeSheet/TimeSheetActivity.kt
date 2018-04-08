@@ -518,7 +518,7 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun clearSelected() {
         Log.d(TAG, "in clearSelected()")
-        val myTaskList = findViewById(R.id.tasklistfragment) as ListView
+        val myTaskList = findViewById<ListView>(R.id.tasklistfragment)
         clearSelected(myTaskList)
     }
 
@@ -530,12 +530,10 @@ class TimeSheetActivity : AppCompatActivity() {
     internal fun clearSelected(myTaskList: ListView) {
         Log.d(TAG, "clearSelected")
         myTaskList.clearChoices()
-        for (i in 0..myTaskList.count - 1)
-            try {
+        // for (i in 0..myTaskList.count - 1)
+        for (i in 0 until myTaskList.count)
+            if (myTaskList.getChildAt(i) != null)
                 (myTaskList.getChildAt(i) as Checkable).isChecked = false
-            } catch (e: NullPointerException) {
-                //Log.d(TAG, "NullPointerException at item " + i)
-            }
     }
 
     /**
@@ -543,12 +541,12 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     internal fun setSelected() {
         Log.d(TAG, "in setSelected()")
-        if (findViewById(R.id.tasklistfragment) == null) {
+        if (findViewById<ListView>(R.id.tasklistfragment) == null) {
             Log.i(TAG, "findViewByID(tasklistfragment) returned null.")
             return
         }
 
-        val myTaskList = findViewById(R.id.tasklistfragment) as ListView
+        val myTaskList = findViewById<ListView>(R.id.tasklistfragment)
         setSelected(myTaskList)
     }
 
@@ -593,11 +591,11 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun refreshTaskListAdapter() {
         Log.d(TAG, "In refreshTaskListAdapter()")
-        if (findViewById(R.id.tasklistfragment) == null) {
+        if (findViewById<ListView>(R.id.tasklistfragment) == null) {
             Log.i(TAG, "findViewByID(tasklistfragment) returned null.")
             return
         }
-        refreshTaskListAdapter(findViewById(R.id.tasklistfragment) as ListView)
+        refreshTaskListAdapter(findViewById(R.id.tasklistfragment))
     }
 
     /**
@@ -610,7 +608,7 @@ class TimeSheetActivity : AppCompatActivity() {
         val db = TimeSheetDbAdapter(applicationContext)
 
         // (Re-)Populate the ListView with an array adapter with the task items.
-        myTaskList.adapter = MyArrayAdapter<String>(applicationContext,
+        myTaskList.adapter = MyArrayAdapter(applicationContext,
                 android.R.layout.simple_list_item_single_choice, db.getTasksList())
 
         setSelected(myTaskList)
@@ -621,11 +619,11 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun refreshReportListAdapter() {
         Log.d(TAG, "In refreshReportListAdapter()")
-        if (findViewById(R.id.reportList) == null) {
+        if (findViewById<ListView>(R.id.reportList) == null) {
             Log.i(TAG, "findViewByID(reportList) returned null.")
             return
         }
-        refreshReportListAdapter(findViewById(R.id.reportList) as ListView)
+        refreshReportListAdapter(findViewById(R.id.reportList))
     }
 
     /**
@@ -699,7 +697,7 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun refreshWeekReportListAdapter() {
         Log.d(TAG, "In refreshWeekReportListAdapter()")
-        if (findViewById(R.id.weekList) == null) {
+        if (findViewById<ListView>(R.id.weekList) == null) {
             Log.i(TAG, "findViewByID(weekList) returned null.")
             return
         }
@@ -734,7 +732,7 @@ class TimeSheetActivity : AppCompatActivity() {
         footerView.text = String.format(Locale.US, "Hours worked this week: 0\n" +
                 "Hours remaining this week: %.2f", weekHours)
 
-        val timeEntryCursor: Cursor
+        val timeEntryCursor: Cursor?
 
         // If the day being reported is the current week, most probably
         // where the current open task exists, then include it, otherwise
@@ -742,21 +740,27 @@ class TimeSheetActivity : AppCompatActivity() {
         if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow()) &&
                 day <= TimeHelpers.millisToEndOfWeek(TimeHelpers.millisNow(),
                         prefs!!.weekStartDay, prefs!!.weekStartHour)) {
-            timeEntryCursor = db.weekSummary(day, false)!!
+            timeEntryCursor = db.weekSummary(day, false)
         } else {
-            timeEntryCursor = db.weekSummary(day, true)!!
+            timeEntryCursor = db.weekSummary(day, true)
         }
 
-        try {
-            timeEntryCursor.moveToFirst()
-        } catch (e: NullPointerException) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
+        if (timeEntryCursor == null) {
+            Log.e(TAG, "timeEntryCursor.moveToFirst: NullPointerException")
             myReportList.adapter = null
             return
-        } catch (e: Exception) {
-            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
-            return
         }
+        timeEntryCursor.moveToFirst()
+
+//        try {
+//        } catch (e: NullPointerException) {
+//            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
+//            myReportList.adapter = null
+//            return
+//        } catch (e: Exception) {
+//            Log.e(TAG, "timeEntryCursor.moveToFirst: $e")
+//            return
+//        }
 
         var accum = 0f
         while (!timeEntryCursor.isAfterLast) {

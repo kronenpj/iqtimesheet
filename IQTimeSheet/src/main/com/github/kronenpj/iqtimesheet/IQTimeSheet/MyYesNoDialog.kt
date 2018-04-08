@@ -9,7 +9,7 @@ import android.support.v4.app.DialogFragment
 class MyYesNoDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val title = arguments.getInt("title")
+        val title = arguments!!.getInt("title")
 
         return AlertDialog.Builder(activity)
                 // .setIcon(R.drawable.alert_dialog_icon)

@@ -4,4 +4,4 @@
     android:id="@+id/tasklistrow"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout="@layout/tasklistrow" />
+    android:textAppearance="@style/TextAppearance.AppCompat" />

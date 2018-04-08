@@ -14,12 +14,11 @@ class TaskListFragment : ListFragment() {
         Log.d(TAG, "in onCreate")
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         Log.d(TAG, "in onCreateView")
 
-        return inflater!!.inflate(R.layout.fragment_tasklist, container, false)
+        return inflater.inflate(R.layout.fragment_tasklist, container, false)
     }
 
     companion object {

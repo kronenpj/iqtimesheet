@@ -26,14 +26,13 @@ class SectionFragment : Fragment() {
      * RoboFragmentActivity#onCreateView(LayoutInflater, ViewGroup,
      * Bundle)
      */
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.d(TAG, "in onCreateView (SectionFragment)")
 
-        when (arguments.getInt(ARG_SECTION_NUMBER)) {
-            1 -> return setupTaskListFragment(inflater!!, container!!)
-            2 -> return setupDayReportFragment(inflater!!, container!!)
-            3 -> return setupWeekReportFragment(inflater!!, container!!)
+        when (arguments!!.getInt(ARG_SECTION_NUMBER)) {
+            1 -> return setupTaskListFragment(inflater, container!!)
+            2 -> return setupDayReportFragment(inflater, container!!)
+            3 -> return setupWeekReportFragment(inflater, container!!)
         }
         return null
     }
@@ -50,16 +49,17 @@ class SectionFragment : Fragment() {
     private fun setupTaskListFragment(inflater: LayoutInflater,
                                       container: ViewGroup): View {
         Log.d(TAG, "in setupTaskListFragment")
-        val db = TimeSheetDbAdapter(activity.applicationContext)
+        val db = TimeSheetDbAdapter(activity!!.applicationContext)
 
         val rootView = inflater.inflate(R.layout.fragment_tasklist,
                 container, false)
-        val myTaskList = rootView.findViewById(R.id.tasklistfragment) as ListView
+        val myTaskList = rootView.findViewById<ListView>(R.id.tasklistfragment)
 
         // Populate the ListView with an array adapter with the task items.
         (activity as TimeSheetActivity).refreshTaskListAdapter(myTaskList)
 
         // Make list items selectable.
+        myTaskList.isEnabled = true
         myTaskList.choiceMode = ListView.CHOICE_MODE_SINGLE
         (activity as TimeSheetActivity).setSelected(myTaskList)
 

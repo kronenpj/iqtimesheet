@@ -44,6 +44,7 @@ class TimeSheetDbAdapter
     // TODO: active should be: Boolean
     data class tasksTuple(val id: Long, val task: String, val active: Long, val usage: Long,
                           val oldusage: Long, val lastused: Long)
+    data class taskUsageTuple(val id: Long, val usage: Long, val oldusage: Long, val lastused: Long)
 
     val timeTotalParser = rowParser { id: Long, task: String, total: Float ->
         timeTotalTuple(id, task, total)
@@ -59,6 +60,10 @@ class TimeSheetDbAdapter
                                   oldusage: Long, lastused: Long ->
         tasksTuple(id, task, active, usage, oldusage, lastused)
     }
+    val taskUsageParser = rowParser { id: Long, usage: Long, oldusage: Long, lastused: Long ->
+        taskUsageTuple(id, usage, oldusage, lastused)
+    }
+
 
     /**
      * Create a new time entry using the charge number provided. If the entry is
@@ -1457,17 +1462,7 @@ GROUP BY TaskSplit.task"""
     private fun incrementTaskUsage(taskID: Long) {
         Log.d(TAG, "incrementTaskUsage: Issuing DB query.")
 
-        data class taskUsageTuple(val id: Long, val usage: Long, val oldusage: Long, val lastused: Long)
-
-        val taskUsageParser = rowParser { id: Long, usage: Long, oldusage: Long, lastused: Long ->
-            taskUsageTuple(id, usage, oldusage, lastused)
-        }
-
-        var usageTuple: taskUsageTuple? = null
-        instance.use {
-            usageTuple = select("Tasks", "_id", "usage", "oldusage", "lastused")
-                    .whereArgs("_id = $taskID").parseOpt(taskUsageParser)
-        }
+        var usageTuple: taskUsageTuple? = getTaskUsageTuple(taskID)
         var usage = usageTuple?.usage ?: 0
         var oldUsage = usageTuple?.oldusage ?: 0
         val lastUsed = usageTuple?.lastused ?: 0
@@ -1488,6 +1483,15 @@ GROUP BY TaskSplit.task"""
             update("Tasks", "lastused" to now, "usage" to usage + 1, "oldusage" to oldUsage)
                     .whereArgs("_id = $taskID").exec()
         }
+    }
+
+    fun getTaskUsageTuple(taskID: Long): taskUsageTuple? {
+        var usageTuple: taskUsageTuple? = null
+        instance.use {
+            usageTuple = select("Tasks", "_id", "usage", "oldusage", "lastused")
+                    .whereArgs("_id = $taskID").parseOpt(taskUsageParser)
+        }
+        return usageTuple
     }
 
     // TODO: Is there a better way of doing this?

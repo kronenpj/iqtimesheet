@@ -1,11 +1,15 @@
 package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import org.jetbrains.anko.applyRecursively
+import org.jetbrains.anko.custom.style
+import org.jetbrains.anko.textColor
 
 import java.util.Arrays
 
@@ -94,7 +98,6 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
         mResource = resource
         view = super.getView(position, convertView, parent)
         text = view as TextView
-        text.textSize = TimeSheetActivity.prefs!!.fontSizeTaskList
 
         return text
     }

@@ -63,6 +63,7 @@
     <string name="restore_title">"This will overwrite the database.  Proceed?"</string>
     <string name="DefaultPercentage">100</string>
     <string name="PercentSign">%</string>
+    <string name="task_last_used">Task last used: %s</string>
     <string name="TASK_TABLE_CREATE">
         CREATE TABLE
         Tasks (

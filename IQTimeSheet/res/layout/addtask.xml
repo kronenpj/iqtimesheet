@@ -64,6 +64,17 @@
         android:text="@string/select_parent_task"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/LastUsedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/CancelEdit"
+        android:paddingTop="2dip"
+        android:text="@string/task_last_used"
+        android:visibility="gone" />
+
     <Spinner
         android:id="@+id/TaskSpinner"
         style="@android:style/TextAppearance"

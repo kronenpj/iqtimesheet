@@ -120,6 +120,7 @@ class EditTaskHandler : AppCompatActivity() {
         PercentSlider!!.setOnSeekBarChangeListener(mSeekBarListener)
         PercentLabel!!.onFocusChangeListener = mTextListener
         PercentLabel!!.setOnEditorActionListener(mEditorListener)
+        LastUsedLabel!!.text = db!!.getTaskUsageTuple(db!!.getTaskIDByName(oldData.toString()))?.usage.toString()
 
         val child = arrayOf(ChangeTask, CancelEdit)
 
@@ -148,6 +149,7 @@ class EditTaskHandler : AppCompatActivity() {
                     android.R.layout.simple_list_item_1, childNames)
             // TODO: Find some way to be able to edit these items and still be able to return here.
             // myChildList.setOnItemClickListener(mChildListener);
+            myChildList.isEnabled = true
             myChildList.visibility = View.VISIBLE
         }
     }

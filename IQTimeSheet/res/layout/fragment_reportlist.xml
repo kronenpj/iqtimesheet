@@ -4,7 +4,6 @@
     android:name="@+id/fragment_reportlist"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout="@layout/fragment_reportlist"
     android:orientation="vertical"
     android:paddingBottom="0dip"
     android:paddingLeft="0dip"
