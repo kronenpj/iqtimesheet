@@ -23,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+	<!-- Yes, apparently all these are required to make everything consistent.
+	Go figure -->
 	<activity android:name=".AboutDialog" android:theme="@style/AppTheme"/>
 	<activity android:name=".AddTaskHandler" android:theme="@style/AppTheme"/>
 	<activity android:name=".ChangeDate" android:theme="@style/AppTheme"/>
