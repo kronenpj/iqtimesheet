@@ -1,6 +1,7 @@
 package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -98,6 +99,9 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
         mResource = resource
         view = super.getView(position, convertView, parent)
         text = view as TextView
+        // FIXME: Horrible hack to get the list visible in a dark theme.
+        // I've invested hours trying to figure out the proper way to fix this.
+        text.setTextColor(Color.WHITE)
 
         return text
     }

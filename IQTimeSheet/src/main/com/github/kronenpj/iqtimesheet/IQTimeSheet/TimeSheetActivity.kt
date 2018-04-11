@@ -67,7 +67,7 @@ class TimeSheetActivity : AppCompatActivity() {
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.pager) as ViewPager
+        mViewPager = findViewById<ViewPager>(R.id.pager)
         mViewPager!!.adapter = mSectionsPagerAdapter
 
         mViewPager!!.addOnPageChangeListener(object : OnPageChangeListener {
@@ -203,7 +203,7 @@ class TimeSheetActivity : AppCompatActivity() {
                     }
                 }
                 try {
-                    refreshTaskListAdapter(findViewById(R.id.tasklistfragment) as ListView)
+                    refreshTaskListAdapter(findViewById<ListView>(R.id.tasklistfragment))
                 } catch (e: NullPointerException) {
                     Log.d(TAG, "TaskAdd refreshTaskListAdapter: $e")
                 }
@@ -214,7 +214,7 @@ class TimeSheetActivity : AppCompatActivity() {
             // the result back to us.
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    refreshTaskListAdapter(findViewById(R.id.tasklistfragment) as ListView)
+                    refreshTaskListAdapter(findViewById<ListView>(R.id.tasklistfragment))
                 } catch (e: NullPointerException) {
                     Log.d(TAG, "TaskRevive refreshTaskListAdapter: $e")
                 }
@@ -701,7 +701,7 @@ class TimeSheetActivity : AppCompatActivity() {
             Log.i(TAG, "findViewByID(weekList) returned null.")
             return
         }
-        refreshWeekReportListAdapter(findViewById(R.id.weekList) as ListView)
+        refreshWeekReportListAdapter(findViewById(R.id.weekList))
     }
 
     /**
@@ -1051,13 +1051,13 @@ class TimeSheetActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "TimeSheetActivity"
-        private val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0xdead
+        private const val TAG = "TimeSheetActivity"
+        private const val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0xdead
         var day = TimeHelpers.millisNow()
 
-        private val CROSS_DIALOG = 0x40
-        private val CONFIRM_RESTORE_DIALOG = 0x41
-        private val MY_NOTIFICATION_ID = 0x73
+        private const val CROSS_DIALOG = 0x40
+        private const val CONFIRM_RESTORE_DIALOG = 0x41
+        private const val MY_NOTIFICATION_ID = 0x73
         internal var prefs: PreferenceHelper? = null
 
         private val contentIntent: PendingIntent? = null

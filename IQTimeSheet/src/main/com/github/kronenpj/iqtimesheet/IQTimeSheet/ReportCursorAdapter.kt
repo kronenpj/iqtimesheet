@@ -18,6 +18,7 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.SimpleCursorAdapter
@@ -54,12 +55,18 @@ class ReportCursorAdapter
         var t = view.findViewById(android.R.id.text1) as TextView
         val tempString = cursor.getString(cursor.getColumnIndex("task"))
         t.text = tempString
+        // FIXME: Horrible hack to get the list visible in a dark theme.
+        // I've invested hours trying to figure out the proper way to fix this.
+        t.setTextColor(Color.WHITE)
 
         t = view.findViewById(android.R.id.text2) as TextView
         val temp = cursor.getFloat(cursor.getColumnIndex("total"))
         Log.d(TAG, "bindView: task: " + tempString + ", total: "
                 + String.format(Locale.US, "%1.2f hours", temp))
         t.text = String.format(Locale.US, "%1.2f hours", temp)
+        // FIXME: Horrible hack to get the list visible in a dark theme.
+        // I've invested hours trying to figure out the proper way to fix this.
+        t.setTextColor(Color.WHITE)
     }
 
     companion object {
