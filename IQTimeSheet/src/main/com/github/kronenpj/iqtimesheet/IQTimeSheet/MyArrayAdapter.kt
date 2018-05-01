@@ -11,6 +11,7 @@ import android.widget.TextView
 import org.jetbrains.anko.applyRecursively
 import org.jetbrains.anko.custom.style
 import org.jetbrains.anko.textColor
+import com.github.kronenpj.iqtimesheet.IQTimeSheet.TimeSheetDbAdapter
 
 import java.util.Arrays
 
@@ -93,16 +94,27 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
      */
     private fun createViewFromResource(position: Int, convertView: View?,
                                        parent: ViewGroup, resource: Int): View {
-        val view: View
-        val text: TextView
-
         mResource = resource
-        view = super.getView(position, convertView, parent)
-        text = view as TextView
+
+        val view = super.getView(position, convertView, parent) as View
+        val text = view as TextView
         // FIXME: Horrible hack to get the list visible in a dark theme.
         // I've invested hours trying to figure out the proper way to fix this.
         text.setTextColor(Color.WHITE)
-
+        // FIXME: Need to figure out how to obtain the TimeSheetDbAdapter.getTaskUsageTuple
+        // information without bogging the app down horribly.
+        try {
+            val dbA = TimeSheetDbAdapter(context)
+            val myTaskID = dbA.getTaskIDByName(text.text.toString())
+            val usageTuple = dbA.getTaskUsageTuple(myTaskID)
+            val parentTask = dbA.getSplitTaskParent(myTaskID)
+            if (parentTask > 0)
+                text.setTextColor(Color.YELLOW)
+            if (usageTuple!!.usage < 0)
+                text.setTextColor(Color.GRAY)
+        } catch (e: Exception) {
+            Log.i("MyArrayAdapter","Retrieval of usageTuple failed for: " + text.text.toString())
+        }
         return text
     }
 }
