@@ -102,7 +102,7 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
         // I've invested hours trying to figure out the proper way to fix this.
         text.setTextColor(Color.WHITE)
         // FIXME: Need to figure out how to obtain the TimeSheetDbAdapter.getTaskUsageTuple
-        // information without bogging the app down horribly.
+        // information without bogging the app down horribly. Because this is horrible.
         try {
             val dbA = TimeSheetDbAdapter(context)
             val myTaskID = dbA.getTaskIDByName(text.text.toString())
