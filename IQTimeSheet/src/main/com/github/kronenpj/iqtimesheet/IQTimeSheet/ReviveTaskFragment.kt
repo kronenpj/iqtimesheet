@@ -85,7 +85,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
     }
 
     private fun reloadTaskCursor(db: TimeSheetDbAdapter) {
-        val temp: Array<TimeSheetDbAdapter.tasksTuple>?
+        val temp: Array<ITimeSheetDbAdapter.tasksTuple>?
         temp = db.fetchAllDisabledTasks()
         taskCursor.clear()
         if (temp != null) {

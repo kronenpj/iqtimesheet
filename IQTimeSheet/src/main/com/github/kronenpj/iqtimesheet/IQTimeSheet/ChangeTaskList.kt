@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.revivetask.*
  */
 class ChangeTaskList : ListActivity() {
     private var db: TimeSheetDbAdapter? = null
-    private var taskCursor: Array<TimeSheetDbAdapter.tasksTuple>? = null
+    private var taskCursor: Array<ITimeSheetDbAdapter.tasksTuple>? = null
 
     /**
      * Called when the activity is first created.

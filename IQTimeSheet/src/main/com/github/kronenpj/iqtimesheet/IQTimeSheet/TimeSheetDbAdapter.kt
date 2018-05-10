@@ -6,6 +6,8 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteException
 import android.util.Log
+import com.github.kronenpj.iqtimesheet.IQTimeSheet.ITimeSheetDbAdapter.Companion.DB_FALSE
+import com.github.kronenpj.iqtimesheet.IQTimeSheet.ITimeSheetDbAdapter.Companion.DB_TRUE
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 import org.jetbrains.anko.db.*
 import java.util.*
@@ -21,12 +23,10 @@ class TimeSheetDbAdapter
  * opened/created
  */
 @JvmOverloads constructor(private val mCtx: Context,
-                          private var instance: MySqlHelper = MySqlHelper.getInstance(mCtx)) {
+                          private var instance: MySqlHelper = MySqlHelper.getInstance(mCtx)) : ITimeSheetDbAdapter {
 
     companion object {
         private val TAG = "TimeSheetDbAdapter"
-        val DB_FALSE = "0"
-        val DB_TRUE = "1"
     }
 
     /* From Anko README
@@ -38,32 +38,23 @@ class TimeSheetDbAdapter
     }
     */
 
-    data class timeTotalTuple(val id: Long, val task: String, val total: Float)
-    data class timeEntryTuple(val id: Long, val task: String, val timein: Long, val timeout: Long)
-    data class chargeNoTuple(val id: Long, val chargeno: Long, val timein: Long, val timeout: Long)
-    // TODO: active should be: Boolean
-    data class tasksTuple(val id: Long, val task: String, val active: Long, val usage: Long,
-                          val oldusage: Long, val lastused: Long)
-    data class taskUsageTuple(val id: Long, val usage: Long, val oldusage: Long, val lastused: Long)
-
     val timeTotalParser = rowParser { id: Long, task: String, total: Float ->
-        timeTotalTuple(id, task, total)
+        ITimeSheetDbAdapter.timeTotalTuple(id, task, total)
     }
     val timeEntryParser = rowParser { id: Long, task: String, timein: Long, timeout: Long ->
-        timeEntryTuple(id, task, timein, timeout)
+        ITimeSheetDbAdapter.timeEntryTuple(id, task, timein, timeout)
     }
     val chargeNoParser = rowParser { id: Long, chargeno: Long, timein: Long, timeout: Long ->
-        chargeNoTuple(id, chargeno, timein, timeout)
+        ITimeSheetDbAdapter.chargeNoTuple(id, chargeno, timein, timeout)
     }
     // TODO: active should be: Boolean
     val tasksParser = rowParser { id: Long, task: String, active: Long, usage: Long,
                                   oldusage: Long, lastused: Long ->
-        tasksTuple(id, task, active, usage, oldusage, lastused)
+        ITimeSheetDbAdapter.tasksTuple(id, task, active, usage, oldusage, lastused)
     }
     val taskUsageParser = rowParser { id: Long, usage: Long, oldusage: Long, lastused: Long ->
-        taskUsageTuple(id, usage, oldusage, lastused)
+        ITimeSheetDbAdapter.taskUsageTuple(id, usage, oldusage, lastused)
     }
-
 
     /**
      * Create a new time entry using the charge number provided. If the entry is
@@ -74,7 +65,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun createEntry(task: String): Long {
+    override fun createEntry(task: String): Long {
         val chargeno = getTaskIDByName(task)
         return createEntry(chargeno)
     }
@@ -90,7 +81,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun createEntry(task: String, timeIn: Long): Long {
+    override fun createEntry(task: String, timeIn: Long): Long {
         val chargeno = getTaskIDByName(task)
         return createEntry(chargeno, timeIn)
     }
@@ -106,7 +97,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun createEntry(chargeno: Long, timeInP: Long = System.currentTimeMillis()): Long {
+    override fun createEntry(chargeno: Long, timeInP: Long): Long {
         var timeIn = timeInP
         if (TimeSheetActivity.prefs!!.alignMinutesAuto) {
             timeIn = TimeHelpers.millisToAlignMinutes(timeIn,
@@ -130,7 +121,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(): Int {
+    override fun closeEntry(): Int {
         val rowID = lastClockEntry()
         val chargeTuple = getChargeNoTuple(rowID)
         val chargeno = chargeTuple?.chargeno ?: -1
@@ -146,7 +137,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(task: String): Int {
+    override fun closeEntry(task: String): Int {
         val chargeno = getTaskIDByName(task)
         return closeEntry(chargeno)
     }
@@ -162,7 +153,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(task: String, timeOut: Long): Int {
+    override fun closeEntry(task: String, timeOut: Long): Int {
         val chargeno = getTaskIDByName(task)
         return closeEntry(chargeno, timeOut)
     }
@@ -178,7 +169,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun closeEntry(chargeno: Long, timeOutP: Long = System.currentTimeMillis()): Int {
+    override fun closeEntry(chargeno: Long, timeOutP: Long): Int {
         var timeOut = timeOutP
         if (TimeSheetActivity.prefs!!.alignMinutesAuto) {
             timeOut = TimeHelpers.millisToAlignMinutes(timeOut,
@@ -219,7 +210,7 @@ class TimeSheetDbAdapter
      *
      * @return true if deleted, false otherwise
      */
-    fun deleteEntry(rowId: Long): Boolean {
+    override fun deleteEntry(rowId: Long): Boolean {
         Log.i("Delete called", "value__ $rowId")
 
         var retcode = 0
@@ -234,7 +225,7 @@ class TimeSheetDbAdapter
      *
      * @return Cursor over all database entries
      */
-    fun fetchAllTimeEntries(): Cursor? {
+    override fun fetchAllTimeEntries(): Cursor? {
         val c: Cursor? = null
         instance.readableDatabase
                 .query("TimeSheet", arrayOf("_id", "chargeno", "timein", "timeout"),
@@ -252,7 +243,7 @@ class TimeSheetDbAdapter
      * @throws SQLException if entry could not be found/retrieved
      */
     @Throws(SQLException::class)
-    fun fetchEntry(rowId: Long): Cursor? {
+    override fun fetchEntry(rowId: Long): Cursor? {
         val mCursor = instance.readableDatabase
                 .query("TimeSheet", arrayOf("_id", "chargeno", "timein", "timeout"),
                         "_id = $rowId", null, null, null, null)
@@ -270,7 +261,7 @@ class TimeSheetDbAdapter
      * @throws SQLException if entry could not be found/retrieved
      */
     @Throws(SQLException::class)
-    fun fetchEntry(rowId: Long, column: String): Cursor? {
+    override fun fetchEntry(rowId: Long, column: String): Cursor? {
         val mCursor = instance.readableDatabase
                 .query("TimeSheet", arrayOf(column), "_id = $rowId", null, null, null, null)
         mCursor?.moveToFirst()
@@ -294,8 +285,8 @@ class TimeSheetDbAdapter
      *
      * @return true if the entry was successfully updated, false otherwise
      */
-    fun updateEntry(rowIdP: Long, chargeno: Long, date: String?,
-                    timein: Long, timeout: Long): Boolean {
+    override fun updateEntry(rowIdP: Long, chargeno: Long, date: String?,
+                             timein: Long, timeout: Long): Boolean {
         var rowId = rowIdP
         val args = ContentValues()
         // Only change items that aren't null or -1.
@@ -321,7 +312,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun taskIDForLastClockEntry(): Long {
+    override fun taskIDForLastClockEntry(): Long {
         val lastClockID = lastClockEntry()
 
         var retval: Long? = null
@@ -339,7 +330,7 @@ class TimeSheetDbAdapter
      *
      * @return time in in milliseconds or -1 if failed
      */
-    fun timeInForLastClockEntry(): Long {
+    override fun timeInForLastClockEntry(): Long {
         val lastClockID = lastClockEntry()
 
         var retval: Long? = -1L
@@ -357,7 +348,7 @@ class TimeSheetDbAdapter
      *
      * @return time out in milliseconds or -1 if failed
      */
-    fun timeOutForLastClockEntry(): Long {
+    override fun timeOutForLastClockEntry(): Long {
         val lastClockID = lastClockEntry()
 
         var retval: Long? = -1
@@ -375,7 +366,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun lastTaskEntry(): Long {
+    override fun lastTaskEntry(): Long {
         var retval: Long? = -1
         instance.use {
             retval = select("Tasks", "max(_id)")
@@ -395,8 +386,8 @@ class TimeSheetDbAdapter
      * @throws SQLException if entry could not be found/retrieved
      */
     @Throws(SQLException::class)
-    fun getTimeEntryTuple(rowId: Long): timeEntryTuple? {
-        var retval: timeEntryTuple? = null
+    override fun getTimeEntryTuple(rowId: Long): ITimeSheetDbAdapter.timeEntryTuple? {
+        var retval: ITimeSheetDbAdapter.timeEntryTuple? = null
         instance.use {
             retval = select("EntryItems", "_id", "task", "timein", "timeout")
                     .whereArgs("_id = $rowId")
@@ -415,8 +406,8 @@ class TimeSheetDbAdapter
      * @throws SQLException if entry could not be found/retrieved
      */
     @Throws(SQLException::class)
-    fun getChargeNoTuple(rowId: Long): chargeNoTuple? {
-        var retval: chargeNoTuple? = null
+    override fun getChargeNoTuple(rowId: Long): ITimeSheetDbAdapter.chargeNoTuple? {
+        var retval: ITimeSheetDbAdapter.chargeNoTuple? = null
         instance.use {
             retval = select("TimeSheet", "_id", "chargeno", "timein", "timeout")
                     .whereArgs("_id = $rowId")
@@ -431,20 +422,20 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun getPreviousClocking(rowID: Long): Long {
+    override fun getPreviousClocking(rowID: Long): Long {
         var thisTimeIn: Long = -1
         var prevTimeOut: Long = -1
 
         Log.d(TAG, "getPreviousClocking for row: $rowID")
 
         // Get the tuple from the provided row
-        var mCurrent: timeEntryTuple? = getTimeEntryTuple(rowID)
+        var mCurrent: ITimeSheetDbAdapter.timeEntryTuple? = getTimeEntryTuple(rowID)
 
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
         thisTimeIn = mCurrent?.timein ?: return -1L
         Log.d(TAG, "timeIn for current: $thisTimeIn")
 
-        var retval: timeEntryTuple? = null
+        var retval: ITimeSheetDbAdapter.timeEntryTuple? = null
         instance.use {
             retval = select("EntryItems", "_id", "task", "timein", "timeout")
                     .whereArgs("_id < $rowID")
@@ -479,19 +470,19 @@ class TimeSheetDbAdapter
      */
     // TODO: Should this be chronological or ordered by _id? as it is now?
     // And, if it should be chronological by time in or time out or both... :(
-    fun getNextClocking(rowID: Long): Long {
+    override fun getNextClocking(rowID: Long): Long {
         var thisTimeOut: Long = -1L
         var nextTimeIn: Long = -1L
 
         Log.d(TAG, "getNextClocking for row: $rowID")
 
         // Get the tuple from the provided row
-        var mCurrent: timeEntryTuple? = getTimeEntryTuple(rowID)
+        var mCurrent: ITimeSheetDbAdapter.timeEntryTuple? = getTimeEntryTuple(rowID)
         // KEY_ROWID, KEY_TASK, KEY_TIMEIN, KEY_TIMEOUT
         thisTimeOut = mCurrent?.timeout ?: return -1L
         Log.d(TAG, "timeOut for current: $thisTimeOut")
 
-        var retval: timeEntryTuple? = null
+        var retval: ITimeSheetDbAdapter.timeEntryTuple? = null
         instance.use {
             retval = select("EntryItems", "_id", "task", "timein", "timeout")
                     .whereArgs("_id > $rowID")
@@ -522,7 +513,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun lastClockEntry(): Long {
+    override fun lastClockEntry(): Long {
         var response: Long = -1
         instance.use {
             select("TimeSheet", "max(_id)").exec {
@@ -537,7 +528,7 @@ class TimeSheetDbAdapter
      *
      * @return array of rowId's or null if failed
      */
-    fun todaysEntries(): LongArray? {
+    override fun todaysEntries(): LongArray? {
         val now = TimeHelpers.millisNow()
         val todayStart = TimeHelpers.millisToStartOfDay(now)
         val todayEnd = TimeHelpers.millisToEndOfDay(now)
@@ -575,8 +566,8 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                             start: Long, end: Long): Cursor? {
+    override fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
+                                      start: Long, end: Long): Cursor? {
         return getEntryReportCursor(distinct, columns, null, null, start, end)
     }
 
@@ -585,8 +576,8 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    protected fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                                       groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor? {
+    override fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
+                                      groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor? {
         // public Cursor query(boolean distinct, String table, String[] columns,
         // String selection, String[] selectionArgs, String groupBy, String
         // having, String orderBy, String limit) {
@@ -630,8 +621,8 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                         start: Long, end: Long): Cursor? {
+    override fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
+                                  start: Long, end: Long): Cursor? {
         return getSummaryCursor(distinct, columns, null, null, start, end)
     }
 
@@ -642,7 +633,7 @@ class TimeSheetDbAdapter
      * @return true if a new task was started, false if the old task was
      * stopped.
      */
-    fun processChange(taskID: Long): Boolean {
+    override fun processChange(taskID: Long): Boolean {
         Log.d(TAG, "processChange for task ID: $taskID")
 
         var lastRowID = lastClockEntry()
@@ -678,8 +669,8 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    protected fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                                   groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor? {
+    override fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
+                                  groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor? {
         // public Cursor query(boolean distinct, String table, String[] columns,
         // String selection, String[] selectionArgs, String groupBy, String
         // having, String orderBy, String limit) {
@@ -743,7 +734,7 @@ class TimeSheetDbAdapter
      *
      * @return rowId or -1 if failed
      */
-    @JvmOverloads fun dayEntryReport(timeP: Long = TimeHelpers.millisNow()): Cursor? {
+    override fun dayEntryReport(timeP: Long): Cursor? {
         var time = timeP
         if (time <= 0) time = TimeHelpers.millisNow()
 
@@ -764,7 +755,7 @@ class TimeSheetDbAdapter
      *
      * @return Cursor over the results.
      */
-    fun daySummary(omitOpen: Boolean): Cursor? {
+    override fun daySummary(omitOpen: Boolean): Cursor? {
         return daySummary(TimeHelpers.millisNow(), omitOpen)
     }
 
@@ -779,7 +770,7 @@ class TimeSheetDbAdapter
      * @return Cursor over the results.
      */
     // TODO: Finish and replace the other routines with it.
-    @JvmOverloads fun daySummary(timeP: Long = TimeHelpers.millisNow(), omitOpen: Boolean = true): Cursor? {
+    override fun daySummary(timeP: Long, omitOpen: Boolean): Cursor? {
         var time = timeP
         Log.d(TAG, "In daySummary.")
         if (time <= 0)
@@ -823,7 +814,7 @@ class TimeSheetDbAdapter
      *
      * @return Cursor over the entries
      */
-    @JvmOverloads fun weekEntryReport(timeP: Long = TimeHelpers.millisNow()): Cursor? {
+    override fun weekEntryReport(timeP: Long): Cursor? {
         var time = timeP
         if (time <= 0) time = TimeHelpers.millisNow()
 
@@ -852,7 +843,7 @@ class TimeSheetDbAdapter
      * @return Cursor over the results.
      */
     // TODO: Finish and replace the other routines with it.
-    fun weekSummary(timeP: Long, omitOpen: Boolean): Cursor? {
+    override fun weekSummary(timeP: Long, omitOpen: Boolean): Cursor? {
         var time = timeP
         Log.d(TAG, "In weekSummary.")
         if (time <= 0)
@@ -892,7 +883,7 @@ class TimeSheetDbAdapter
      *
      * @param summaryEnd   The end time for the summary
      */
-    internal fun populateSummary(summaryStart: Long, summaryEnd: Long) {
+    override fun populateSummary(summaryStart: Long, summaryEnd: Long) {
         populateSummary(summaryStart, summaryEnd, true)
     }
 
@@ -904,8 +895,8 @@ class TimeSheetDbAdapter
      * *
      * @param omitOpen     Whether the summary should omit an open task
      */
-    private fun populateSummary(summaryStart: Long, summaryEnd: Long,
-                                omitOpen: Boolean) {
+    override fun populateSummary(summaryStart: Long, summaryEnd: Long,
+                                 omitOpen: Boolean) {
 
         Log.v(TAG, "populateSummary: Creating summary table.")
         instance.readableDatabase.execSQL("""CREATE TEMP TABLE
@@ -951,7 +942,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return rowId or -1 if failed
      */
-    fun createTask(task: String): Long {
+    override fun createTask(task: String): Long {
         Log.d(TAG, "createTask: $task")
         val tempDate = System.currentTimeMillis() // Local time...
 
@@ -975,7 +966,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return rowId or -1 if failed
      */
-    fun createTask(task: String, parent: String, percentage: Int): Long {
+    override fun createTask(task: String, parent: String, percentage: Int): Long {
         Log.d(TAG, "createTask: $task")
         Log.d(TAG, "    parent: $parent")
         Log.d(TAG, "percentage: $percentage")
@@ -1001,7 +992,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return Cursor over all database entries
      */
-    fun fetchParentTasks(): Array<String>? {
+    override fun fetchParentTasks(): Array<String>? {
         Log.d(TAG, "fetchParentTasks: Issuing DB query.")
 
         var retval: Array<String>? = null
@@ -1027,7 +1018,7 @@ GROUP BY TaskSplit.task"""
         percentage INTEGER NOT NULL DEFAULT 100 CHECK(percentage>=0 AND percentage<=100)
      );
      */
-    fun fetchChildTasks(parentID: Long): Array<Long> {
+    override fun fetchChildTasks(parentID: Long): Array<Long> {
         var retval: Array<Long>? = null
         instance.use {
             retval = select("TaskSplit", "task")
@@ -1042,10 +1033,10 @@ GROUP BY TaskSplit.task"""
      *
      * @return Array of all Tasks database entries
      */
-    fun fetchAllTaskEntries(): Array<tasksTuple>? {
+    override fun fetchAllTaskEntries(): Array<ITimeSheetDbAdapter.tasksTuple>? {
         Log.d(TAG, "fetchAllTaskEntries: Issuing DB query.")
 
-        var retval: Array<tasksTuple>? = null
+        var retval: Array<ITimeSheetDbAdapter.tasksTuple>? = null
         instance.use {
             retval = select("Tasks", "_id", "task", "active", "usage", "oldusage", "lastused")
                     .whereArgs("active = '$DB_TRUE'")
@@ -1060,9 +1051,9 @@ GROUP BY TaskSplit.task"""
      *
      * @return Cursor over all database entries
      */
-    fun fetchAllDisabledTasks(): Array<tasksTuple>? {
+    override fun fetchAllDisabledTasks(): Array<ITimeSheetDbAdapter.tasksTuple>? {
         Log.d(TAG, "fetchAllDisabledTasks: Issuing DB query.")
-        var retval: Array<tasksTuple>? = null
+        var retval: Array<ITimeSheetDbAdapter.tasksTuple>? = null
         instance.use {
             retval = select("Tasks",
                     "_id", "task", "active", "usage", "oldusage", "lastused")
@@ -1084,7 +1075,7 @@ GROUP BY TaskSplit.task"""
      * @throws SQLException if entry could not be found/retrieved
      */
     @Throws(SQLException::class)
-    private fun fetchTask(rowId: Long): Cursor {
+    override fun fetchTask(rowId: Long): Cursor {
         Log.d(TAG, "fetchTask: Issuing DB query.")
         val mCursor = instance.readableDatabase.query(true, "Tasks",
                 arrayOf("_id", "task", "active", "usage", "oldusage", "lastused"),
@@ -1098,7 +1089,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return rowId or -1 if failed
      */
-    fun getTaskIDByName(name: String): Long {
+    override fun getTaskIDByName(name: String): Long {
         Log.d(TAG, "getTaskIDByName: Issuing DB query.")
 
         var response: Long = -1L
@@ -1119,7 +1110,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return Name of the task identified by the taskID
      */
-    fun getTaskNameByID(taskID: Long): String? {
+    override fun getTaskNameByID(taskID: Long): String? {
         Log.d(TAG, "getTaskNameByID: Issuing DB query for ID: $taskID")
 
         var response = ""
@@ -1148,7 +1139,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskParent(splitTask: String): Long {
+    override fun getSplitTaskParent(splitTask: String): Long {
         Log.d(TAG, "getSplitTaskParent: $splitTask")
         return getSplitTaskParent(getTaskIDByName(splitTask))
     }
@@ -1160,7 +1151,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskParent(rowId: Long): Long {
+    override fun getSplitTaskParent(rowId: Long): Long {
         Log.d(TAG, "getSplitTaskParent: Issuing DB query. requesting rrrow ID: $rowId")
         var retval: Long = -1L
 
@@ -1190,7 +1181,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskPercentage(splitTask: String): Int {
+    override fun getSplitTaskPercentage(splitTask: String): Int {
         Log.d(TAG, "getSplitTaskPercentage: $splitTask")
         return getSplitTaskPercentage(getTaskIDByName(splitTask))
     }
@@ -1202,7 +1193,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskPercentage(rowId: Long): Int {
+    override fun getSplitTaskPercentage(rowId: Long): Int {
         Log.d(TAG, "getSplitTaskPercentage: Issuing DB query.")
         var retval: Int = -1
 
@@ -1233,7 +1224,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskFlag(splitTask: String): Int {
+    override fun getSplitTaskFlag(splitTask: String): Int {
         Log.d(TAG, "getSplitTaskFlag: $splitTask")
         return getSplitTaskFlag(getTaskIDByName(splitTask))
     }
@@ -1246,7 +1237,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return 1 if the task is part of a split, and if found, 0 otherwise
      */
-    fun getSplitTaskFlag(rowId: Long): Int {
+    override fun getSplitTaskFlag(rowId: Long): Int {
         Log.d(TAG, "getSplitTaskFlag: Issuing DB query.")
         var retval: Int = 0
 
@@ -1276,7 +1267,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return Number of "children" of this task, 0 if none.
      */
-    fun getQuantityOfSplits(rowId: Long): Long {
+    override fun getQuantityOfSplits(rowId: Long): Long {
         Log.d(TAG, "getQuantityOfSplits: Issuing DB query.")
         var retval: Long = 0
 
@@ -1302,7 +1293,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param newName  New task name
      */
-    fun renameTask(origName: String, newName: String) {
+    override fun renameTask(origName: String, newName: String) {
         Log.d(TAG, "renameTask: Issuing DB query.")
         val taskID = getTaskIDByName(origName)
 
@@ -1324,7 +1315,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param split      New split flag state
      */
-    fun alterSplitTask(rowID: Long, parentIDP: Long, percentage: Int, split: Int) {
+    override fun alterSplitTask(rowID: Long, parentIDP: Long, percentage: Int, split: Int) {
         var parentID = parentIDP
         Log.d(TAG, "alterSplitTask: Issuing DB query.")
         val currentParent = getSplitTaskParent(rowID)
@@ -1412,7 +1403,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param taskName The name of the task to be deactivated.
      */
-    fun deactivateTask(taskName: String) {
+    override fun deactivateTask(taskName: String) {
         Log.d(TAG, "deactivateTask: Issuing DB query.")
         val taskID = getTaskIDByName(taskName)
         deactivateTask(taskID)
@@ -1423,7 +1414,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param taskID The ID of the task to be deactivated.
      */
-    fun deactivateTask(taskID: Long) {
+    override fun deactivateTask(taskID: Long) {
         Log.d(TAG, "deactivateTask: Issuing DB query.")
         instance.use {
             update("Tasks", "active" to DB_FALSE).whereArgs("_id = $taskID").exec()
@@ -1435,7 +1426,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param taskName The name of the task to be activated.
      */
-    fun activateTask(taskName: String) {
+    override fun activateTask(taskName: String) {
         Log.d(TAG, "activateTask: Issuing DB query.")
         val taskID = getTaskIDByName(taskName)
         activateTask(taskID)
@@ -1446,7 +1437,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param taskID The ID of the task to be activated.
      */
-    fun activateTask(taskID: Long) {
+    override fun activateTask(taskID: Long) {
         Log.d(TAG, "activateTask: Issuing DB query.")
 
         instance.use {
@@ -1459,10 +1450,10 @@ GROUP BY TaskSplit.task"""
      *
      * @param taskID The ID of the task's usage to be incremented.
      */
-    private fun incrementTaskUsage(taskID: Long) {
+    override fun incrementTaskUsage(taskID: Long) {
         Log.d(TAG, "incrementTaskUsage: Issuing DB query.")
 
-        var usageTuple: taskUsageTuple? = getTaskUsageTuple(taskID)
+        var usageTuple: ITimeSheetDbAdapter.taskUsageTuple? = getTaskUsageTuple(taskID)
         var usage = usageTuple?.usage ?: 0
         var oldUsage = usageTuple?.oldusage ?: 0
         val lastUsed = usageTuple?.lastused ?: 0
@@ -1485,8 +1476,8 @@ GROUP BY TaskSplit.task"""
         }
     }
 
-    fun getTaskUsageTuple(taskID: Long): taskUsageTuple? {
-        var usageTuple: taskUsageTuple? = null
+    override fun getTaskUsageTuple(taskID: Long): ITimeSheetDbAdapter.taskUsageTuple? {
+        var usageTuple: ITimeSheetDbAdapter.taskUsageTuple? = null
         instance.use {
             usageTuple = select("Tasks", "_id", "usage", "oldusage", "lastused")
                     .whereArgs("_id = $taskID").parseOpt(taskUsageParser)
@@ -1495,7 +1486,7 @@ GROUP BY TaskSplit.task"""
     }
 
     // TODO: Is there a better way of doing this?
-    fun getTasksList(): Array<String> {
+    override fun getTasksList(): Array<String> {
         Log.d(TAG, "getTasksList")
         val taskArray = fetchAllTaskEntries()
         val items = mutableListOf<String>()
@@ -1508,7 +1499,7 @@ GROUP BY TaskSplit.task"""
     }
 
     // TODO: Is there a better way of doing this?
-    fun getDayReportList(): Array<String?> {
+    override fun getDayReportList(): Array<String?> {
         Log.d(TAG, "getDayReportList")
         val reportCursor = daySummary()
         try {
@@ -1542,7 +1533,7 @@ GROUP BY TaskSplit.task"""
      * @throws SQLException if note could not be found/retrieved
      */
     @Throws(SQLException::class)
-    internal fun fetchVersion(): Int {
+    override fun fetchVersion(): Int {
         Log.d(TAG, "fetchVersion: Issuing DB query.")
 
         var response = -1
@@ -1556,7 +1547,7 @@ GROUP BY TaskSplit.task"""
      * Generic SQL exec wrapper, for use with statements which do not return
      * values.
      */
-    fun runSQL(sqlTorun: String) {
+    override fun runSQL(sqlTorun: String) {
         instance.use {
             execSQL(sqlTorun)
         }
@@ -1575,8 +1566,8 @@ GROUP BY TaskSplit.task"""
      *
      * @return The number of rows affected
      */
-    fun runUpdate(table: String, values: ContentValues,
-                  whereClause: String, whereArgs: Array<String>): Int {
+    override fun runUpdate(table: String, values: ContentValues,
+                           whereClause: String, whereArgs: Array<String>): Int {
         Log.d(TAG, "Running update on '$table'...")
 
         var retval: Int = -1
@@ -1597,7 +1588,7 @@ GROUP BY TaskSplit.task"""
      *
      * @return The rowID is the just-inserted row
      */
-    fun runInsert(table: String, nullColHack: String, values: ContentValues): Long {
+    override fun runInsert(table: String, nullColHack: String, values: ContentValues): Long {
         Log.d(TAG, "Running update on '$table'...")
 
         var retval: Long = -1L
@@ -1610,7 +1601,7 @@ GROUP BY TaskSplit.task"""
     /**
      * Dumps the contents of the tasks table to logcat, for testing.
      */
-    fun dumpTasks() {
+    override fun dumpTasks() {
         Log.d(TAG, "Dumping tasks table")
 
         data class taskDumpTuple(val id: Long, val task: String)
@@ -1632,7 +1623,7 @@ GROUP BY TaskSplit.task"""
     /**
      * Dumps the contents of the tasks table to logcat, for testing.
      */
-    fun dumpClockings() {
+    override fun dumpClockings() {
         Log.d(TAG, "Dumping clock table")
 
         data class clockingDumpTuple(val id: Long, val chargeno: Long)
