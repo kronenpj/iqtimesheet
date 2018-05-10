@@ -3,6 +3,7 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
+import android.util.Log
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 
 interface ITimeSheetDbAdapter {
@@ -24,7 +25,10 @@ interface ITimeSheetDbAdapter {
      *
      * @return rowId or -1 if failed
      */
-    fun createEntry(task: String): Long
+    fun createEntry(task: String): Long {
+        val chargeno = getTaskIDByName(task)
+        return createEntry(chargeno)
+    }
 
     /**
      * Create a new time entry using the charge number provided. If the entry is
@@ -37,7 +41,10 @@ interface ITimeSheetDbAdapter {
      *
      * @return rowId or -1 if failed
      */
-    fun createEntry(task: String, timeIn: Long): Long
+    fun createEntry(task: String, timeIn: Long): Long {
+        val chargeno = getTaskIDByName(task)
+        return createEntry(chargeno, timeIn)
+    }
 
     /**
      * Create a new time entry using the charge number provided. If the entry is
@@ -58,7 +65,13 @@ interface ITimeSheetDbAdapter {
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(): Int
+    fun closeEntry(): Int {
+        val rowID = lastClockEntry()
+        val chargeTuple = getChargeNoTuple(rowID)
+        val chargeno = chargeTuple?.chargeno ?: -1
+
+        return closeEntry(chargeno)
+    }
 
     /**
      * Close supplied time entry. If the entry is successfully closed, return
@@ -68,7 +81,10 @@ interface ITimeSheetDbAdapter {
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(task: String): Int
+    fun closeEntry(task: String): Int {
+        val chargeno = getTaskIDByName(task)
+        return closeEntry(chargeno)
+    }
 
     /**
      * Close supplied time entry with the supplied time. If the entry is
@@ -81,7 +97,10 @@ interface ITimeSheetDbAdapter {
      *
      * @return rowId or -1 if failed
      */
-    fun closeEntry(task: String, timeOut: Long): Int
+    fun closeEntry(task: String, timeOut: Long): Int {
+        val chargeno = getTaskIDByName(task)
+        return closeEntry(chargeno, timeOut)
+    }
 
     /**
      * Close an existing time entry using the charge number provided. If the
@@ -246,7 +265,9 @@ interface ITimeSheetDbAdapter {
      * @return rowId or -1 if failed
      */
     fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                             start: Long, end: Long): Cursor?
+                             start: Long, end: Long): Cursor? {
+        return getEntryReportCursor(distinct, columns, null, null, start, end)
+    }
 
     /**
      * Retrieve list of entries for the day surrounding the supplied time.
@@ -262,7 +283,9 @@ interface ITimeSheetDbAdapter {
      * @return rowId or -1 if failed
      */
     fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                         start: Long, end: Long): Cursor?
+                         start: Long, end: Long): Cursor? {
+        return getSummaryCursor(distinct, columns, null, null, start, end)
+    }
 
     /**
      * Given a task ID, close the task and, if the ID differs, open a new task.
@@ -295,7 +318,9 @@ interface ITimeSheetDbAdapter {
      *
      * @return Cursor over the results.
      */
-    fun daySummary(omitOpen: Boolean): Cursor?
+    fun daySummary(omitOpen: Boolean): Cursor? {
+        return daySummary(TimeHelpers.millisNow(), omitOpen)
+    }
 
     /**
      * Method that populates a temporary table for a single specified day from
@@ -332,7 +357,9 @@ interface ITimeSheetDbAdapter {
      *
      * @param summaryEnd   The end time for the summary
      */
-    fun populateSummary(summaryStart: Long, summaryEnd: Long)
+    fun populateSummary(summaryStart: Long, summaryEnd: Long) {
+        populateSummary(summaryStart, summaryEnd, true)
+    }
 
     /**
      *
@@ -444,7 +471,9 @@ interface ITimeSheetDbAdapter {
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskParent(splitTask: String): Long
+    fun getSplitTaskParent(splitTask: String): Long {
+        return getSplitTaskParent(getTaskIDByName(splitTask))
+    }
 
     /**
      * Return the entry that matches the given rowId
@@ -462,7 +491,9 @@ interface ITimeSheetDbAdapter {
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskPercentage(splitTask: String): Int
+    fun getSplitTaskPercentage(splitTask: String): Int {
+        return getSplitTaskPercentage(getTaskIDByName(splitTask))
+    }
 
     /**
      * Return the entry that matches the given rowId
@@ -481,7 +512,9 @@ interface ITimeSheetDbAdapter {
      *
      * @return parent's task ID, if found, 0 if not
      */
-    fun getSplitTaskFlag(splitTask: String): Int
+    fun getSplitTaskFlag(splitTask: String): Int {
+        return getSplitTaskFlag(getTaskIDByName(splitTask))
+    }
 
     /**
      * Return the flag whether the task that matches the given rowId is a split
@@ -529,7 +562,10 @@ interface ITimeSheetDbAdapter {
      *
      * @param taskName The name of the task to be deactivated.
      */
-    fun deactivateTask(taskName: String)
+    fun deactivateTask(taskName: String) {
+        val taskID = getTaskIDByName(taskName)
+        deactivateTask(taskID)
+    }
 
     /**
      * Deactivate / retire the task supplied.
@@ -543,7 +579,10 @@ interface ITimeSheetDbAdapter {
      *
      * @param taskName The name of the task to be activated.
      */
-    fun activateTask(taskName: String)
+    fun activateTask(taskName: String) {
+        val taskID = getTaskIDByName(taskName)
+        activateTask(taskID)
+    }
 
     /**
      * Activate the task supplied.

@@ -61,36 +61,6 @@ class TimeSheetDbAdapter
      * successfully created return the new rowId for that note, otherwise return
      * a -1 to indicate failure.
      *
-     * @param task the charge number for the entry
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun createEntry(task: String): Long {
-        val chargeno = getTaskIDByName(task)
-        return createEntry(chargeno)
-    }
-
-    /**
-     * Create a new time entry using the charge number provided. If the entry is
-     * successfully created return the new rowId for that note, otherwise return
-     * a -1 to indicate failure.
-     *
-     * @param task   the charge number for the entry
-     *
-     * @param timeIn the time in milliseconds of the clock-in
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun createEntry(task: String, timeIn: Long): Long {
-        val chargeno = getTaskIDByName(task)
-        return createEntry(chargeno, timeIn)
-    }
-
-    /**
-     * Create a new time entry using the charge number provided. If the entry is
-     * successfully created return the new rowId for that note, otherwise return
-     * a -1 to indicate failure.
-     *
      * @param chargeno the charge number for the entry
      *
      * @param timeInP  the time in milliseconds of the clock-in
@@ -113,49 +83,6 @@ class TimeSheetDbAdapter
             result = insert("TimeSheet", "chargeno" to chargeno, "timein" to timeIn)
         }
         return result
-    }
-
-    /**
-     * Close last time entry. If the entry is successfully closed, return the
-     * rowId for that entry, otherwise return a -1 to indicate failure.
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun closeEntry(): Int {
-        val rowID = lastClockEntry()
-        val chargeTuple = getChargeNoTuple(rowID)
-        val chargeno = chargeTuple?.chargeno ?: -1
-
-        return closeEntry(chargeno)
-    }
-
-    /**
-     * Close supplied time entry. If the entry is successfully closed, return
-     * the rowId for that entry, otherwise return a -1 to indicate failure.
-     *
-     * @param task the charge number for the entry
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun closeEntry(task: String): Int {
-        val chargeno = getTaskIDByName(task)
-        return closeEntry(chargeno)
-    }
-
-    /**
-     * Close supplied time entry with the supplied time. If the entry is
-     * successfully closed, return the rowId for that entry, otherwise return a
-     * -1 to indicate failure.
-     *
-     * @param task    the charge number for the entry
-     *
-     * @param timeOut the time in milliseconds of the clock-out
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun closeEntry(task: String, timeOut: Long): Int {
-        val chargeno = getTaskIDByName(task)
-        return closeEntry(chargeno, timeOut)
     }
 
     /**
@@ -567,16 +494,6 @@ class TimeSheetDbAdapter
      * @return rowId or -1 if failed
      */
     override fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                                      start: Long, end: Long): Cursor? {
-        return getEntryReportCursor(distinct, columns, null, null, start, end)
-    }
-
-    /**
-     * Retrieve list of entries for the day surrounding the supplied time.
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
                                       groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor? {
         // public Cursor query(boolean distinct, String table, String[] columns,
         // String selection, String[] selectionArgs, String groupBy, String
@@ -614,16 +531,6 @@ class TimeSheetDbAdapter
         }
 
         return mCursor
-    }
-
-    /**
-     * Retrieve list of entries for the day surrounding the supplied time.
-     *
-     * @return rowId or -1 if failed
-     */
-    override fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                                  start: Long, end: Long): Cursor? {
-        return getSummaryCursor(distinct, columns, null, null, start, end)
     }
 
     /**
@@ -749,17 +656,6 @@ class TimeSheetDbAdapter
     }
 
     /**
-     * Method that retrieves the entries for today from the entry view.
-     *
-     * @param omitOpen Omit an open task in the result
-     *
-     * @return Cursor over the results.
-     */
-    override fun daySummary(omitOpen: Boolean): Cursor? {
-        return daySummary(TimeHelpers.millisNow(), omitOpen)
-    }
-
-    /**
      * Method that populates a temporary table for a single specified day from
      * the entry view.
      *
@@ -875,16 +771,6 @@ class TimeSheetDbAdapter
             Log.e(TAG, "getSummaryCursor: ${e.localizedMessage}")
             return null
         }
-    }
-
-    /**
-     *
-     * @param summaryStart The start time for the summary
-     *
-     * @param summaryEnd   The end time for the summary
-     */
-    override fun populateSummary(summaryStart: Long, summaryEnd: Long) {
-        populateSummary(summaryStart, summaryEnd, true)
     }
 
     /**
@@ -1177,18 +1063,6 @@ GROUP BY TaskSplit.task"""
     /**
      * Return the entry that matches the given rowId
      *
-     * @param splitTask id of task to retrieve
-     *
-     * @return parent's task ID, if found, 0 if not
-     */
-    override fun getSplitTaskPercentage(splitTask: String): Int {
-        Log.d(TAG, "getSplitTaskPercentage: $splitTask")
-        return getSplitTaskPercentage(getTaskIDByName(splitTask))
-    }
-
-    /**
-     * Return the entry that matches the given rowId
-     *
      * @param rowId id of task to retrieve
      *
      * @return parent's task ID, if found, 0 if not
@@ -1214,19 +1088,6 @@ GROUP BY TaskSplit.task"""
 
         Log.d(TAG, "getSplitTaskPercentage: $retval")
         return retval
-    }
-
-    /**
-     * Return the flag whether the task that matches the given rowId is a split
-     * task.
-     *
-     * @param splitTask name of task to retrieve
-     *
-     * @return parent's task ID, if found, 0 if not
-     */
-    override fun getSplitTaskFlag(splitTask: String): Int {
-        Log.d(TAG, "getSplitTaskFlag: $splitTask")
-        return getSplitTaskFlag(getTaskIDByName(splitTask))
     }
 
     /**
@@ -1401,17 +1262,6 @@ GROUP BY TaskSplit.task"""
     /**
      * Deactivate / retire the task supplied.
      *
-     * @param taskName The name of the task to be deactivated.
-     */
-    override fun deactivateTask(taskName: String) {
-        Log.d(TAG, "deactivateTask: Issuing DB query.")
-        val taskID = getTaskIDByName(taskName)
-        deactivateTask(taskID)
-    }
-
-    /**
-     * Deactivate / retire the task supplied.
-     *
      * @param taskID The ID of the task to be deactivated.
      */
     override fun deactivateTask(taskID: Long) {
@@ -1419,17 +1269,6 @@ GROUP BY TaskSplit.task"""
         instance.use {
             update("Tasks", "active" to DB_FALSE).whereArgs("_id = $taskID").exec()
         }
-    }
-
-    /**
-     * Activate the task supplied.
-     *
-     * @param taskName The name of the task to be activated.
-     */
-    override fun activateTask(taskName: String) {
-        Log.d(TAG, "activateTask: Issuing DB query.")
-        val taskID = getTaskIDByName(taskName)
-        activateTask(taskID)
     }
 
     /**
