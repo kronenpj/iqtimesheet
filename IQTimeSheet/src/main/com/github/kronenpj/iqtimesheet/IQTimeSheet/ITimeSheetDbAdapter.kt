@@ -275,7 +275,7 @@ interface ITimeSheetDbAdapter {
      * @return rowId or -1 if failed
      */
     fun getEntryReportCursor(distinct: Boolean, columns: Array<String>,
-                                       groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor?
+                             groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor?
 
     /**
      * Retrieve list of entries for the day surrounding the supplied time.
@@ -302,7 +302,7 @@ interface ITimeSheetDbAdapter {
      * @return rowId or -1 if failed
      */
     fun getSummaryCursor(distinct: Boolean, columns: Array<String>,
-                                   groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor?
+                         groupBy: String?, orderBy: String?, start: Long, end: Long): Cursor?
 
     /**
      * Retrieve list of entries for the day surrounding the supplied time.
@@ -370,7 +370,7 @@ interface ITimeSheetDbAdapter {
      * @param omitOpen     Whether the summary should omit an open task
      */
     fun populateSummary(summaryStart: Long, summaryEnd: Long,
-                                omitOpen: Boolean)
+                        omitOpen: Boolean)
 
     /**
      * Create a new time entry using the charge number provided. If the entry is
@@ -411,14 +411,6 @@ interface ITimeSheetDbAdapter {
      * of the supplied split task parent.
      *
      * @return Array over all matching database entries
-     */
-    /*
-    CREATE TABLE TaskSplit (
-        _id INTEGER PRIMARY KEY AUTOINCREMENT,
-        chargeno INTEGER NOT NULL REFERENCES Tasks(_id),
-        task INTEGER NOT NULL REFERENCES Tasks(_id),
-        percentage INTEGER NOT NULL DEFAULT 100 CHECK(percentage>=0 AND percentage<=100)
-     );
      */
     fun fetchChildTasks(parentID: Long): Array<Long>
 
