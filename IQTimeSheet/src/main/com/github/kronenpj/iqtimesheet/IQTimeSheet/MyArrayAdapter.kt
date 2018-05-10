@@ -98,9 +98,11 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
 
         val view = super.getView(position, convertView, parent) as View
         val text = view as TextView
+        var red = 255
+        var green = 255
+        var blue = 255
         // FIXME: Horrible hack to get the list visible in a dark theme.
         // I've invested hours trying to figure out the proper way to fix this.
-        text.setTextColor(Color.WHITE)
         // FIXME: Need to figure out how to obtain the TimeSheetDbAdapter.getTaskUsageTuple
         // information without bogging the app down horribly. Because this is horrible.
         try {
@@ -108,13 +110,24 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
             val myTaskID = dbA.getTaskIDByName(text.text.toString())
             val usageTuple = dbA.getTaskUsageTuple(myTaskID)
             val parentTask = dbA.getSplitTaskParent(myTaskID)
-            if (parentTask > 0)
-                text.setTextColor(Color.YELLOW)
-            if (usageTuple!!.usage < 0)
-                text.setTextColor(Color.GRAY)
+            if (parentTask > 0) {
+                // TODO: Make this a property/setting.
+                // Yellow
+                red = 255
+                green = 250
+                blue = 0
+            }
+            if (usageTuple!!.usage < 0) {
+                // Gray-ify the current color.
+                red = (red * .75).toInt()
+                green = (green*.75).toInt()
+                blue = (blue*.75).toInt()
+            }
         } catch (e: Exception) {
-            Log.i("MyArrayAdapter","Retrieval of usageTuple failed for: " + text.text.toString())
+            Log.i("MyArrayAdapter", "Retrieval of usageTuple failed for: " + text.text.toString())
         }
+
+        text.setTextColor(Color.rgb(red, green, blue))
         return text
     }
 }
