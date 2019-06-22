@@ -85,8 +85,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
     }
 
     private fun reloadTaskCursor(db: TimeSheetDbAdapter) {
-        val temp: Array<ITimeSheetDbAdapter.tasksTuple>?
-        temp = db.fetchAllDisabledTasks()
+        val temp: Array<ITimeSheetDbAdapter.tasksTuple>? = db.fetchAllDisabledTasks()
         taskCursor.clear()
         if (temp != null) {
             for ((_, task) in temp) {
@@ -97,7 +96,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
     }
 
     private fun reactivateTask(taskName: String) {
-        Log.d(TAG, "Reactivating task " + taskName)
+        Log.d(TAG, "Reactivating task $taskName")
         val db = TimeSheetDbAdapter(applicationContext)
 
         db.activateTask(taskName)
@@ -127,16 +126,16 @@ class ReviveTaskFragment : ActionBarListActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+        return when (menuItem.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(menuItem)
+            else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
     companion object {
-        private val TAG = "ReviveTaskHandler"
+        private const val TAG = "ReviveTaskHandler"
     }
 }

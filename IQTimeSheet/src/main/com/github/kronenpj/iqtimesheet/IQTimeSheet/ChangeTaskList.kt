@@ -50,7 +50,7 @@ class ChangeTaskList : ListActivity() {
         try {
             fillData()
         } catch (e: Exception) {
-            Log.d(TAG, "fillData: " + e.toString())
+            Log.d(TAG, "fillData: $e")
         }
 
         try {
@@ -84,6 +84,6 @@ class ChangeTaskList : ListActivity() {
     }
 
     companion object {
-        private val TAG = "ChangeTaskList"
+        private const val TAG = "ChangeTaskList"
     }
 }

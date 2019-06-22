@@ -3,7 +3,6 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
-import android.util.Log
 import com.github.kronenpj.iqtimesheet.TimeHelpers
 
 interface ITimeSheetDbAdapter {
@@ -160,7 +159,7 @@ interface ITimeSheetDbAdapter {
      * specified using the rowId, and it is altered to use the date and time
      * values passed in
      *
-     * @param rowId    id of entry to update
+     * @param rowIdP    id of entry to update
      *
      * @param chargeno change number to update
      *
@@ -541,7 +540,7 @@ interface ITimeSheetDbAdapter {
      *
      * @param rowID      Task ID to change
      *
-     * @param parentID   New parent ID
+     * @param parentIDP   New parent ID
      *
      * @param percentage New percentage
      *
@@ -652,7 +651,7 @@ interface ITimeSheetDbAdapter {
     fun dumpClockings()
 
     companion object {
-        val DB_FALSE: String = "0"
-        val DB_TRUE: String = "1"
+        const val DB_FALSE: String = "0"
+        const val DB_TRUE: String = "1"
     }
 }

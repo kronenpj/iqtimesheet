@@ -8,12 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import org.jetbrains.anko.applyRecursively
-import org.jetbrains.anko.custom.style
-import org.jetbrains.anko.textColor
-import com.github.kronenpj.iqtimesheet.IQTimeSheet.TimeSheetDbAdapter
-
-import java.util.Arrays
+import java.util.*
 
 internal class MyArrayAdapter<T> : ArrayAdapter<T> {
     /**

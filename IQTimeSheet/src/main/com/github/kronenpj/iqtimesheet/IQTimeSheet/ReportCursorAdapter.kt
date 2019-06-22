@@ -70,6 +70,6 @@ class ReportCursorAdapter
     }
 
     companion object {
-        private val TAG = "ReportCursorAdapter"
+        private const val TAG = "ReportCursorAdapter"
     }
 }

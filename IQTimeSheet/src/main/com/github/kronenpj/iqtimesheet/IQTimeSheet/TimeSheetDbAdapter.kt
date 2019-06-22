@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.SQLException
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import com.github.kronenpj.iqtimesheet.IQTimeSheet.ITimeSheetDbAdapter.Companion.DB_FALSE
@@ -26,7 +27,7 @@ class TimeSheetDbAdapter
                           private var instance: MySqlHelper = MySqlHelper.getInstance(mCtx)) : ITimeSheetDbAdapter {
 
     companion object {
-        private val TAG = "TimeSheetDbAdapter"
+        private const val TAG = "TimeSheetDbAdapter"
     }
 
     /* From Anko README
@@ -122,10 +123,14 @@ class TimeSheetDbAdapter
 
         var result = 0
         // TODO: Figure out how to get the Long return code here.
-        instance.use {
-            result = update("TimeSheet", "timeout" to timeOut)
-                    .whereArgs("_id = ${lastClockEntry()} and chargeno = $chargeno")
-                    .exec()
+        try {
+            instance.use {
+                result = update("TimeSheet", "timeout" to timeOut)
+                        .whereArgs("_id = ${lastClockEntry()} and chargeno = $chargeno")
+                        .exec()
+            }
+        } catch (e: SQLiteConstraintException) {
+            result = -1
         }
         return result
     }
@@ -200,7 +205,7 @@ class TimeSheetDbAdapter
      * specified using the rowId, and it is altered to use the date and time
      * values passed in
      *
-     * @param rowId    id of entry to update
+     * @param rowIdP    id of entry to update
      *
      * @param chargeno change number to update
      *
@@ -479,7 +484,7 @@ class TimeSheetDbAdapter
             return null
         }
 
-        rows = kotlin.LongArray((tmp as List<Long>).count())
+        rows = LongArray((tmp as List<Long>).count())
         var count = 0
         (tmp as List<Long>).forEach {
             rows[count++] = it
@@ -502,14 +507,14 @@ class TimeSheetDbAdapter
         val selection: String
         val endDay = TimeHelpers.millisToDayOfMonth(end - 1000)
         val now = TimeHelpers.millisNow()
-        if (TimeHelpers.millisToDayOfMonth(now - 1000) == endDay ||
+        selection = if (TimeHelpers.millisToDayOfMonth(now - 1000) == endDay ||
                 TimeHelpers.millisToDayOfMonth(TimeHelpers.millisToEndOfWeek(now - 1000,
                         TimeSheetActivity.prefs!!.weekStartDay,
                         TimeSheetActivity.prefs!!.weekStartHour)) == endDay) {
             Log.d(TAG, "getEntryReportCursor: Allowing selection of zero-end-hour entries.")
-            selection = "timein >=? and timeout <= ? and (timeout >= timein or timeout = 0)"
+            "timein >=? and timeout <= ? and (timeout >= timein or timeout = 0)"
         } else {
-            selection = "timein >=? and timeout <= ? and timeout >= timein"
+            "timein >=? and timeout <= ? and timeout >= timein"
         }
 
         Log.d(TAG, "getEntryReportCursor: Selection criteria: $selection")
@@ -522,7 +527,7 @@ class TimeSheetDbAdapter
 
         mCursor?.moveToLast() ?: Log.e(TAG, "getEntryReportCursor: mCursor for range is null.")
 
-        if (mCursor?.isAfterLast ?: true) {
+        if (mCursor?.isAfterLast != false) {
             Log.d(TAG, "getEntryReportCursor: mCursor for range is empty.")
             // Toast.makeText(mCtx,
             // "No entries in the database for supplied range.",
@@ -609,22 +614,22 @@ class TimeSheetDbAdapter
         var select = "SELECT "
         if (distinct) select += "DISTINCT "
         for (c in columns.indices) {
-            if (c == 0) {
-                select += columns[c]
+            select += if (c == 0) {
+                columns[c]
             } else {
-                select += (", " + columns[c])
+                (", " + columns[c])
             }
         }
         select += " FROM Summary WHERE total > 0"
-        if (groupBy != null) select += " GROUP BY " + groupBy
-        if (orderBy != null) select += " ORDER BY " + orderBy
+        if (groupBy != null) select += " GROUP BY $groupBy"
+        if (orderBy != null) select += " ORDER BY $orderBy"
         Log.d(TAG, "getSummaryCursor: query: $select")
 
         val mCursor = instance.readableDatabase.rawQuery(select, null)
 
         mCursor?.moveToLast() ?: Log.e(TAG, "entryReport mCursor for range is null.")
 
-        if (mCursor?.isAfterLast ?: true) {
+        if (mCursor?.isAfterLast != false) {
             Log.d(TAG, "entryReport mCursor for range is empty.")
             // Toast.makeText(mCtx,
             // "No entries in the database for supplied range.",
@@ -696,12 +701,12 @@ class TimeSheetDbAdapter
         val columns = arrayOf("_id", "task", "total")
         val groupBy = "task"
         val orderBy = "total DESC"
-        try {
-            return getSummaryCursor(true, columns, groupBy, orderBy,
+        return try {
+            getSummaryCursor(true, columns, groupBy, orderBy,
                     todayStart, todayEnd)
         } catch (e: SQLiteException) {
             Log.e(TAG, "getSummaryCursor: $e")
-            return null
+            null
         }
     }
 
@@ -764,12 +769,12 @@ class TimeSheetDbAdapter
         val columns = arrayOf("_id", "task", "total")
         val groupBy = "task"
         val orderBy = "total DESC"
-        try {
-            return getSummaryCursor(true, columns, groupBy, orderBy, weekStart,
+        return try {
+            getSummaryCursor(true, columns, groupBy, orderBy, weekStart,
                     weekEnd)
         } catch (e: SQLiteException) {
             Log.e(TAG, "getSummaryCursor: ${e.localizedMessage}")
-            return null
+            null
         }
     }
 
@@ -802,7 +807,7 @@ SUM((CASE WHEN TimeSheet.timeout = 0 THEN ${TimeHelpers.millisNow()} ELSE
 TimeSheet.timeout END - TimeSheet.timein )/3600000.0) AS total FROM TimeSheet, Tasks
 WHERE TimeSheet.timeout <= $summaryEnd AND $omitOpenQuery TimeSheet.timein >=
 $summaryStart AND TimeSheet.chargeno = Tasks._id AND Tasks.split = 0 GROUP BY task"""
-        Log.v(TAG, "populateTemp1\n" + populateTemp1)
+        Log.v(TAG, "populateTemp1\n$populateTemp1")
         instance.readableDatabase.execSQL(populateTemp1)
 
         val populateTemp2 = """INSERT INTO Summary (task,total) SELECT
@@ -863,7 +868,7 @@ GROUP BY TaskSplit.task"""
         var retval: Long = -1L
         instance.use {
             newRow = insert("Tasks", "task" to task, "lastused" to tempDate, "split" to 1)
-            Log.d(TAG, "new row   : " + newRow)
+            Log.d(TAG, "new row   : $newRow")
             update("Tasks", "split" to 2).whereArgs("_id = $parentId").exec()
             retval = insert("TaskSplit", "task" to newRow, "chargeno" to parentId,
                     "percentage" to percentage)
@@ -1117,7 +1122,7 @@ GROUP BY TaskSplit.task"""
             Log.d(TAG, "getSplitTaskFlag: Ignoring SQLException: $e")
         }
 
-        Log.d(TAG, "getSplitTaskFlag: " + retval)
+        Log.d(TAG, "getSplitTaskFlag: $retval")
         return retval
     }
 
@@ -1170,7 +1175,7 @@ GROUP BY TaskSplit.task"""
      *
      * @param rowID      Task ID to change
      *
-     * @param parentID   New parent ID
+     * @param parentIDP   New parent ID
      *
      * @param percentage New percentage
      *
@@ -1292,7 +1297,7 @@ GROUP BY TaskSplit.task"""
     override fun incrementTaskUsage(taskID: Long) {
         Log.d(TAG, "incrementTaskUsage: Issuing DB query.")
 
-        var usageTuple: ITimeSheetDbAdapter.taskUsageTuple? = getTaskUsageTuple(taskID)
+        val usageTuple: ITimeSheetDbAdapter.taskUsageTuple? = getTaskUsageTuple(taskID)
         var usage = usageTuple?.usage ?: 0
         var oldUsage = usageTuple?.oldusage ?: 0
         val lastUsed = usageTuple?.lastused ?: 0
@@ -1306,7 +1311,7 @@ GROUP BY TaskSplit.task"""
         // Roll-over the old usage when transitioning into a new month.
         if (todayCal.get(Calendar.MONTH) != dateLastUsedCal.get(Calendar.MONTH)) {
             oldUsage = usage
-            if (usage >= 0) usage = 0 else usage = -1
+            usage = if (usage >= 0) 0 else -1
         }
 
         instance.use {

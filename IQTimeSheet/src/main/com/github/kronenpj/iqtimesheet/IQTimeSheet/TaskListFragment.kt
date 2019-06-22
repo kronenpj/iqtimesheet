@@ -25,7 +25,7 @@ class TaskListFragment : ListFragment() {
         /**
          * The fragment argument representing the section number for this fragment.
          */
-        val ARG_SECTION_NUMBER = "section_number"
-        private val TAG = "TaskListFragment"
+        const val ARG_SECTION_NUMBER = "section_number"
+        private const val TAG = "TaskListFragment"
     }
 }

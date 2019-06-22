@@ -16,20 +16,17 @@ import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.ContextMenu
+import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.Checkable
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import com.crashlytics.android.Crashlytics
 import com.github.kronenpj.iqtimesheet.TimeHelpers
+import io.fabric.sdk.android.Fabric
 import java.util.*
-import kotlinx.android.synthetic.main.activity_time_sheet.*
-import kotlinx.android.synthetic.main.fragment_tasklist.*
 
 class TimeSheetActivity : AppCompatActivity() {
 
@@ -58,6 +55,7 @@ class TimeSheetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+        Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_time_sheet)
 
         prefs = PreferenceHelper(applicationContext)
@@ -67,7 +65,7 @@ class TimeSheetActivity : AppCompatActivity() {
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById<ViewPager>(R.id.pager)
+        mViewPager = findViewById(R.id.pager)
         mViewPager!!.adapter = mSectionsPagerAdapter
 
         mViewPager!!.addOnPageChangeListener(object : OnPageChangeListener {
@@ -84,9 +82,9 @@ class TimeSheetActivity : AppCompatActivity() {
                 Log.d(TAG, "HoD Preference: ${prefs!!.weekStartHour}")
                 checkCrossDayClock()
                 if (TimeHelpers.millisToDayOfWeek(TimeHelpers.millisNow()) ==
-                        TimeSheetActivity.prefs!!.weekStartDay &&
-                        TimeSheetActivity.prefs!!.weekStartHour > 0)
-                    checkCrossSplitClock(TimeSheetActivity.prefs!!.weekStartHour)
+                        prefs!!.weekStartDay &&
+                        prefs!!.weekStartHour > 0)
+                    checkCrossSplitClock(prefs!!.weekStartHour)
                 when (position) {
                     0 -> {
                         run {
@@ -203,7 +201,7 @@ class TimeSheetActivity : AppCompatActivity() {
                     }
                 }
                 try {
-                    refreshTaskListAdapter(findViewById<ListView>(R.id.tasklistfragment))
+                    refreshTaskListAdapter(findViewById(R.id.tasklistfragment))
                 } catch (e: NullPointerException) {
                     Log.d(TAG, "TaskAdd refreshTaskListAdapter: $e")
                 }
@@ -214,7 +212,7 @@ class TimeSheetActivity : AppCompatActivity() {
             // the result back to us.
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    refreshTaskListAdapter(findViewById<ListView>(R.id.tasklistfragment))
+                    refreshTaskListAdapter(findViewById(R.id.tasklistfragment))
                 } catch (e: NullPointerException) {
                     Log.d(TAG, "TaskRevive refreshTaskListAdapter: $e")
                 }
@@ -312,7 +310,7 @@ class TimeSheetActivity : AppCompatActivity() {
             }
             R.id.menu_backup -> {
                 if (!SDBackup.doSDBackup(MySqlHelper.DATABASE_NAME,
-                        applicationContext.packageName)) {
+                                applicationContext.packageName)) {
                     Log.w(TAG, "doSDBackup failed.")
                     Toast.makeText(applicationContext,
                             "Database backup failed.", Toast.LENGTH_LONG).show()
@@ -369,7 +367,7 @@ class TimeSheetActivity : AppCompatActivity() {
      *
      * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
      */
-    override fun onContextItemSelected(item: android.view.MenuItem): Boolean {
+    override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterContextMenuInfo
         if (item.itemId == ActivityCodes.EDIT_ID.ordinal) {
             Log.d(TAG, "Edit task: " + info.id)
@@ -442,7 +440,7 @@ class TimeSheetActivity : AppCompatActivity() {
                         }
                 dialog = builder.create()
             }
-        // This may be dead code now...
+            // This may be dead code now...
             CONFIRM_RESTORE_DIALOG -> {
                 Log.d(TAG, "in onCreateDialog (restore)")
                 builder = AlertDialog.Builder(applicationContext)
@@ -452,9 +450,9 @@ class TimeSheetActivity : AppCompatActivity() {
                         ) { dialog, id ->
                             Log.d(TAG, "in onClick (restore dialog)")
                             if (!SDBackup.doSDRestore(
-                                    MySqlHelper.DATABASE_NAME,
-                                    applicationContext
-                                            .packageName)) {
+                                            MySqlHelper.DATABASE_NAME,
+                                            applicationContext
+                                                    .packageName)) {
                                 Log.w(TAG, "doSDRestore failed.")
                                 Toast.makeText(applicationContext,
                                         "Database restore failed.",
@@ -578,7 +576,7 @@ class TimeSheetActivity : AppCompatActivity() {
         // TODO: There should be a better way to do this.
         // Iterate over the entire ListView to find the name of the
         // entry that is to be selected.
-        for (i in 0..myTaskList.count - 1) {
+        for (i in 0 until myTaskList.count) {
             if (taskName!!.equals(myTaskList.getItemAtPosition(i) as String, ignoreCase = true)) {
                 myTaskList.setItemChecked(i, true)
                 myTaskList.setSelection(i)
@@ -635,7 +633,7 @@ class TimeSheetActivity : AppCompatActivity() {
         Log.d(TAG, "In refreshReportListAdapter")
 
         val db = TimeSheetDbAdapter(applicationContext)
-        val dayHours = TimeSheetActivity.prefs!!.hoursPerDay
+        val dayHours = prefs!!.hoursPerDay
         val date = TimeHelpers.millisToDate(day)
         Log.d(TAG, "refreshReportListAdapter: Updating to ${TimeHelpers.millisToTimeDate(day)}")
 
@@ -652,11 +650,11 @@ class TimeSheetActivity : AppCompatActivity() {
         // where the current open task exists, then include it, otherwise
         // omit.
         try {
-            if (day >= TimeHelpers.millisToStartOfDay(TimeHelpers.millisNow()) &&
+            timeEntryCursor = if (day >= TimeHelpers.millisToStartOfDay(TimeHelpers.millisNow()) &&
                     day <= TimeHelpers.millisToEndOfDay(TimeHelpers.millisNow())) {
-                timeEntryCursor = db.daySummary(day, false)!!
+                db.daySummary(day, false)!!
             } else {
-                timeEntryCursor = db.daySummary(day, true)!!
+                db.daySummary(day, true)!!
             }
 
             timeEntryCursor.moveToFirst()
@@ -713,7 +711,7 @@ class TimeSheetActivity : AppCompatActivity() {
         Log.d(TAG, "In refreshWeekReportListAdapter")
 
         val db = TimeSheetDbAdapter(applicationContext)
-        val weekHours = TimeSheetActivity.prefs!!.hoursPerWeek
+        val weekHours = prefs!!.hoursPerWeek
         val date = TimeHelpers.millisToDate(TimeHelpers.millisToEndOfWeek(day,
                 prefs!!.weekStartDay, prefs!!.weekStartHour))
         Log.d(TAG, "refreshWeekReportListAdapter: Updating to $date")
@@ -737,12 +735,12 @@ class TimeSheetActivity : AppCompatActivity() {
         // If the day being reported is the current week, most probably
         // where the current open task exists, then include it, otherwise
         // omit.
-        if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow()) &&
+        timeEntryCursor = if (day >= TimeHelpers.millisToStartOfWeek(TimeHelpers.millisNow()) &&
                 day <= TimeHelpers.millisToEndOfWeek(TimeHelpers.millisNow(),
                         prefs!!.weekStartDay, prefs!!.weekStartHour)) {
-            timeEntryCursor = db.weekSummary(day, false)
+            db.weekSummary(day, false)
         } else {
-            timeEntryCursor = db.weekSummary(day, true)
+            db.weekSummary(day, true)
         }
 
         if (timeEntryCursor == null) {
@@ -838,7 +836,7 @@ class TimeSheetActivity : AppCompatActivity() {
     fun doRestoreClick() {
         Log.d(TAG, "in doRestoreClick")
         if (!SDBackup.doSDRestore(MySqlHelper.DATABASE_NAME,
-                applicationContext.packageName)) {
+                        applicationContext.packageName)) {
             Log.w(TAG, "doSDRestore failed.")
             Toast.makeText(applicationContext, "Database restore failed.",
                     Toast.LENGTH_LONG).show()
@@ -993,18 +991,23 @@ class TimeSheetActivity : AppCompatActivity() {
 
         // TODO: This should be handled better.
         // Less than one day
-        if (delta < 1) {
-            Log.d(TAG, "Ignoring.  delta = $delta")
-        } else if (now - TimeHelpers.millisToStartOfDay(lastClockIn) > 86400000) { // More
-            // than one day.
-            Log.d(TAG, "Closing entry.  delta = ${delta / 86400000.0} days.")
-            Log.d(TAG, "With timeOut = $boundary")
-            db.closeEntry(lastTaskID, boundary)
-            refreshTaskListAdapter()
-        } else if (delta > 0) { // Now is beyond the boundary.
-            Log.d(TAG, "Opening dialog.  delta = $delta")
-            db.closeEntry(lastTaskID, boundary)
-            showDialog(CROSS_DIALOG)
+        when {
+            delta < 1 -> Log.d(TAG, "Ignoring.  delta = $delta")
+            now - TimeHelpers.millisToStartOfDay(lastClockIn) > 86400000 -> { // More
+                // than one day.
+                Log.d(TAG, "Closing entry.  delta = ${delta / 86400000.0} days.")
+                Log.d(TAG, "With timeOut = $boundary")
+                db.closeEntry(lastTaskID, boundary)
+                refreshTaskListAdapter()
+            }
+            delta > 0 -> { // Now is beyond the boundary.
+                Log.d(TAG, "Opening dialog.  delta = $delta")
+                db.closeEntry(lastTaskID, boundary)
+                try {
+                    showDialog(CROSS_DIALOG)
+                } catch (e: WindowManager.BadTokenException) {
+                }
+            }
         }
 
         try {
@@ -1018,11 +1021,11 @@ class TimeSheetActivity : AppCompatActivity() {
         val thisActivity = this
 
         if (ContextCompat.checkSelfPermission(thisActivity.applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.

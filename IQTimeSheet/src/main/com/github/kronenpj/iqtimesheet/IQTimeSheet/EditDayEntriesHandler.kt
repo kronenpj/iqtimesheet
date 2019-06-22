@@ -164,7 +164,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
      * @param itemID The entry ID being changed.
      */
     private fun processChange(itemID: Long) {
-        Log.d(TAG, "processChange: " + itemID)
+        Log.d(TAG, "processChange: $itemID")
         val intent = Intent(this@EditDayEntriesHandler, ChangeEntryHandler::class.java)
 
         val entryCursor = db!!.fetchEntry(itemID)
@@ -267,12 +267,12 @@ class EditDayEntriesHandler : ActionBarListActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+        return when (menuItem.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(menuItem)
+            else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
@@ -292,7 +292,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
     }
 
     companion object {
-        private val TAG = "EditDayEntriesHandler"
-        val ENTRY_ID = "entryID"
+        private const val TAG = "EditDayEntriesHandler"
+        const val ENTRY_ID = "entryID"
     }
 }

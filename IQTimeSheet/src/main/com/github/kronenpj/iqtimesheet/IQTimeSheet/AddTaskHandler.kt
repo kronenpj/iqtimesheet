@@ -95,7 +95,7 @@ class AddTaskHandler : Activity() {
 
         val item = (v as Button).text.toString()
         if (item.equals("cancel", ignoreCase = true)) {
-            setResult(Activity.RESULT_CANCELED, Intent().setAction(item))
+            setResult(RESULT_CANCELED, Intent().setAction(item))
         } else {
             val result = EditTask!!.text.toString()
             val mIntent = Intent()
@@ -105,7 +105,7 @@ class AddTaskHandler : Activity() {
                 mIntent.putExtra("percentage", PercentSlider!!.progress)
             }
             mIntent.action = result
-            setResult(Activity.RESULT_OK, mIntent)
+            setResult(RESULT_OK, mIntent)
         }
         finish()
     }
@@ -158,7 +158,7 @@ class AddTaskHandler : Activity() {
         if (!hasFocus) {
             try {
                 var temp = Integer.valueOf((v as TextView).text
-                        .toString())!!
+                        .toString())
                 if (temp > 100) temp = 100
                 if (temp < 0) temp = 0
                 PercentSlider!!.progress = temp
@@ -175,7 +175,7 @@ class AddTaskHandler : Activity() {
      */
     private val mEditorListener = OnEditorActionListener { v, actionId, event ->
         try {
-            var temp = Integer.valueOf(v.text.toString())!!
+            var temp = Integer.valueOf(v.text.toString())
             if (temp > 100) temp = 100
             if (temp < 0) temp = 0
             PercentSlider!!.progress = temp
@@ -188,6 +188,6 @@ class AddTaskHandler : Activity() {
     }
 
     companion object {
-        private val TAG = "AddTaskHandler"
+        private const val TAG = "AddTaskHandler"
     }
 }

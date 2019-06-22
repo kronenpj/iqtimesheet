@@ -37,9 +37,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
-
-import java.util.Calendar
-import java.util.TimeZone
+import java.util.*
 
 /**
  * Class to encapsulate preference handling for the application.
@@ -47,11 +45,7 @@ import java.util.TimeZone
  * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
  */
 class PreferenceHelper(mCtx: Context) {
-    private val prefs: SharedPreferences
-
-    init {
-        prefs = PreferenceManager.getDefaultSharedPreferences(mCtx)
-    }
+    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx)
 
     // Be careful here - The list used by the preferences activity is based
     // on String, not any other primitive or class... This threw cast
@@ -63,9 +57,9 @@ class PreferenceHelper(mCtx: Context) {
             var alignMinutes = 1
             try {
                 alignMinutes = Integer.valueOf(prefs.getString(KEY_ALIGN_MINUTES,
-                        "1"))!!
+                        "1"))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_ALIGN_MINUTES + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_ALIGN_MINUTES threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_ALIGN_MINUTES: $alignMinutes")
@@ -95,7 +89,7 @@ class PreferenceHelper(mCtx: Context) {
                 alignTimePicker = prefs.getBoolean(KEY_ALIGN_TIME_PICKER, true)
             } catch (e: Exception) {
                 Log.e(TAG,
-                        KEY_ALIGN_TIME_PICKER + " threw exception: " + e.toString())
+                        "$KEY_ALIGN_TIME_PICKER threw exception: $e")
             }
 
             Log.d(TAG, "Preference " + KEY_ALIGN_TIME_PICKER + ": "
@@ -112,9 +106,9 @@ class PreferenceHelper(mCtx: Context) {
         get() {
             var hoursDay = 8.0.toFloat()
             try {
-                hoursDay = java.lang.Float.valueOf(prefs.getString(KEY_HOURS_DAY, "8"))!!
+                hoursDay = java.lang.Float.valueOf(prefs.getString(KEY_HOURS_DAY, "8"))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_HOURS_DAY + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_HOURS_DAY threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_HOURS_DAY: $hoursDay")
@@ -130,9 +124,9 @@ class PreferenceHelper(mCtx: Context) {
         get() {
             var hoursWeek = 40.0.toFloat()
             try {
-                hoursWeek = java.lang.Float.valueOf(prefs.getString(KEY_HOURS_WEEK, "40"))!!
+                hoursWeek = java.lang.Float.valueOf(prefs.getString(KEY_HOURS_WEEK, "40"))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_HOURS_WEEK + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_HOURS_WEEK threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_HOURS_WEEK: $hoursWeek")
@@ -149,9 +143,9 @@ class PreferenceHelper(mCtx: Context) {
             var totalsFontSize = FONTSIZE_TOTAL_DEFAULT
             try {
                 totalsFontSize = java.lang.Float.valueOf(prefs.getString(KEY_TOTAL_FONTSIZE,
-                        FONTSIZE_TOTAL_DEFAULT.toString()))!!
+                        FONTSIZE_TOTAL_DEFAULT.toString()))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_TOTAL_FONTSIZE + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_TOTAL_FONTSIZE threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_TOTAL_FONTSIZE: $totalsFontSize")
@@ -171,10 +165,10 @@ class PreferenceHelper(mCtx: Context) {
             try {
                 fontSizeTaskList = java.lang.Float.valueOf(prefs.getString(
                         KEY_FONTSIZE_TASKLIST,
-                        FONTSIZE_TASKLIST_DEFAULT.toString()))!!
+                        FONTSIZE_TASKLIST_DEFAULT.toString()))
             } catch (e: Exception) {
                 Log.e(TAG,
-                        KEY_FONTSIZE_TASKLIST + " threw exception: " + e.toString())
+                        "$KEY_FONTSIZE_TASKLIST threw exception: $e")
             }
 
             return fontSizeTaskList
@@ -195,7 +189,7 @@ class PreferenceHelper(mCtx: Context) {
                 timeZoneAnchor = TimeZone.getTimeZone(tzpref)
             } catch (e: Exception) {
                 Log.e(TAG,
-                        KEY_TIMEZONE_ANCHOR + " threw exception: " + e.toString())
+                        "$KEY_TIMEZONE_ANCHOR threw exception: $e")
             }
 
             return timeZoneAnchor
@@ -225,7 +219,7 @@ class PreferenceHelper(mCtx: Context) {
             try {
                 backup = prefs.getBoolean(KEY_SDCARD_BACKUP, true)
             } catch (e: Exception) {
-                Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_SDCARD_BACKUP threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_SDCARD_BACKUP: $backup")
@@ -237,7 +231,7 @@ class PreferenceHelper(mCtx: Context) {
                 editor.putBoolean(KEY_SDCARD_BACKUP, backup)
                 editor.apply()
             } catch (e: Exception) {
-                Log.e(TAG, KEY_SDCARD_BACKUP + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_SDCARD_BACKUP threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_SDCARD_BACKUP: $backup")
@@ -248,9 +242,9 @@ class PreferenceHelper(mCtx: Context) {
             var startDay = Calendar.MONDAY
             try {
                 startDay = Integer.valueOf(prefs.getString(KEY_WEEK_START_DAY,
-                        Integer.toString(Calendar.MONDAY)))!!
+                        Integer.toString(Calendar.MONDAY)))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_WEEK_START_DAY + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_WEEK_START_DAY threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_WEEK_START_DAY: $startDay")
@@ -261,9 +255,9 @@ class PreferenceHelper(mCtx: Context) {
         get() {
             var startHour = 0
             try {
-                startHour = Integer.valueOf(prefs.getString(KEY_WEEK_START_HOUR, "0"))!!
+                startHour = Integer.valueOf(prefs.getString(KEY_WEEK_START_HOUR, "0"))
             } catch (e: Exception) {
-                Log.e(TAG, KEY_WEEK_START_HOUR + " threw exception: " + e.toString())
+                Log.e(TAG, "$KEY_WEEK_START_HOUR threw exception: $e")
             }
 
             Log.d(TAG, "Preference $KEY_WEEK_START_HOUR: $startHour")
@@ -271,21 +265,21 @@ class PreferenceHelper(mCtx: Context) {
         }
 
     companion object {
-        private val FONTSIZE_TOTAL_DEFAULT = 14.0f
-        private val FONTSIZE_TASKLIST_DEFAULT = 12.0f
-        private val TAG = "PreferenceHelper"
+        private const val FONTSIZE_TOTAL_DEFAULT = 14.0f
+        private const val FONTSIZE_TASKLIST_DEFAULT = 12.0f
+        private const val TAG = "PreferenceHelper"
 
-        val KEY_ALIGN_MINUTES = "align.minutes"
-        val KEY_ALIGN_MINUTES_AUTO = "align.minutes.auto"
-        val KEY_ALIGN_TIME_PICKER = "align.time.picker"
-        val KEY_HOURS_DAY = "hours.day"
-        val KEY_HOURS_WEEK = "hours.week"
-        val KEY_FONTSIZE_TASKLIST = "fontSize.tasklist"
-        val KEY_TOTAL_FONTSIZE = "total.fontSize"
-        val KEY_PERSISTENT_NOTIFICATION = "persistent.notification"
-        val KEY_SDCARD_BACKUP = "db.on.sdcard"
-        val KEY_TIMEZONE_ANCHOR = "tz.anchor"
-        val KEY_WEEK_START_DAY = "week.startday"
-        val KEY_WEEK_START_HOUR = "week.starthour"
+        const val KEY_ALIGN_MINUTES = "align.minutes"
+        const val KEY_ALIGN_MINUTES_AUTO = "align.minutes.auto"
+        const val KEY_ALIGN_TIME_PICKER = "align.time.picker"
+        const val KEY_HOURS_DAY = "hours.day"
+        const val KEY_HOURS_WEEK = "hours.week"
+        const val KEY_FONTSIZE_TASKLIST = "fontSize.tasklist"
+        const val KEY_TOTAL_FONTSIZE = "total.fontSize"
+        const val KEY_PERSISTENT_NOTIFICATION = "persistent.notification"
+        const val KEY_SDCARD_BACKUP = "db.on.sdcard"
+        const val KEY_TIMEZONE_ANCHOR = "tz.anchor"
+        const val KEY_WEEK_START_DAY = "week.startday"
+        const val KEY_WEEK_START_HOUR = "week.starthour"
     }
 }

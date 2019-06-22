@@ -57,7 +57,7 @@ class ChangeEntryHandler : AppCompatActivity() {
         try {
             showChangeLayout()
         } catch (e: RuntimeException) {
-            Log.e(TAG, e.toString() + " calling showChangeLayout")
+            Log.e(TAG, "$e calling showChangeLayout")
         }
 
         alignMinutes = TimeSheetActivity.prefs!!.alignMinutes
@@ -267,28 +267,28 @@ class ChangeEntryHandler : AppCompatActivity() {
                     Log.d(TAG, "onActivityResult action: " + data.action)
                     // db.updateEntry(entryID, Long.parseLong(data.getAction()),
                     // null, -1, -1);
-                    newTask = db!!.getTaskNameByID(java.lang.Long.valueOf(data.action)!!)
+                    newTask = db!!.getTaskNameByID(java.lang.Long.valueOf(data.action))
                     fillData()
                 }
             }
             CHANGETIMEIN_CODE -> if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
-                    newTimeIn = java.lang.Long.valueOf(data.action)!!
-                    Log.d(TAG, "onActivityResult action: " + newTimeIn)
+                    newTimeIn = java.lang.Long.valueOf(data.action)
+                    Log.d(TAG, "onActivityResult action: $newTimeIn")
                     fillData()
                 }
             }
             CHANGETIMEOUT_CODE -> if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
-                    newTimeOut = java.lang.Long.valueOf(data.action)!!
-                    Log.d(TAG, "onActivityResult action: " + newTimeOut)
+                    newTimeOut = java.lang.Long.valueOf(data.action)
+                    Log.d(TAG, "onActivityResult action: $newTimeOut")
                     fillData()
                 }
             }
             CHANGEDATE_CODE -> if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
                     Log.d(TAG, "onActivityResult action: " + data.action)
-                    newDate = java.lang.Long.valueOf(data.action)!!
+                    newDate = java.lang.Long.valueOf(data.action)
                     newTimeIn = TimeHelpers.millisSetTime(newDate,
                             TimeHelpers.millisToHour(newTimeIn),
                             TimeHelpers.millisToMinute(newTimeIn))
@@ -302,11 +302,11 @@ class ChangeEntryHandler : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "ChangeEntryHandler"
-        private val TASKCHOOSE_CODE = 0x01
-        private val CHANGETIMEIN_CODE = 0x02
-        private val CHANGETIMEOUT_CODE = 0x03
-        private val CHANGEDATE_CODE = 0x04
-        private val CONFIRM_DELETE_DIALOG = 0x10
+        private const val TAG = "ChangeEntryHandler"
+        private const val TASKCHOOSE_CODE = 0x01
+        private const val CHANGETIMEIN_CODE = 0x02
+        private const val CHANGETIMEOUT_CODE = 0x03
+        private const val CHANGEDATE_CODE = 0x04
+        private const val CONFIRM_DELETE_DIALOG = 0x10
     }
 }

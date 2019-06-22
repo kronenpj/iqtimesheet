@@ -10,9 +10,7 @@ import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
-
 import com.github.kronenpj.iqtimesheet.TimeHelpers
-import kotlinx.android.synthetic.main.fragment_tasklist.*
 
 /**
  * A fragment representing a section of the application.
@@ -184,7 +182,7 @@ class SectionFragment : Fragment() {
                     .findViewById(R.id.reportheader) as TextView
             val date = TimeHelpers.millisToDate(TimeSheetActivity.day)
             headerView.text = "Day Report - $date"
-            Log.d(TAG, "New day is: " + date)
+            Log.d(TAG, "New day is: $date")
 
             (activity as TimeSheetActivity).refreshReportListAdapter(v.rootView
                     .findViewById(R.id.reportList) as ListView)
@@ -194,7 +192,7 @@ class SectionFragment : Fragment() {
             try {
                 aChild.setOnClickListener(mButtonListener)
             } catch (e: NullPointerException) {
-                Log.e(TAG, "setOnClickListener: " + e)
+                Log.e(TAG, "setOnClickListener: $e")
             }
 
         }
@@ -280,7 +278,7 @@ class SectionFragment : Fragment() {
                     .findViewById(R.id.weekheader) as TextView
             val date = TimeHelpers.millisToDate(TimeSheetActivity.day)
             headerView.text = "Week Report - $date"
-            Log.d(TAG, "New day is: " + date)
+            Log.d(TAG, "New day is: $date")
 
             (activity as TimeSheetActivity).refreshWeekReportListAdapter(v.rootView
                     .findViewById(R.id.weekList) as ListView)
@@ -290,7 +288,7 @@ class SectionFragment : Fragment() {
             try {
                 aChild.setOnClickListener(mButtonListener)
             } catch (e: NullPointerException) {
-                Log.e(TAG, "setOnClickListener: " + e)
+                Log.e(TAG, "setOnClickListener: $e")
             }
 
         }
@@ -299,12 +297,12 @@ class SectionFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = "SectionFragment"
+        private const val TAG = "SectionFragment"
 
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
-        val ARG_SECTION_NUMBER = "section_number"
+        const val ARG_SECTION_NUMBER = "section_number"
     }
 }

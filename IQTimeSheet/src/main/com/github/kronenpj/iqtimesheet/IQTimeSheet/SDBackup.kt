@@ -10,18 +10,16 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 
 import android.os.Environment
 import android.util.Log
-
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 object SDBackup {
-    private val TAG = "SDBackup"
+    private const val TAG = "SDBackup"
 
     fun doSDBackup(databaseName: String, packageName: String): Boolean {
         try {
@@ -41,17 +39,17 @@ object SDBackup {
                 val currentPrefPath = "/data/$packageName/shared_prefs/${packageName}_preferences.xml"
                 val currentPref = File(data, currentPrefPath)
                 val backupPref = File(sd, "$backupDBPath/preferences.xml")
-                Log.d(TAG, "Current pref: " + currentPrefPath)
+                Log.d(TAG, "Current pref: $currentPrefPath")
                 Log.d(TAG, "Backup pref : $backupDBPath/preferences.xml")
 
                 val formatter = SimpleDateFormat("yyyyMMdd", Locale.US)
-                val currentTime_1 = Date()
-                val dateString = formatter.format(currentTime_1)
+                val currentTime1 = Date()
+                val dateString = formatter.format(currentTime1)
                 val backupDBDate = File(sd, "$backupDBPath/$databaseName-$dateString")
                 Log.d(TAG, "Backup DB Date: $backupDBPath/$databaseName-$dateString")
 
-                Log.d(TAG, "SDBackup: currentDBPath: " + currentDBPath)
-                Log.d(TAG, "SDBackup: backupDBPath: " + backupDBPath)
+                Log.d(TAG, "SDBackup: currentDBPath: $currentDBPath")
+                Log.d(TAG, "SDBackup: backupDBPath: $backupDBPath")
                 Log.d(TAG, "SDBackup: backupDBDatePath: $backupDBPath-$dateString")
 
                 if (currentDB.exists()) {
@@ -124,11 +122,9 @@ object SDBackup {
                 if (currentDBbak.exists()) currentDBbak.delete()
 
                 if (backupDB.exists()) {
-                    val src: FileChannel
-                    val dst: FileChannel
+                    val src: FileChannel = FileInputStream(backupDB).channel
+                    val dst: FileChannel = FileOutputStream(currentDB).channel
                     currentDB.renameTo(currentDBbak)
-                    src = FileInputStream(backupDB).channel
-                    dst = FileOutputStream(currentDB).channel
                     dst.transferFrom(src, 0, src.size())
                     src.close()
                     dst.close()
@@ -139,10 +135,8 @@ object SDBackup {
 
                 // Restore the preferences
                 try {
-                    val src: FileChannel
-                    val dst: FileChannel
-                    src = FileInputStream(backupPref).channel
-                    dst = FileOutputStream(currentPref).channel
+                    val src: FileChannel = FileInputStream(backupPref).channel
+                    val dst: FileChannel = FileOutputStream(currentPref).channel
                     dst.transferFrom(src, 0, src.size())
                     dst.close()
                     src.close()

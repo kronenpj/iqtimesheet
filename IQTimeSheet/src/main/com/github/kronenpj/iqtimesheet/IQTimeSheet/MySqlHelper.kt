@@ -13,9 +13,9 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, DATABASE_NAME, ve
 
     companion object {
         private var instance: MySqlHelper? = null
-        private val DATABASE_VERSION = 3
-        private val TAG = "MySqlHelper"
-        val DATABASE_NAME = "TimeSheetDB.db"
+        private const val DATABASE_VERSION = 3
+        private const val TAG = "MySqlHelper"
+        const val DATABASE_NAME = "TimeSheetDB.db"
 
         @Synchronized
         fun getInstance(ctx: Context): MySqlHelper {

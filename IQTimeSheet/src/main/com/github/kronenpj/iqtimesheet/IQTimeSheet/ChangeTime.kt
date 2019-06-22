@@ -101,19 +101,19 @@ class ChangeTime : Activity() {
      */
     private val mButtonListener = OnClickListener { v ->
         val newTime = TimeHelpers.millisSetTime(timeMillis,
-                TimePicker01!!.currentHour!!,
-                TimePicker01!!.currentMinute!! * TimeSheetActivity.prefs!!.alignMinutes)
+                TimePicker01!!.currentHour,
+                TimePicker01!!.currentMinute * TimeSheetActivity.prefs!!.alignMinutes)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
 
         when (v.id) {
             R.id.changecancel -> {
-                setResult(Activity.RESULT_CANCELED, Intent().setAction("cancel"))
+                setResult(RESULT_CANCELED, Intent().setAction("cancel"))
                 finish()
             }
             R.id.changeok -> {
-                setResult(Activity.RESULT_OK,
+                setResult(RESULT_OK,
                         Intent().setAction(java.lang.Long.toString(newTime)))
                 finish()
             }
@@ -121,6 +121,6 @@ class ChangeTime : Activity() {
     }
 
     companion object {
-        private val TAG = "ChangeTime"
+        private const val TAG = "ChangeTime"
     }
 }

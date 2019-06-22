@@ -50,8 +50,8 @@ class AboutDialog : AppCompatActivity() {
         Log.d(TAG, "In onCreate.")
 
         setContentView(R.layout.about)
-        val version = findViewById(R.id.version) as TextView
-        val aboutText = findViewById(R.id.abouttext) as TextView
+        val version = findViewById<TextView>(R.id.version)
+        val aboutText = findViewById<TextView>(R.id.abouttext)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // TODO: Make into string.xml reference.
@@ -61,17 +61,17 @@ class AboutDialog : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+        return when (menuItem.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super
+            else -> super
                     .onOptionsItemSelected(menuItem)
         }
     }
 
     companion object {
-        private val TAG = "AboutDialog"
+        private const val TAG = "AboutDialog"
     }
 }

@@ -260,7 +260,7 @@ class EditTaskHandler : AppCompatActivity() {
     private val mTextListener = OnFocusChangeListener { v, hasFocus ->
         if (!hasFocus) {
             try {
-                var temp = Integer.valueOf((v as TextView).text.toString())!!
+                var temp = Integer.valueOf((v as TextView).text.toString())
                 if (temp > 100) temp = 100
                 if (temp < 0) temp = 0
                 PercentSlider!!.progress = temp
@@ -271,12 +271,12 @@ class EditTaskHandler : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+        return when (menuItem.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(menuItem)
+            else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
@@ -286,7 +286,7 @@ class EditTaskHandler : AppCompatActivity() {
      */
     private val mEditorListener = OnEditorActionListener { v, actionId, event ->
         try {
-            var temp = Integer.valueOf(v.text.toString())!!
+            var temp = Integer.valueOf(v.text.toString())
             if (temp > 100) temp = 100
             if (temp < 0) temp = 0
             PercentSlider!!.progress = temp
@@ -299,6 +299,6 @@ class EditTaskHandler : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "EditTaskHandler"
+        private const val TAG = "EditTaskHandler"
     }
 }

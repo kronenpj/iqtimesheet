@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View.OnClickListener
-import android.widget.Button
 import android.widget.DatePicker.OnDateChangedListener
 import android.widget.Toast
 import com.github.kronenpj.iqtimesheet.TimeHelpers
@@ -82,11 +81,11 @@ class ChangeDate : Activity() {
 
         when (v.id) {
             R.id.changecancel -> {
-                setResult(Activity.RESULT_CANCELED, Intent().setAction("cancel"))
+                setResult(RESULT_CANCELED, Intent().setAction("cancel"))
                 finish()
             }
             R.id.changeok -> {
-                setResult(Activity.RESULT_OK, Intent().setAction(java.lang.Long.toString(newDate)))
+                setResult(RESULT_OK, Intent().setAction(java.lang.Long.toString(newDate)))
                 finish()
             }
         }
@@ -99,6 +98,6 @@ class ChangeDate : Activity() {
     }
 
     companion object {
-        private val TAG = "ChangeDate"
+        private const val TAG = "ChangeDate"
     }
 }

@@ -15,7 +15,7 @@ abstract class ActionBarListActivity : AppCompatActivity() {
     protected val listView: ListView
         get() {
             if (mListView == null) {
-                mListView = findViewById(android.R.id.list) as ListView
+                mListView = findViewById(android.R.id.list)
             }
             return mListView as ListView
         }
@@ -23,10 +23,10 @@ abstract class ActionBarListActivity : AppCompatActivity() {
     protected var listAdapter: ListAdapter
         get() {
             val adapter = listView.adapter
-            if (adapter is HeaderViewListAdapter) {
-                return adapter.wrappedAdapter
+            return if (adapter is HeaderViewListAdapter) {
+                adapter.wrappedAdapter
             } else {
-                return adapter
+                adapter
             }
         }
         set(adapter) {
