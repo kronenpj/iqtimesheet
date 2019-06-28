@@ -3,7 +3,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout="@layout/mysimple_list_item_2">
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView
         android:id="@+id/tasklist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
