@@ -3,14 +3,13 @@ package com.github.kronenpj.iqtimesheet.IQTimeSheet
 import android.os.Bundle
 import android.preference.ListPreference
 import android.preference.PreferenceFragment
-
-import java.util.TimeZone
+import java.util.*
 
 /**
  * @author kronenpj
  */
 class MyPreferenceFragment : PreferenceFragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 

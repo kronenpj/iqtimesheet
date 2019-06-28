@@ -38,7 +38,7 @@ import android.preference.PreferenceActivity
  */
 class MyPreferenceActivity : PreferenceActivity() {
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    public override fun onCreate(savedInstanceState: Bundle) {
         super.onCreate(savedInstanceState)
 
         // Display the fragment as the main content.
