@@ -242,7 +242,7 @@ class PreferenceHelper(mCtx: Context) {
             var startDay = Calendar.MONDAY
             try {
                 startDay = Integer.valueOf(prefs.getString(KEY_WEEK_START_DAY,
-                        Integer.toString(Calendar.MONDAY)))
+                        Calendar.MONDAY.toString()))
             } catch (e: Exception) {
                 Log.e(TAG, "$KEY_WEEK_START_DAY threw exception: $e")
             }

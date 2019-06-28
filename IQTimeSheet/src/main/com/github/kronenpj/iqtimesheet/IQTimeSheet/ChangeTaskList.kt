@@ -76,7 +76,7 @@ class ChangeTaskList : ListActivity() {
         val textList: MutableList<String> = mutableListOf()
         // This is a replacement for a for-loop. Interesting.
         taskCursor!!.asList().mapTo(textList) { it.component2() }
-        val adapter = ArrayAdapter<String>(this,
+        val adapter = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1,
                 textList)
 

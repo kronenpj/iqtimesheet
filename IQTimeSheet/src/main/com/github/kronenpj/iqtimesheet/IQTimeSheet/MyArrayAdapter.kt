@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import java.util.*
 
 internal class MyArrayAdapter<T> : ArrayAdapter<T> {
     /**
@@ -51,7 +50,7 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
      * {@inheritDoc}
      */
     constructor(context: Context, resource: Int,
-                textViewResourceId: Int, objects: Array<T>) : super(context, resource, textViewResourceId, Arrays.asList(*objects)) {
+                textViewResourceId: Int, objects: Array<T>) : super(context, resource, textViewResourceId, listOf(*objects)) {
         init(context, resource, textViewResourceId)
     }
 

@@ -114,7 +114,7 @@ class ChangeTime : Activity() {
             }
             R.id.changeok -> {
                 setResult(RESULT_OK,
-                        Intent().setAction(java.lang.Long.toString(newTime)))
+                        Intent().setAction(newTime.toString()))
                 finish()
             }
         }
