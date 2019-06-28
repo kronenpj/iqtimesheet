@@ -48,7 +48,7 @@ class ChangeDate : Activity() {
 
         val mDateChangedListener = OnDateChangedListener { view, year, monthOfYear, dayOfMonth -> updateDateText(year, monthOfYear, dayOfMonth) }
 
-        DatePicker01!!.init(TimeHelpers.millisToYear(timeMillis),
+        DatePicker01.init(TimeHelpers.millisToYear(timeMillis),
                 TimeHelpers.millisToMonthOfYear(timeMillis),
                 TimeHelpers.millisToDayOfMonth(timeMillis),
                 mDateChangedListener)
@@ -73,8 +73,8 @@ class ChangeDate : Activity() {
      * occur when it is pressed.
      */
     private val mButtonListener = OnClickListener { v ->
-        val newDate = TimeHelpers.millisSetDate(DatePicker01!!.year,
-                DatePicker01!!.month + 1, DatePicker01!!.dayOfMonth)
+        val newDate = TimeHelpers.millisSetDate(DatePicker01.year,
+                DatePicker01.month + 1, DatePicker01.dayOfMonth)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)
@@ -85,7 +85,7 @@ class ChangeDate : Activity() {
                 finish()
             }
             R.id.changeok -> {
-                setResult(RESULT_OK, Intent().setAction(java.lang.Long.toString(newDate)))
+                setResult(RESULT_OK, Intent().setAction(newDate.toString()))
                 finish()
             }
         }
@@ -94,7 +94,7 @@ class ChangeDate : Activity() {
     private fun updateDateText(year: Int, monthOfYear: Int, dayOfMonth: Int) {
         val date = GregorianCalendar(year, monthOfYear, dayOfMonth)
         val simpleDate = SimpleDateFormat("E, MMM d, yyyy", Locale.US)
-        DateText!!.text = simpleDate.format(date.time)
+        DateText.text = simpleDate.format(date.time)
     }
 
     companion object {

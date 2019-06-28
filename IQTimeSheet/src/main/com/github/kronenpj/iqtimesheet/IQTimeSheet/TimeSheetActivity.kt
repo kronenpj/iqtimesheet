@@ -577,7 +577,7 @@ class TimeSheetActivity : AppCompatActivity() {
         // Iterate over the entire ListView to find the name of the
         // entry that is to be selected.
         for (i in 0 until myTaskList.count) {
-            if (taskName!!.equals(myTaskList.getItemAtPosition(i) as String, ignoreCase = true)) {
+            if (taskName.equals(myTaskList.getItemAtPosition(i) as String, ignoreCase = true)) {
                 myTaskList.setItemChecked(i, true)
                 myTaskList.setSelection(i)
             }

@@ -47,7 +47,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
         setContentView(R.layout.fragment_revivelist)
 
         try {
-            revivetasklist!!.choiceMode = ListView.CHOICE_MODE_SINGLE
+            revivetasklist.choiceMode = ListView.CHOICE_MODE_SINGLE
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
@@ -66,7 +66,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         try {
             // Register listeners for the list items.
-            revivetasklist!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            revivetasklist.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val taskName = parent.getItemAtPosition(position) as String
                 reactivateTask(taskName)
                 setResult(Activity.RESULT_OK, Intent())
@@ -121,7 +121,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         val items = taskCursor.toTypedArray()
 
-        revivetasklist!!.adapter = ArrayAdapter(applicationContext,
+        revivetasklist.adapter = ArrayAdapter(applicationContext,
                 android.R.layout.simple_list_item_single_choice, items)
     }
 
