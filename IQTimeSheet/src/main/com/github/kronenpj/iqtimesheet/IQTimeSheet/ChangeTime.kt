@@ -51,9 +51,9 @@ class ChangeTime : Activity() {
             if (TimeSheetActivity.prefs!!.alignTimePicker)
                 setTimePickerInterval(TimePicker01 as TimePicker)
 
-            TimePicker01.setIs24HourView(true)
-            TimePicker01.currentHour = TimeHelpers.millisToHour(timeMillis)
-            TimePicker01.currentMinute = TimeHelpers.millisToMinute(timeMillis) /
+            TimePicker01!!.setIs24HourView(true)
+            TimePicker01!!.currentHour = TimeHelpers.millisToHour(timeMillis)
+            TimePicker01!!.currentMinute = TimeHelpers.millisToMinute(timeMillis) /
                     TimeSheetActivity.prefs!!.alignMinutes
         }
 
@@ -101,8 +101,8 @@ class ChangeTime : Activity() {
      */
     private val mButtonListener = OnClickListener { v ->
         val newTime = TimeHelpers.millisSetTime(timeMillis,
-                TimePicker01.currentHour,
-                TimePicker01.currentMinute * TimeSheetActivity.prefs!!.alignMinutes)
+                TimePicker01!!.currentHour,
+                TimePicker01!!.currentMinute * TimeSheetActivity.prefs!!.alignMinutes)
 
         Log.d(TAG, "onClickListener view id: " + v.id)
         Log.d(TAG, "onClickListener defaulttask id: " + R.id.defaulttask)

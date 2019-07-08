@@ -56,13 +56,13 @@ class AddTaskHandler : Activity() {
 
         val items = db!!.fetchParentTasks()
 
-        TaskSpinner.adapter = ArrayAdapter(this,
+        TaskSpinner!!.adapter = ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, items)
 
-        PercentSlider.max = 100
+        PercentSlider!!.max = 100
         // TODO: Retrieve from database or default to 100 if none.
-        PercentSlider.progress = 100
-        PercentLabel.setText("100")
+        PercentSlider!!.progress = 100
+        PercentLabel!!.setText("100")
     }
 
     internal fun showTaskAdd() {
@@ -71,11 +71,11 @@ class AddTaskHandler : Activity() {
 
         val child = arrayOf(ChangeTask, CancelEdit)
 
-        SplitTask.setOnClickListener(mCheckBoxListener)
+        SplitTask!!.setOnClickListener(mCheckBoxListener)
 
-        PercentSlider.setOnSeekBarChangeListener(mSeekBarListener)
-        PercentLabel.onFocusChangeListener = mTextListener
-        PercentLabel.setOnEditorActionListener(mEditorListener)
+        PercentSlider!!.setOnSeekBarChangeListener(mSeekBarListener)
+        PercentLabel!!.onFocusChangeListener = mTextListener
+        PercentLabel!!.setOnEditorActionListener(mEditorListener)
 
         for (aChild in child) {
             try {
@@ -97,12 +97,12 @@ class AddTaskHandler : Activity() {
         if (item.equals("cancel", ignoreCase = true)) {
             setResult(RESULT_CANCELED, Intent().setAction(item))
         } else {
-            val result = EditTask.text.toString()
+            val result = EditTask!!.text.toString()
             val mIntent = Intent()
-            mIntent.putExtra("split", SplitTask.isChecked)
-            if (SplitTask.isChecked) {
-                mIntent.putExtra("parent", TaskSpinner.selectedItem as String)
-                mIntent.putExtra("percentage", PercentSlider.progress)
+            mIntent.putExtra("split", SplitTask!!.isChecked)
+            if (SplitTask!!.isChecked) {
+                mIntent.putExtra("parent", TaskSpinner!!.selectedItem as String)
+                mIntent.putExtra("percentage", PercentSlider!!.progress)
             }
             mIntent.action = result
             setResult(RESULT_OK, mIntent)
@@ -118,17 +118,17 @@ class AddTaskHandler : Activity() {
         // Perform action on selected list item.
 
         if ((v as CheckBox).isChecked) {
-            ParentLabel.visibility = View.VISIBLE
-            TaskSpinner.visibility = View.VISIBLE
-            PercentLabel.visibility = View.VISIBLE
-            PercentSymbol.visibility = View.VISIBLE
-            PercentSlider.visibility = View.VISIBLE
+            ParentLabel!!.visibility = View.VISIBLE
+            TaskSpinner!!.visibility = View.VISIBLE
+            PercentLabel!!.visibility = View.VISIBLE
+            PercentSymbol!!.visibility = View.VISIBLE
+            PercentSlider!!.visibility = View.VISIBLE
         } else {
-            ParentLabel.visibility = View.INVISIBLE
-            TaskSpinner.visibility = View.INVISIBLE
-            PercentLabel.visibility = View.INVISIBLE
-            PercentSymbol.visibility = View.INVISIBLE
-            PercentSlider.visibility = View.INVISIBLE
+            ParentLabel!!.visibility = View.INVISIBLE
+            TaskSpinner!!.visibility = View.INVISIBLE
+            PercentLabel!!.visibility = View.INVISIBLE
+            PercentSymbol!!.visibility = View.INVISIBLE
+            PercentSlider!!.visibility = View.INVISIBLE
         }
     }
 
@@ -140,7 +140,7 @@ class AddTaskHandler : Activity() {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int,
                                        fromUser: Boolean) {
             // percentLabel.setText(String.valueOf(seekBar.getProgress()));
-            PercentLabel.setText(progress.toString())
+            PercentLabel!!.setText(progress.toString())
         }
 
         override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -161,9 +161,9 @@ class AddTaskHandler : Activity() {
                         .toString())
                 if (temp > 100) temp = 100
                 if (temp < 0) temp = 0
-                PercentSlider.progress = temp
+                PercentSlider!!.progress = temp
             } catch (e: NumberFormatException) {
-                PercentLabel.setText(PercentSlider
+                PercentLabel!!.setText(PercentSlider!!
                         .progress.toString())
             }
         }
@@ -178,9 +178,9 @@ class AddTaskHandler : Activity() {
             var temp = Integer.valueOf(v.text.toString())
             if (temp > 100) temp = 100
             if (temp < 0) temp = 0
-            PercentSlider.progress = temp
+            PercentSlider!!.progress = temp
         } catch (e: NumberFormatException) {
-            PercentLabel.setText(PercentSlider.progress.toString())
+            PercentLabel!!.setText(PercentSlider!!.progress.toString())
         }
 
         v.clearFocus()

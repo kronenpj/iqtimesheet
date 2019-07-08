@@ -58,22 +58,22 @@ class EditTaskHandler : AppCompatActivity() {
 
         items = db!!.fetchParentTasks()
 
-        TaskSpinner.adapter = ArrayAdapter(this,
+        TaskSpinner!!.adapter = ArrayAdapter(this,
                 android.R.layout.simple_spinner_item, items)
 
-        PercentSlider.max = 100
-        PercentSlider.progress = 100
-        PercentLabel.setText(R.string.DefaultPercentage)
+        PercentSlider!!.max = 100
+        PercentSlider!!.progress = 100
+        PercentLabel!!.setText(R.string.DefaultPercentage)
 
         try {
             oldParent = db!!.getSplitTaskParent(oldData!!)
             oldPercentage = db!!.getSplitTaskPercentage(oldData!!)
             oldSplitState = db!!.getSplitTaskFlag(oldData!!)
 
-            SplitTask.isChecked = oldSplitState == 1
+            SplitTask!!.isChecked = oldSplitState == 1
             // TODO: There must be a better way to find a string in the spinner.
             val parentName = db!!.getTaskNameByID(oldParent)
-            Log.d(TAG, "showTaskEdit: trying to find: $parentName")
+            Log.d(TAG, "showTaskEdit: trying to find: " + parentName!!)
             var i = 0
             for (j in items!!.indices) {
                 Log.d(TAG, "showTaskEdit: $j / ${items!![j]}")
@@ -83,16 +83,16 @@ class EditTaskHandler : AppCompatActivity() {
                 }
             }
             Log.d(TAG, "showTaskEdit: trying to select: $i / ${items!![i]}")
-            TaskSpinner.setSelection(i)
-            PercentSlider.progress = oldPercentage
-            PercentLabel.setText(oldPercentage.toString())
+            TaskSpinner!!.setSelection(i)
+            PercentSlider!!.progress = oldPercentage
+            PercentLabel!!.setText(oldPercentage.toString())
 
             if (oldSplitState == 1) {
-                ParentLabel.visibility = View.VISIBLE
-                TaskSpinner.visibility = View.VISIBLE
-                PercentLabel.visibility = View.VISIBLE
-                PercentSymbol.visibility = View.VISIBLE
-                PercentSlider.visibility = View.VISIBLE
+                ParentLabel!!.visibility = View.VISIBLE
+                TaskSpinner!!.visibility = View.VISIBLE
+                PercentLabel!!.visibility = View.VISIBLE
+                PercentSymbol!!.visibility = View.VISIBLE
+                PercentSlider!!.visibility = View.VISIBLE
             }
         } catch (e: CursorIndexOutOfBoundsException) {
             Log.i(TAG, "showTaskEdit: $e")
@@ -113,14 +113,14 @@ class EditTaskHandler : AppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             oldData = extras.getString("taskName")
-            EditTask.setText(oldData)
+            EditTask!!.setText(oldData)
         }
 
-        SplitTask.setOnClickListener(mCheckBoxListener)
-        PercentSlider.setOnSeekBarChangeListener(mSeekBarListener)
-        PercentLabel.onFocusChangeListener = mTextListener
-        PercentLabel.setOnEditorActionListener(mEditorListener)
-        LastUsedLabel.text = db!!.getTaskUsageTuple(db!!.getTaskIDByName(oldData.toString()))?.usage.toString()
+        SplitTask!!.setOnClickListener(mCheckBoxListener)
+        PercentSlider!!.setOnSeekBarChangeListener(mSeekBarListener)
+        PercentLabel!!.onFocusChangeListener = mTextListener
+        PercentLabel!!.setOnEditorActionListener(mEditorListener)
+        LastUsedLabel!!.text = db!!.getTaskUsageTuple(db!!.getTaskIDByName(oldData.toString()))?.usage.toString()
 
         val child = arrayOf(ChangeTask, CancelEdit)
 
@@ -138,7 +138,7 @@ class EditTaskHandler : AppCompatActivity() {
         // Log.v(TAG, "Parent item: " + parentTaskID + " (" + db.getTaskNameByID(parentTaskID) + ")");
         val children = db!!.fetchChildTasks(parentTaskID)
         if (children.isNotEmpty()) {
-            SplitTask.visibility = View.GONE
+            SplitTask!!.visibility = View.GONE
             val myChildList = childlist
             val childNames = ArrayList<String>(children.size)
             for (childID in children) {
@@ -165,22 +165,22 @@ class EditTaskHandler : AppCompatActivity() {
         if (item.equals("cancel", ignoreCase = true)) {
             setResult(Activity.RESULT_CANCELED, Intent().setAction(item))
         } else {
-            val result = EditTask.text.toString()
+            val result = EditTask!!.text.toString()
             val intent = Intent()
             intent.action = result
             intent.putExtra("oldTaskName", oldData)
             // TODO: Test case to make sure this doesn't clobber split in
             // parent tasks, where it == 2.
             if (oldSplitState != 2) {
-                intent.putExtra("split", if (SplitTask.isChecked) 1 else 0)
+                intent.putExtra("split", if (SplitTask!!.isChecked) 1 else 0)
             } else {
                 intent.putExtra("split", oldSplitState)
             }
             intent.putExtra("oldSplit", oldSplitState)
-            if (SplitTask.isChecked) {
-                intent.putExtra("parent", TaskSpinner.selectedItem as String)
+            if (SplitTask!!.isChecked) {
+                intent.putExtra("parent", TaskSpinner!!.selectedItem as String)
                 intent.putExtra("oldParent", oldParent)
-                intent.putExtra("percentage", PercentSlider.progress)
+                intent.putExtra("percentage", PercentSlider!!.progress)
                 intent.putExtra("oldPercentage", oldPercentage)
             }
             setResult(Activity.RESULT_OK, intent)
@@ -221,17 +221,17 @@ class EditTaskHandler : AppCompatActivity() {
         // Perform action on selected list item.
 
         if ((v as CheckBox).isChecked) {
-            ParentLabel.visibility = View.VISIBLE
-            TaskSpinner.visibility = View.VISIBLE
-            PercentLabel.visibility = View.VISIBLE
-            PercentSymbol.visibility = View.VISIBLE
-            PercentSlider.visibility = View.VISIBLE
+            ParentLabel!!.visibility = View.VISIBLE
+            TaskSpinner!!.visibility = View.VISIBLE
+            PercentLabel!!.visibility = View.VISIBLE
+            PercentSymbol!!.visibility = View.VISIBLE
+            PercentSlider!!.visibility = View.VISIBLE
         } else {
-            ParentLabel.visibility = View.GONE
-            TaskSpinner.visibility = View.GONE
-            PercentLabel.visibility = View.GONE
-            PercentSymbol.visibility = View.GONE
-            PercentSlider.visibility = View.GONE
+            ParentLabel!!.visibility = View.GONE
+            TaskSpinner!!.visibility = View.GONE
+            PercentLabel!!.visibility = View.GONE
+            PercentSymbol!!.visibility = View.GONE
+            PercentSlider!!.visibility = View.GONE
         }
     }
 
@@ -243,7 +243,7 @@ class EditTaskHandler : AppCompatActivity() {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int,
                                        fromUser: Boolean) {
             // percentLabel.setText(String.valueOf(seekBar.getProgress()));
-            PercentLabel.setText(progress.toString())
+            PercentLabel!!.setText(progress.toString())
         }
 
         override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -263,9 +263,9 @@ class EditTaskHandler : AppCompatActivity() {
                 var temp = Integer.valueOf((v as TextView).text.toString())
                 if (temp > 100) temp = 100
                 if (temp < 0) temp = 0
-                PercentSlider.progress = temp
+                PercentSlider!!.progress = temp
             } catch (e: NumberFormatException) {
-                PercentLabel.setText(PercentSlider.progress.toString())
+                PercentLabel!!.setText(PercentSlider!!.progress.toString())
             }
         }
     }
@@ -289,9 +289,9 @@ class EditTaskHandler : AppCompatActivity() {
             var temp = Integer.valueOf(v.text.toString())
             if (temp > 100) temp = 100
             if (temp < 0) temp = 0
-            PercentSlider.progress = temp
+            PercentSlider!!.progress = temp
         } catch (e: NumberFormatException) {
-            PercentLabel.setText(PercentSlider.progress.toString())
+            PercentLabel!!.setText(PercentSlider!!.progress.toString())
         }
 
         v.clearFocus()

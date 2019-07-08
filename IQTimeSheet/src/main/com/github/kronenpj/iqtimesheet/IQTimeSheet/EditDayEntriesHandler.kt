@@ -64,7 +64,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
 
         try {
             // Register listeners for the list items.
-            list.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            list!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val itemID = parent.getItemIdAtPosition(position)
                 Log.d(TAG, "itemID: $itemID")
                 processChange(itemID)
@@ -125,7 +125,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
         Log.d(TAG, "timeEntryCursor has ${timeEntryCursor!!.count} entries.")
 
         try {
-            list.adapter = SimpleCursorAdapter(this,
+            list!!.adapter = SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2, timeEntryCursor,
                     arrayOf("task", "range"),
                     intArrayOf(android.R.id.text1, android.R.id.text2))
@@ -219,7 +219,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
                             val newTask = extras.getString("task")
                             val newTimeIn = extras.getLong("timein")
                             val newTimeOut = extras.getLong("timeout")
-                            val chargeNo = db!!.getTaskIDByName(newTask)
+                            val chargeNo = db!!.getTaskIDByName(newTask!!)
                             db!!.updateEntry(entryID, chargeNo, null, newTimeIn, newTimeOut)
                         }
                     } else if (result.equals("acceptadjacent", ignoreCase = true)) {
@@ -231,7 +231,7 @@ class EditDayEntriesHandler : ActionBarListActivity() {
                             val newTask = extras.getString("task")
                             val newTimeIn = extras.getLong("timein")
                             val newTimeOut = extras.getLong("timeout")
-                            val chargeNo = db!!.getTaskIDByName(newTask)
+                            val chargeNo = db!!.getTaskIDByName(newTask!!)
                             try {
                                 val prev = db!!.getPreviousClocking(entryID)
                                 if (prev > 0)

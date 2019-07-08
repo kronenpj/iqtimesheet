@@ -44,7 +44,7 @@ class ChangeTaskList : ListActivity() {
         title = "Choose a new task"
         setContentView(R.layout.revivetask)
 
-        list.choiceMode = ListView.CHOICE_MODE_SINGLE
+        list!!.choiceMode = ListView.CHOICE_MODE_SINGLE
 
         db = TimeSheetDbAdapter(this)
         try {
@@ -55,7 +55,7 @@ class ChangeTaskList : ListActivity() {
 
         try {
             // Register listeners for the list items.
-            list.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            list!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                 val taskName: String = parent.getItemAtPosition(position) as String
                 val taskID = db!!.getTaskIDByName(taskName)
                 setResult(Activity.RESULT_OK, Intent()
@@ -80,7 +80,7 @@ class ChangeTaskList : ListActivity() {
                 android.R.layout.simple_list_item_1, android.R.id.text1,
                 textList)
 
-        list.adapter = adapter
+        list!!.adapter = adapter
     }
 
     companion object {
