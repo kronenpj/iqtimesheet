@@ -255,8 +255,8 @@ class TimeSheetActivity : AppCompatActivity() {
                 // TODO: Figure out what can be done to change the notification here.
                 if (data != null) {
                     stopNotification()
-                    startNotification(data.extras.getString("task"),
-                            data.extras.getLong("timein"))
+                    startNotification(data.extras?.getString("task") ?: "Sorry, no task returned",
+                            data.extras?.getLong("timein") ?: 0L)
                 }
             }
         }
