@@ -65,6 +65,11 @@ android {
     }
     productFlavors {
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -72,7 +77,7 @@ dependencies {
         transitive = true
     }
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
 
     //implementation "io.requery:requery:$requeryVersion"
     //implementation "io.requery:requery.kotlin:$requeryVersion"
@@ -83,23 +88,24 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.anko:anko:$anko_version"
-    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
+    implementation "org.jetbrains.anko:anko:${anko_version}"
+    implementation "org.jetbrains.anko:anko-commons:${anko_version}"
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}"
+    testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.amshove.kluent:kluent:1.15'
+    testImplementation 'org.robolectric:robolectric:4.3'
 //    androidTestImplementation 'com.android.support.test:runner:1.1.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 buildscript {
     dependencies {
-        classpath "com.android.tools.build:gradle:$android_build_gradle"
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath "com.android.tools.build:gradle:${android_build_gradle}"
+        classpath 'io.fabric.tools:gradle:1.31.0'
     }
     repositories {
         google()

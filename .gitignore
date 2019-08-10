@@ -47,3 +47,6 @@ build.xml.orig
 settings.xml
 build.xml.old
 /target
+*.waskt
+*.db-201?????
+backup.???
