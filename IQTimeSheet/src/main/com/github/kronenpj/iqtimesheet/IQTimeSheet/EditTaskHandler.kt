@@ -35,7 +35,7 @@ import java.util.*
  * Activity to provide an interface to change a task name and, potentially,
  * other attributes of a task.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class EditTaskHandler : AppCompatActivity() {
     private var oldData: String? = null

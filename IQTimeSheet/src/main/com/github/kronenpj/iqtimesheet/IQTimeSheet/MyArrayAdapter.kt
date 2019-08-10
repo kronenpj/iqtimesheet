@@ -114,8 +114,8 @@ internal class MyArrayAdapter<T> : ArrayAdapter<T> {
             if (usageTuple!!.usage < 0) {
                 // Gray-ify the current color.
                 red = (red * .75).toInt()
-                green = (green*.75).toInt()
-                blue = (blue*.75).toInt()
+                green = (green * .75).toInt()
+                blue = (blue * .75).toInt()
             }
         } catch (e: Exception) {
             Log.i("MyArrayAdapter", "Retrieval of usageTuple failed for: " + text.text.toString())
