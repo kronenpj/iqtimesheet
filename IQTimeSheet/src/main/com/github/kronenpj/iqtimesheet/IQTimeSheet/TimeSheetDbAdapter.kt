@@ -838,6 +838,9 @@ GROUP BY TaskSplit.task"""
         val tempDate = System.currentTimeMillis() // Local time...
 
         var retval: Long = -1L
+        // Do some rudimentary checks/fixes on the input.
+        task.replace(oldValue = "'", newValue = "")
+        task.replace(oldValue = ";", newValue = "")
         instance.use {
             retval = insert("Tasks", "task" to task, "lastused" to tempDate)
         }
@@ -866,6 +869,9 @@ GROUP BY TaskSplit.task"""
 
         var newRow: Long = -1L
         var retval: Long = -1L
+        // Do some rudimentary checks/fixes on the input.
+        task.replace(oldValue = "'", newValue = "")
+        task.replace(oldValue = ";", newValue = "")
         instance.use {
             newRow = insert("Tasks", "task" to task, "lastused" to tempDate, "split" to 1)
             Log.d(TAG, "new row   : $newRow")
@@ -1163,6 +1169,8 @@ GROUP BY TaskSplit.task"""
         Log.d(TAG, "renameTask: Issuing DB query.")
         val taskID = getTaskIDByName(origName)
 
+        newName.replace(oldValue = "'", newValue = "")
+        newName.replace(oldValue = ";", newValue = "")
         instance.use {
             update("Tasks", "task" to newName)
                     .whereArgs("_id = $taskID")
