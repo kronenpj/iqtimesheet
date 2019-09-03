@@ -104,10 +104,10 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, DATABASE_NAME, ve
         )
 
         db.execSQL("""CREATE UNIQUE INDEX Tasks_index ON "Tasks" ("task")""")
-        db.execSQL("""CREATE UNIQUE INDEX TimeSheet_chargeno_index ON "TimeSheet" ("chargeno")""")
+        db.execSQL("""CREATE INDEX TimeSheet_chargeno_index ON "TimeSheet" ("chargeno")""")
         db.execSQL("""CREATE UNIQUE INDEX TaskSplit_chargeno_index ON "TaskSplit" ("chargeno")""")
-        db.execSQL("""CREATE UNIQUE INDEX TimeSheet_timein_index ON "TimeSheet" ("timein")""")
-        db.execSQL("""CREATE UNIQUE INDEX TimeSheet_timeout_index ON "TimeSheet" ("timeout")""")
+        db.execSQL("""CREATE INDEX TimeSheet_timein_index ON "TimeSheet" ("timein")""")
+        db.execSQL("""CREATE INDEX TimeSheet_timeout_index ON "TimeSheet" ("timeout")""")
         db.createTable("TimeSheetMeta", true, "version" to INTEGER + PRIMARY_KEY)
 
         db.insert("TimeSheetMeta", "version" to DATABASE_VERSION)
