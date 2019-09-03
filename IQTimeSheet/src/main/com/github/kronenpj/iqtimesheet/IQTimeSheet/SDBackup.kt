@@ -122,9 +122,9 @@ object SDBackup {
                 if (currentDBbak.exists()) currentDBbak.delete()
 
                 if (backupDB.exists()) {
+                    currentDB.renameTo(currentDBbak)
                     val src: FileChannel = FileInputStream(backupDB).channel
                     val dst: FileChannel = FileOutputStream(currentDB).channel
-                    currentDB.renameTo(currentDBbak)
                     dst.transferFrom(src, 0, src.size())
                     src.close()
                     dst.close()
