@@ -42,7 +42,7 @@ import java.util.*
 /**
  * Class to encapsulate preference handling for the application.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class PreferenceHelper(mCtx: Context) {
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx)

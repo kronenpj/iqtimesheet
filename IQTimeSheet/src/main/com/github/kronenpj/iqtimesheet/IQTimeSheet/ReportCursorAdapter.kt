@@ -31,7 +31,7 @@ import java.util.Locale
  * display the desired data on the second line. In this case it's the number of
  * hours an entry represents.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ReportCursorAdapter
 /**

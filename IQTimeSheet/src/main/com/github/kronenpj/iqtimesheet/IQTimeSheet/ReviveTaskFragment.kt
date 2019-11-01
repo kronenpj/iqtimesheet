@@ -32,7 +32,7 @@ import java.util.*
  * Tasks are "never" removed from the database so that entries always reference
  * a valid task.
 
- * @author Paul Kronenwetter <kronenpj></kronenpj>@gmail.com>
+ * @author Paul Kronenwetter <kronenpj@gmail.com>
  */
 class ReviveTaskFragment : ActionBarListActivity() {
     private val taskCursor = ArrayList<String>(0)
