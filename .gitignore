@@ -50,3 +50,4 @@ build.xml.old
 *.waskt
 *.db-201?????
 backup.???
+fabric.properties

@@ -857,19 +857,25 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun updateTitleBar() {
         Log.d(TAG, "updateTitleBar")
-        val format = "(%.2fh / %.2fh) / (%.2fh / %.2fh)"
+        val format = "(%.2fh / %.2fh / %d:%02d) / (%.2fh / %.2fh / %d:%02d)"
         val locale = Locale.getDefault()
         val hoursPerDay = prefs!!.hoursPerDay
         val hoursPerWeek = prefs!!.hoursPerWeek
         var dayAdder = 0f
         var weekAdder = 0f
         val db = TimeSheetDbAdapter(applicationContext)
+        val now = TimeHelpers.millisNow()
 
         // Display the time accumulated for today with time remaining.
         var reportCursor = db.daySummary(false)
         if (reportCursor == null) {
-            supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay, weekAdder,
-                    hoursPerWeek)
+            val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
+            val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
+            val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+            val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+
+            supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
+                    dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
             return
         }
         reportCursor.moveToFirst()
@@ -888,8 +894,13 @@ class TimeSheetActivity : AppCompatActivity() {
 
         reportCursor = db.weekSummary(day, false)
         if (reportCursor == null) {
-            supportActionBar!!.subtitle = String.format(locale, format, dayAdder,
-                    hoursPerDay - dayAdder, weekAdder, hoursPerWeek)
+            val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
+            val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
+            val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+            val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+
+            supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
+                    dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
             return
         }
         reportCursor.moveToFirst()
@@ -906,8 +917,13 @@ class TimeSheetActivity : AppCompatActivity() {
             Log.d(TAG, "updateTitleBar $e")
         }
 
-        supportActionBar!!.subtitle = String.format(locale, format, dayAdder,
-                hoursPerDay - dayAdder, weekAdder, hoursPerWeek - weekAdder)
+        val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
+        val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
+        val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+        val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+
+        supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
+                dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
     }
 
     private fun checkCrossSplitClock(hour: Int) {
