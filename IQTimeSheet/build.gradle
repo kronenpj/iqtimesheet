@@ -40,9 +40,9 @@ android {
     compileSdkVersion 28
     buildToolsVersion '29.0.0'
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
-        versionCode 20
+        versionCode 22
         versionName "2019-beta1"
         applicationId 'com.github.kronenpj.iqtimesheet.IQTimeSheet'
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
@@ -100,10 +100,9 @@ dependencies {
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
     testImplementation 'org.amshove.kluent:kluent:1.15'
     testImplementation 'org.robolectric:robolectric:4.3'
-//    androidTestImplementation 'com.android.support.test:runner:1.1.0'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    testImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    testImplementation 'com.android.support.test:rules:1.0.2'
+    testImplementation 'com.android.support.test:runner:1.0.2'
 }
 
 buildscript {
