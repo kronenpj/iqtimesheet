@@ -857,7 +857,7 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun updateTitleBar() {
         Log.d(TAG, "updateTitleBar")
-        val format = "(%.2fh / %.2fh / %d:%02d) / (%.2fh / %.2fh / %d:%02d)"
+        val format = "(%.2fh/%.1fh/%d:%02d) | (%.2fh/%.1fh/%d:%02d)"
         val locale = Locale.getDefault()
         val hoursPerDay = prefs!!.hoursPerDay
         val hoursPerWeek = prefs!!.hoursPerWeek
