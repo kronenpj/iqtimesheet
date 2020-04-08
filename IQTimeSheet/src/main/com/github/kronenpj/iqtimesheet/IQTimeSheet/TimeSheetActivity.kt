@@ -217,47 +217,49 @@ class TimeSheetActivity : AppCompatActivity() {
                     Log.d(TAG, "TaskRevive refreshTaskListAdapter: $e")
                 }
             }
-        } else if (requestCode == ActivityCodes.TASKEDIT.ordinal) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    val result = data.action
-                    var oldData: String? = null
+        } else if (requestCode == ActivityCodes.TASKEDIT.ordinal && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                val result = data.action
+                var oldData: String? = null
 
-                    val extras = data.extras
-                    if (extras != null) {
-                        oldData = extras.getString("oldTaskName")
-                    }
+                val extras = data.extras
+                if (extras != null) {
+                    oldData = extras.getString("oldTaskName")
+                }
 
-                    // TODO: Determine what needs to be done to change these
-                    // database fields.
-                    if (data.hasExtra("parent")) {
-                        val taskID = db.getTaskIDByName(oldData!!)
-                        // int oldSplit = db.getSplitTaskFlag(oldData);
-                        val parentID = db.getTaskIDByName(data
-                                .getStringExtra("parent"))
-                        db.alterSplitTask(taskID, parentID,
-                                data.getIntExtra("percentage", 100),
-                                data.getIntExtra("split", 0))
-                    }
+                // TODO: Determine what the below TODO actually means.
+                // TODO: Determine what needs to be done to change these database fields.
+                if (data.hasExtra("parent")) {
+                    val taskID = db.getTaskIDByName(oldData!!)
+                    // This may not be needed if having a parent is sufficient.
+                    // val oldSplit = db.getSplitTaskFlag(oldData)
+                    val parentID = db.getTaskIDByName(data
+                            .getStringExtra("parent"))
+                    // This may be the cause of not being able to edit a new split.
+                    Log.d(TAG, """Percentage (-1 default): ${data.getIntExtra("percentage", -1)}""")
+                    Log.d(TAG, """Split (-1 default): ${data.getIntExtra("split", -1)}""")
+                    db.alterSplitTask(taskID, parentID,
+                            data.getIntExtra("percentage", 100),
+                            data.getIntExtra("split", 0))
+                }
 
-                    if (oldData != null && result != null) {
-                        db.renameTask(oldData, result)
-                    }
+                if (oldData != null && result != null) {
+                    db.renameTask(oldData, result)
                 }
-                try {
-                    refreshTaskListAdapter()
-                    refreshReportListAdapter()
-                    refreshWeekReportListAdapter()
-                    updateTitleBar()
-                } catch (e: NullPointerException) {
-                    Log.d(TAG, "TaskEdit refreshTaskListAdapter: $e")
-                }
-                // TODO: Figure out what can be done to change the notification here.
-                if (data != null) {
-                    stopNotification()
-                    startNotification(data.extras?.getString("task") ?: "Sorry, no task returned",
-                            data.extras?.getLong("timein") ?: 0L)
-                }
+            }
+            try {
+                refreshTaskListAdapter()
+                refreshReportListAdapter()
+                refreshWeekReportListAdapter()
+                updateTitleBar()
+            } catch (e: NullPointerException) {
+                Log.d(TAG, "TaskEdit refreshTaskListAdapter: $e")
+            }
+            // TODO: Figure out what can be done to change the notification here.
+            if (data != null) {
+                stopNotification()
+                startNotification(data.extras?.getString("task") ?: "Sorry, no task returned",
+                        data.extras?.getLong("timein") ?: 0L)
             }
         }
     }
@@ -790,7 +792,7 @@ class TimeSheetActivity : AppCompatActivity() {
         if (!prefs!!.persistentNotification) {
             return
         }
-        val myNotification = NotificationCompat.Builder(applicationContext)
+        val myNotification = NotificationCompat.Builder(applicationContext, "IQTimeSheet")
                 .setContentTitle(resources.getString(R.string.notification_title))
                 .setContentText(taskName).setWhen(timeIn)
                 .setContentIntent(contentIntent).setAutoCancel(false).setOngoing(true)
@@ -861,69 +863,68 @@ class TimeSheetActivity : AppCompatActivity() {
         val locale = Locale.getDefault()
         val hoursPerDay = prefs!!.hoursPerDay
         val hoursPerWeek = prefs!!.hoursPerWeek
+        val db = TimeSheetDbAdapter(applicationContext)
         var dayAdder = 0f
         var weekAdder = 0f
-        val db = TimeSheetDbAdapter(applicationContext)
-        val now = TimeHelpers.millisNow()
 
-        // Display the time accumulated for today with time remaining.
         var reportCursor = db.daySummary(false)
-        if (reportCursor == null) {
-            val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
-            val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
-            val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
-            val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
-
-            supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
-                    dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
-            return
-        }
-        reportCursor.moveToFirst()
-        if (!reportCursor.isAfterLast) {
-            val column = reportCursor.getColumnIndex("total")
-            while (!reportCursor.isAfterLast) {
-                dayAdder += reportCursor.getFloat(column)
-                reportCursor.moveToNext()
+        if (reportCursor != null) {
+            reportCursor.moveToFirst()
+            if (!reportCursor.isAfterLast) {
+                val column = reportCursor.getColumnIndex("total")
+                while (!reportCursor.isAfterLast) {
+                    dayAdder += reportCursor.getFloat(column)
+                    reportCursor.moveToNext()
+                }
             }
-        }
-        try {
-            reportCursor.close()
-        } catch (e: IllegalStateException) {
-            Log.d(TAG, "updateTitleBar $e")
+            try {
+                reportCursor.close()
+            } catch (e: IllegalStateException) {
+                Log.d(TAG, "updateTitleBar $e")
+            }
         }
 
         reportCursor = db.weekSummary(day, false)
-        if (reportCursor == null) {
-            val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
-            val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
-            val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
-            val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
-
-            supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
-                    dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
-            return
-        }
-        reportCursor.moveToFirst()
-        if (!reportCursor.isAfterLast) {
-            val column = reportCursor.getColumnIndex("total")
-            while (!reportCursor.isAfterLast) {
-                weekAdder += reportCursor.getFloat(column)
-                reportCursor.moveToNext()
+        if (reportCursor != null) {
+            reportCursor.moveToFirst()
+            if (!reportCursor.isAfterLast) {
+                val column = reportCursor.getColumnIndex("total")
+                while (!reportCursor.isAfterLast) {
+                    weekAdder += reportCursor.getFloat(column)
+                    reportCursor.moveToNext()
+                }
+            }
+            try {
+                reportCursor.close()
+            } catch (e: IllegalStateException) {
+                Log.d(TAG, "updateTitleBar $e")
             }
         }
-        try {
-            reportCursor.close()
-        } catch (e: IllegalStateException) {
-            Log.d(TAG, "updateTitleBar $e")
-        }
 
-        val dayHour = TimeHelpers.millisToHour(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())  // Truncates float to int
-        val dayMinute = TimeHelpers.millisToMinute(now + ((hoursPerDay - dayAdder) * 3600.0 * 1000).toLong())
-        val weekHour = TimeHelpers.millisToHour(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
-        val weekMinute = TimeHelpers.millisToMinute(now + ((hoursPerWeek - weekAdder) * 3600.0 * 1000).toLong())
+        // Calculate the amount of hours left in the day/week & convert to milliseconds.
+        val (dayHour, dayMinute, weekHour, weekMinute) =
+                estimateCompletion(dayAdder = dayAdder, weekAdder = weekAdder)
 
         supportActionBar!!.subtitle = String.format(locale, format, dayAdder, hoursPerDay,
                 dayHour, dayMinute, weekAdder, hoursPerWeek, weekHour, weekMinute)
+    }
+
+    // Calculate the amount of hours left in the day/week & convert to milliseconds.
+    private fun estimateCompletion(dayAdder: Float, weekAdder: Float): Array<Int> {
+        val now = TimeHelpers.millisNow()
+        val hoursPerDay = prefs!!.hoursPerDay
+        val hoursPerWeek = prefs!!.hoursPerWeek
+        val millisHour = 3600 * 1000.0
+
+        val dayEstimateCalc = ((hoursPerDay - dayAdder) * millisHour).toLong()  // Truncates float to int
+        val weekEstimateCalc = ((hoursPerWeek - weekAdder) * millisHour).toLong()
+        Log.d(TAG, "updateTitleBar: h/day: $hoursPerDay | adder: $dayAdder | Est: ${now + dayEstimateCalc}")
+        val dayHour = TimeHelpers.millisToHour(now + dayEstimateCalc)
+        val dayMinute = TimeHelpers.millisToMinute(now + dayEstimateCalc)
+        val weekHour = TimeHelpers.millisToHour(now + weekEstimateCalc)
+        val weekMinute = TimeHelpers.millisToMinute(now + weekEstimateCalc)
+
+        return (arrayOf(dayHour, dayMinute, weekHour, weekMinute))
     }
 
     private fun checkCrossSplitClock(hour: Int) {
