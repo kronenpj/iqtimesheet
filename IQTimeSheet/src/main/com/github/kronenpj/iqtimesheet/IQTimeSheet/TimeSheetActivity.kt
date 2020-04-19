@@ -859,7 +859,7 @@ class TimeSheetActivity : AppCompatActivity() {
      */
     private fun updateTitleBar() {
         Log.d(TAG, "updateTitleBar")
-        val format = "(%.2fh/%.1fh/%d:%02d) | (%.2fh/%.1fh/%d:%02d)"
+        val format = "%.2fh/%.1fh/%d:%02d | %.2fh/%.1fh/%d:%02d"
         val locale = Locale.getDefault()
         val hoursPerDay = prefs!!.hoursPerDay
         val hoursPerWeek = prefs!!.hoursPerWeek
@@ -870,12 +870,10 @@ class TimeSheetActivity : AppCompatActivity() {
         var reportCursor = db.daySummary(false)
         if (reportCursor != null) {
             reportCursor.moveToFirst()
-            if (!reportCursor.isAfterLast) {
-                val column = reportCursor.getColumnIndex("total")
-                while (!reportCursor.isAfterLast) {
-                    dayAdder += reportCursor.getFloat(column)
-                    reportCursor.moveToNext()
-                }
+            val column = reportCursor.getColumnIndex("total")
+            while (!reportCursor.isAfterLast) {
+                dayAdder += reportCursor.getFloat(column)
+                reportCursor.moveToNext()
             }
             try {
                 reportCursor.close()
@@ -887,12 +885,10 @@ class TimeSheetActivity : AppCompatActivity() {
         reportCursor = db.weekSummary(day, false)
         if (reportCursor != null) {
             reportCursor.moveToFirst()
-            if (!reportCursor.isAfterLast) {
-                val column = reportCursor.getColumnIndex("total")
-                while (!reportCursor.isAfterLast) {
-                    weekAdder += reportCursor.getFloat(column)
-                    reportCursor.moveToNext()
-                }
+            val column = reportCursor.getColumnIndex("total")
+            while (!reportCursor.isAfterLast) {
+                weekAdder += reportCursor.getFloat(column)
+                reportCursor.moveToNext()
             }
             try {
                 reportCursor.close()
@@ -1023,6 +1019,7 @@ class TimeSheetActivity : AppCompatActivity() {
                 try {
                     showDialog(CROSS_DIALOG)
                 } catch (e: WindowManager.BadTokenException) {
+                    Log.d(TAG, "checkCrossDayClock $e")
                 }
             }
         }
