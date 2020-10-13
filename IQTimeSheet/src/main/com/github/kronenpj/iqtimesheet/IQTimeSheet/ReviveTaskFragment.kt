@@ -22,7 +22,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import kotlinx.android.synthetic.main.fragment_revivelist.*
 import java.util.*
@@ -121,7 +120,7 @@ class ReviveTaskFragment : ActionBarListActivity() {
 
         val items = taskCursor.toTypedArray()
 
-        revivetasklist!!.adapter = ArrayAdapter(applicationContext,
+        revivetasklist!!.adapter = MyArrayAdapter(applicationContext,
                 android.R.layout.simple_list_item_single_choice, items)
     }
 
