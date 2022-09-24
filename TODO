@@ -3,6 +3,8 @@ High-priority items to do:
 ** Start time < anchored midnight < End time / now = cross day...
 * Address deprecated functions while keeping compatibility at ~ API 8.
 * Add barcode scan for new task input.
+* Add filter feature to main list so that it's easier to find and activate a
+  task.
 
 Medium-priority items to do:
 * Move everything possible into preferences.

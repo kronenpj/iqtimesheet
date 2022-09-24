@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">IQTimeSheet</string>
-    <string name="icon_add_task">ic_task_add.png</string>
     <string name="taskedit">Edit Task</string>
     <string name="taskretire">Retire Task</string>
     <string name="menu_new_task">New Task</string>
     <string name="menu_revive_task">Revive Task</string>
     <string name="menu_edit_day_entries">Edit Entries</string>
-    <string name="menu_reports">Day Report</string>
-    <string name="menu_week_reports">Week Report</string>
     <string name="menu_prefs">Settings</string>
     <string name="menu_backup">Backup Database</string>
     <string name="menu_restore">Restore Database</string>
@@ -55,7 +52,6 @@
     <string name="totals_font_size">Totals Font Size</string>
     <string name="fontsize_tasklist">Tasklist Font Size</string>
     <string name="select_parent_task">Select parent task</string>
-    <string name="scrub_database">Scrub the database</string>
     <string name="notification_title">Clocked in…</string>
     <string name="title_section1">Select Task</string>
     <string name="title_section2">Day Report</string>
@@ -64,16 +60,4 @@
     <string name="DefaultPercentage">100</string>
     <string name="PercentSign">%</string>
     <string name="task_last_used">Task last used: %s</string>
-    <string name="TASK_TABLE_CREATE">
-        CREATE TABLE
-        Tasks (
-          _id INTEGER PRIMARY KEY AUTOINCREMENT,
-          task TEXT NOT NULL,
-          active BOOLEAN NOT NULL DEFAULT 1,
-          usage INTEGER NOT NULL DEFAULT 0,
-          oldusage INTEGER NOT NULL DEFAULT 0,
-          lastused INTEGER NOT NULL DEFAULT 0,
-          split INTEGER DEFAULT 0
-        );
-    </string>
 </resources>
